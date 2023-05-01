@@ -1,0 +1,33 @@
+name: zDeath-Arcade
+version: 0.0.1
+main: dev.nullpointercoding.zdeatharcade.Main
+api-version: 1.13
+authors: [xxCoderforlife]
+load: POSTWORLD
+#COMMANDS
+commands:
+  zdeatharcade:
+    permission: 
+    description: Root Command For zDeath-Arcade
+    usage: /zdeatharcade
+    aliases: [ zda ]
+  economy:
+    permission: 
+    description: Economy Command For zDeath-Arcade
+    usage: /economy
+    aliases: [ eco ]
+  account:
+    permission: 
+    description: Account Command For zDeath-Arcade
+    usage: /account
+    aliases: [ acc ]
+permissions:
+  zdeatharcade.admin:
+    description: Allows access to all zDeath-Arcade commands
+    default: op
+  zdeatharcade.economy:
+    description: Allows access to all zDeath-Arcade economy commands
+    default: op
+  zdeatharcade.account:
+    description: Allows you to access the AccountGUI
+    default: true
