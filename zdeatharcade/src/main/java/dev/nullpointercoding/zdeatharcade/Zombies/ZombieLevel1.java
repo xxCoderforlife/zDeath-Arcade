@@ -14,13 +14,18 @@ public class ZombieLevel1 {
     
     private Main plugin = Main.getInstance();
     private final Component level = Component.text("LVL 1",TextColor.color(255, 255, 255)).decorate(TextDecoration.BOLD);
+    private Component name = Component.text("Zombie").color(TextColor.color(10, 214, 68)).appendSpace().append(level);
 
     public LivingEntity convertToLevel1Zombie(final Zombie z){
-        z.customName(Component.text("Zombie").color(TextColor.color(10, 214, 68)).appendSpace().append(level));
+        z.customName(name);
         z.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4.0);
         z.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
         z.setCustomNameVisible(true);
         z.setShouldBurnInDay(false);
         return z;
+    }
+
+    public Component name(){
+        return name;
     }
 }

@@ -11,7 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,6 +117,16 @@ public class Commands implements CommandExecutor {
                         p.sendMessage("§aSuccessfully set zombie spawner.");
                         p.sendMessage("There are now " + ZSLM.getZombieSpawnLocationFolder().listFiles().length
                                 + " zombie spawners.");
+                    }
+                    if(args[1].equalsIgnoreCase("killall")){
+                        if(!(p.hasPermission("zdeatharcade.admin"))){
+                            p.sendMessage("§cYou do not have permission to use this command.");
+                            return true;
+                        }
+                        for(Entity z : p.getWorld().getEntitiesByClass(Zombie.class)){
+                            z.remove();
+                        }
+                        p.sendMessage("§aSuccessfully removed all zombies.");
                     }
                 }
                 if (args[0].equalsIgnoreCase("range")) {

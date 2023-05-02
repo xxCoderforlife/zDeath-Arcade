@@ -81,5 +81,23 @@ public class PlayerConfigManager {
         getConfig().set(configName + ".Balance", balance);
         saveConfig();
     }
+
+    public Double getKills(){
+        return getConfig().getDouble(configName + ".Zombie-Kills");
+    }
+
+    public void setKills(Double kills){
+        getConfig().set(configName + ".Zombie-Kills", kills);
+        saveConfig();
+    }
+
+    public Double getDeaths(){
+        return getConfig().getDouble(configName + ".Deaths");
+    }
+
+    public void setDeaths(Double deaths){
+        getConfig().set(configName + ".Deaths", deaths);
+        saveConfig();
+    }
 }
 

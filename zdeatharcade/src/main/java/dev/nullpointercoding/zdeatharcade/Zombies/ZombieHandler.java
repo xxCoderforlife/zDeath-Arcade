@@ -9,9 +9,13 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,13 +26,19 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
+import net.milkbowl.vault.economy.Economy;
 
 public class ZombieHandler implements Listener{
 
     private Main plugin = Main.getInstance();
+    Economy econ = new VaultHook();
     private File ZSLM = plugin.getZombieSpawnLocationFolder();
     private FileConfiguration config = new YamlConfiguration();
     private HashMap<File,Integer> zombieSpawnLocations = new HashMap<File,Integer>();
@@ -42,6 +52,38 @@ public class ZombieHandler implements Listener{
     private static int randoInt(int min,int max){
         int randoNum = r.nextInt((max - min) + 1) + min;
         return randoNum;
+    }
+
+    @EventHandler
+    public void onZombieDeath(EntityDeathEvent e){
+        if(!(e.getEntity() instanceof Zombie)){return;}
+        Zombie z = (Zombie) e.getEntity();
+        if(z.getKiller() instanceof Player){
+            Player p = (Player) z.getKiller();
+            PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
+            if(z.name().equals(zl1.name())){
+                econ.depositPlayer(p, 3);
+                pcm.setKills(pcm.getKills() + 1);
+                p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
+                e.getDrops().clear();
+                List<ItemStack> drops = new ArrayList<ItemStack>();
+                drops.add(new ItemStack(Material.IRON_INGOT, 1));
+                drops.add(new ItemStack(Material.GOLD_INGOT, 1));
+                drops.add(new ItemStack(Material.DIAMOND, 1));
+                e.getDrops().addAll(drops);
+            }
+            if(z.name().equals(zl2.name())){
+                econ.depositPlayer(p, 8);
+                pcm.setKills(pcm.getKills() + 1);
+                p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
+                e.getDrops().clear();
+                List<ItemStack> drops = new ArrayList<ItemStack>();
+                drops.add(new ItemStack(Material.IRON_INGOT, 1));
+                drops.add(new ItemStack(Material.GOLD_INGOT, 1));
+                drops.add(new ItemStack(Material.DIAMOND, 1));
+                e.getDrops().addAll(drops);
+            }
+        }
     }
 
     @EventHandler
@@ -101,6 +143,11 @@ public class ZombieHandler implements Listener{
             Slime sl = (Slime) c;
             sl.getWorld().spawnEntity(sl.getLocation(), EntityType.ZOMBIE);
             sl.remove();
+        }
+        if(c.getType() == EntityType.ENDERMAN){
+            Enderman em = (Enderman) c;
+            em.getWorld().spawnEntity(em.getLocation(), EntityType.ZOMBIE);
+            em.remove();
         }
 
     }

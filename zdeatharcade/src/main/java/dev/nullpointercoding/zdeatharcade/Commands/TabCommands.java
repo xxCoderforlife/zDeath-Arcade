@@ -26,6 +26,7 @@ public class TabCommands implements TabCompleter{
          if(args.length == 2){
             if(args[0].equalsIgnoreCase("zombie")){
                 tab.add("setspawner");
+                tab.add("killall");
             }
             if(args[0].equalsIgnoreCase("range")){
                 tab.add("setspawn");
