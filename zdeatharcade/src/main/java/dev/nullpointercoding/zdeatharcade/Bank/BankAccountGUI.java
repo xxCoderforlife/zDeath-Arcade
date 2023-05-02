@@ -2,6 +2,7 @@ package dev.nullpointercoding.zdeatharcade.Bank;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -57,6 +58,7 @@ public class BankAccountGUI implements Listener{
         inv.setItem(44, remove1000());
         if(isDepositingv){
             inv.setItem(49, confirmDeposit());
+            inv.setItem(4, depoistAll());
         }else{
             inv.setItem(49, confirmWithdraw());
         }
@@ -146,6 +148,26 @@ public class BankAccountGUI implements Listener{
                 }
             }else{
                 p.sendMessage("§c§lERROR: §7You cannot move a negative amount to your player account!");
+            }
+        }
+        if(clicked.getItemMeta().displayName().equals(depoistAll().getItemMeta().displayName())){
+                if(econ.getBalance(p) > 0){
+                    econ.withdrawPlayer(p, econ.getBalance(p));
+                    econ.bankDeposit(p.getUniqueId().toString(), econ.getBalance(p));
+                    p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + econ.getBalance(p) + " §7to your bank account!");
+                    p.closeInventory(Reason.PLUGIN);
+                }else{
+                    p.sendMessage("§c§lERROR: §7You do not have enough money to move that amount to your bank account!");
+                }
+        }
+        if(clicked.getItemMeta().displayName().equals(withdrawlAll().getItemMeta().displayName())){
+            if(econ.bankBalance(p.getUniqueId().toString()).balance > 0){
+                econ.depositPlayer(p, econ.bankBalance(p.getUniqueId().toString()).balance);
+                econ.bankWithdraw(p.getUniqueId().toString(), econ.bankBalance(p.getUniqueId().toString()).balance);
+                p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + econ.bankBalance(p.getUniqueId().toString()).balance + " §7to your player account!");
+                p.closeInventory(Reason.PLUGIN);
+            }else{
+                p.sendMessage("§c§lERROR: §7You do not have enough money to move that amount to your player account!");
             }
         }
     }
@@ -246,6 +268,25 @@ public class BankAccountGUI implements Listener{
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         confirm.setItemMeta(meta);
         return confirm;
+    }
+    private ItemStack withdrawlAll(){
+        ItemStack all = new ItemStack(Material.MAGENTA_WOOL);
+        ItemMeta meta = all.getItemMeta();
+        meta.displayName(Component.text("§d§lWITHDRAW ALL"));
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
+        all.setItemMeta(meta);
+        return all;
+    }
+
+    private ItemStack depoistAll(){
+        ItemStack all = new ItemStack(Material.MAGENTA_WOOL);
+        ItemMeta meta = all.getItemMeta();
+        meta.displayName(Component.text("§d§lDEPOSIT ALL"));
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
+        all.setItemMeta(meta);
+        return all;
     }
 
     public void setIsDespoisting(Boolean isDespoisting){

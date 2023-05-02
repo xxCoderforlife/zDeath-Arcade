@@ -21,7 +21,7 @@ public class BankGUI implements Listener{
 
     private Main plugin = Main.getInstance();
     private Player p;
-    private Economy econ = plugin.getEconomy();
+    private Economy econ = Main.getEconomy();
     private final Inventory inv;
     private Component title = Component.text("§c§l         BANK MENU");
 

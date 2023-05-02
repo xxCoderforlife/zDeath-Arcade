@@ -23,7 +23,7 @@
     <repository>
       <id>papermc</id>
       <url>https://repo.papermc.io/repository/maven-public/</url>
-  </repository>
+    </repository>
     <repository>
       <id>codemc-repo</id>
       <url>https://repo.codemc.org/repository/maven-public/</url>
@@ -35,19 +35,19 @@
     <repository>
       <id>citizens-repo</id>
       <url>https://maven.citizensnpcs.co/repo</url>
-  </repository>
+    </repository>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
 
   <dependencies>
     <dependency>
-        <groupId>com.github.MilkBowl</groupId>
-        <artifactId>VaultAPI</artifactId>
-        <version>1.7.1</version>
-        <scope>provided</scope>
+      <groupId>com.github.MilkBowl</groupId>
+      <artifactId>VaultAPI</artifactId>
+      <version>1.7.1</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>net.citizensnpcs</groupId>
@@ -56,12 +56,12 @@
       <type>jar</type>
       <scope>provided</scope>
       <exclusions>
-          <exclusion>
-              <groupId>*</groupId>
-              <artifactId>*</artifactId>
-          </exclusion>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
-  </dependency>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -73,7 +73,13 @@
       <artifactId>paper-api</artifactId>
       <version>1.19.4-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
-  </dependency>
+    </dependency>
+    <dependency>
+      <groupId>net.luckperms</groupId>
+      <artifactId>api</artifactId>
+      <version>5.4</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>com.sk89q.worldguard</groupId>
       <artifactId>worldguard-bukkit</artifactId>

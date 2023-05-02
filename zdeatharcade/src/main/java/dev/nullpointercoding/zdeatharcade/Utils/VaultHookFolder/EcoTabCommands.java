@@ -21,8 +21,8 @@ public class EcoTabCommands implements TabCompleter {
 
         }
         if (args.length == 1) {
-            tab.add("give");
-            tab.add("take");
+            tab.add("add");
+            tab.add("remove");
             tab.add("set");
         }
         if (args.length == 2) {

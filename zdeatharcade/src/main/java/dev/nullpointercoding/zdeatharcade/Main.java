@@ -26,7 +26,7 @@ public class Main extends JavaPlugin {
     private static Main plugin;
     private static Random r;
     private static Random spawmChance;
-    private Economy econ = null;
+    private static Economy econ = null;
     private VaultChat vaultChat;
     private Boolean isRangeSpawnSet;
     private File zombieSpawnLocations = new File(getDataFolder() + File.separator + "Zombie Spawn Locations");
@@ -40,7 +40,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
-        registerEcon();
         r = new Random();
         spawmChance = new Random();
         createConfigFolders();
@@ -91,6 +90,7 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new TheRange(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);
         getServer().getPluginManager().registerEvents(new RangeGunSmith(), this);
+        registerEcon();
     }
 
     private boolean setupEconomy() {
@@ -178,7 +178,7 @@ public class Main extends JavaPlugin {
         return bankDataFolder;
     }
 
-    public Economy getEconomy() {
+    public static Economy getEconomy() {
         return econ;
     }
 
