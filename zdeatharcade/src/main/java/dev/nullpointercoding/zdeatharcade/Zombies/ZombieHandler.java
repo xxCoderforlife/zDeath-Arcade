@@ -24,10 +24,12 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 
 import dev.nullpointercoding.zdeatharcade.Main;
@@ -54,7 +56,7 @@ public class ZombieHandler implements Listener{
         return randoNum;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onZombieDeath(EntityDeathEvent e){
         if(!(e.getEntity() instanceof Zombie)){return;}
         Zombie z = (Zombie) e.getEntity();
@@ -86,7 +88,7 @@ public class ZombieHandler implements Listener{
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void disableAllOtherMobSpawns(CreatureSpawnEvent e){
         LivingEntity c = e.getEntity();
         if(c.getType() == EntityType.ZOMBIE){
@@ -125,28 +127,33 @@ public class ZombieHandler implements Listener{
         }
         if(c.getType() == EntityType.SPIDER){
             Spider s = (Spider) c;
-            s.getWorld().spawnEntity(s.getLocation(), EntityType.ZOMBIE); 
+            Zombie z = (Zombie) s.getWorld().spawnEntity(s.getLocation(), EntityType.ZOMBIE);
+            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             s.remove();
             
         }
         if(c.getType() == EntityType.SKELETON){
             Skeleton sk = (Skeleton) c;
-            sk.getWorld().spawnEntity(sk.getLocation(), EntityType.ZOMBIE);
+            Zombie z = (Zombie) sk.getWorld().spawnEntity(sk.getLocation(), EntityType.ZOMBIE);
+            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             sk.remove();
         }
         if(c.getType() == EntityType.CREEPER){
             Creeper cp = (Creeper) c;
-            cp.getWorld().spawnEntity(cp.getLocation(), EntityType.ZOMBIE);
+            Zombie z = (Zombie) cp.getWorld().spawnEntity(cp.getLocation(), EntityType.ZOMBIE);
+            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             cp.remove();
         }
         if(c.getType() == EntityType.SLIME){
             Slime sl = (Slime) c;
-            sl.getWorld().spawnEntity(sl.getLocation(), EntityType.ZOMBIE);
+            Zombie z = (Zombie) sl.getWorld().spawnEntity(sl.getLocation(), EntityType.ZOMBIE);
+            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             sl.remove();
         }
         if(c.getType() == EntityType.ENDERMAN){
             Enderman em = (Enderman) c;
-            em.getWorld().spawnEntity(em.getLocation(), EntityType.ZOMBIE);
+            Zombie z = (Zombie) em.getWorld().spawnEntity(em.getLocation(), EntityType.ZOMBIE);
+            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             em.remove();
         }
 

@@ -18,11 +18,14 @@ public class ZombieLevel2 {
             .append(level);
 
     public LivingEntity convertToLevel1Zombie(final Zombie z) {
-        z.customName(name);
-        z.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(12.0);
-        z.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
-        z.setCustomNameVisible(true);
-        z.setShouldBurnInDay(false);
+        Zombie z2 = (Zombie) z;
+        z2.customName(name);
+        z2.setAge(1);
+        z2.getEquipment().clear();
+        z2.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(12.0);
+        z2.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3);
+        z2.setCustomNameVisible(true);
+        z2.setShouldBurnInDay(false);
         return z;
     }
 
