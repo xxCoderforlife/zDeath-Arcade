@@ -19,9 +19,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.title.TitlePart;
 import net.milkbowl.vault.economy.Economy;
 
 public class BankAccountGUI implements Listener{
@@ -33,7 +35,7 @@ public class BankAccountGUI implements Listener{
     private Economy econ = new VaultHook();
     private static HashMap<Player,Double> bountyAmount = new HashMap<Player,Double>();
     private static HashMap<Player,HashMap<Player,Double>> playerBounty = new HashMap<Player,HashMap<Player,Double>>();
-    private Component title = Component.text("§e§oBANK TRANSACTION MENU");
+    private Component title = Component.text("§e§o    TRANSACTION MENU");
     private Component error = Component.text("§4§lBROKE ALERT: You ain't got no Bread").hoverEvent(HoverEvent.showText(Component.text("§7§oYou can't move $0")));
 
     private Inventory inv;
@@ -75,20 +77,29 @@ public class BankAccountGUI implements Listener{
             if(isDepositingv){
                 inv.setItem(49, confirmDeposit());
                 inv.setItem(4, depoistAll());
+                inv.setItem(45, exit());
             }else{
                 inv.setItem(49, confirmWithdraw());
                 inv.setItem(4, withdrawlAll());
+                inv.setItem(45, exit());
+
             }
         }
         if(accountT.equals(AccountType.PLAYER)){
             if(isDepositingv){
                 inv.setItem(49, payPlayer());
+                inv.setItem(45, exit());
+
             }else{
                 inv.setItem(49, reqPlayer());
+                inv.setItem(45, exit());
+
             }
         }
         if(accountT.equals(AccountType.BOUNTY)){
             inv.setItem(49, confirmBouty());
+            inv.setItem(45, exit());
+
         }
 
     }
@@ -98,7 +109,7 @@ public class BankAccountGUI implements Listener{
         if(!(e.getView().title().equals(title))){return;}
         amountToMoveToBank = 0.0;
         if(e.getReason().equals(Reason.PLAYER)){
-            p.sendMessage("§c§lERROR: §7You have closed the bank menu!");
+            p.sendMessage("§c§lERROR: §7You have closed the transcation menu!");
         }
 
     }
@@ -220,11 +231,18 @@ public class BankAccountGUI implements Listener{
         if(clicked.getItemMeta().displayName().equals(confirmBouty().getItemMeta().displayName())){
             Player whoClicked = (Player) e.getWhoClicked();
             if(amountToMoveToBank > 0){
+                    PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
+                    if(pcm.hasBounty()){
+                        whoClicked.sendMessage("§c§lERROR: " + p.getName() + " §7already have a bounty on their head!");
+                        p.closeInventory(Reason.PLUGIN);
+                        return;
+                    }
                 if(econ.getBalance(whoClicked) >= amountToMoveToBank){                    
                     p.sendMessage("§a§lSUCCESS: §7You have successfully put a Bounty on " + p.getName());
-                    Bukkit.broadcast(Component.text(whoClicked + " set a bounty of $" + amountToMoveToBank + " on " + p.getName()));
+                    Bukkit.broadcast(Component.text(whoClicked.getName() + " set a bounty of $" + amountToMoveToBank + " on " + p.getName()));
                     bountyAmount.put(whoClicked, amountToMoveToBank);
                     playerBounty.put(p, bountyAmount);
+                    pcm.setHasBounty(true, amountToMoveToBank);
                     p.closeInventory(Reason.PLUGIN);
                 }else{
                     p.closeInventory(Reason.PLUGIN);
@@ -233,6 +251,12 @@ public class BankAccountGUI implements Listener{
             }else{
                 p.sendMessage("§c§lERROR: §7You cannot move a negative amount to the bounty account!");
             }
+        }
+        if(clicked.getItemMeta().displayName().equals(exit().getItemMeta().displayName())){
+            p.closeInventory(Reason.PLUGIN);
+            p.sendTitlePart(TitlePart.TITLE, Component.text("§c§oClosing Money Managment Terminal..."));
+            p.sendTitlePart(TitlePart.SUBTITLE, Component.text("§4§oHave a nice Day User: " + p.getUniqueId().toString()));
+
         }
     }
 
@@ -377,6 +401,13 @@ public class BankAccountGUI implements Listener{
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         confirm.setItemMeta(meta);
         return confirm;
+    }
+    private ItemStack exit(){
+        ItemStack barrier = new ItemStack(Material.BARRIER);
+        ItemMeta meta = barrier.getItemMeta();
+        meta.displayName(Component.text("§c§lExit"));
+        barrier.setItemMeta(meta);
+        return barrier;
     }
 
     public void setIsDespoisting(Boolean isDespoisting,AccountType accountType){

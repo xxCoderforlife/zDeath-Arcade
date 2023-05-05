@@ -15,9 +15,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerTextures;
 
@@ -51,6 +53,7 @@ public class PlayerAccountGUI implements Listener{
     private void addItems(){
         inv.setItem(0, balanceItem());
         inv.setItem(4, bankAccount());
+        inv.setItem(8, exit());
 
     }
 
@@ -74,6 +77,11 @@ public class PlayerAccountGUI implements Listener{
             p.sendTitlePart(TitlePart.TITLE, Component.text("§a§oCreating your account now..."));
             p.sendTitlePart(TitlePart.SUBTITLE, Component.text("§2§oHave a nice Day User: " + p.getUniqueId().toString()));
             econ.createBank(p.getUniqueId().toString(), p);
+        }
+        if(clicked.getItemMeta().displayName().equals(exit().getItemMeta().displayName())){
+            p.closeInventory(Reason.PLUGIN);
+            p.sendTitlePart(TitlePart.TITLE, Component.text("§c§oClosing Money Managment Terminal..."));
+            p.sendTitlePart(TitlePart.SUBTITLE, Component.text("§4§oHave a nice Day User: " + p.getUniqueId().toString()));
         }
     }
 
@@ -130,6 +138,13 @@ public class PlayerAccountGUI implements Listener{
         meta.setPlayerProfile(profile);
         bank.setItemMeta(meta);
         return bank;
+    }
+    private ItemStack exit(){
+        ItemStack barrier = new ItemStack(Material.BARRIER);
+        ItemMeta meta = barrier.getItemMeta();
+        meta.displayName(Component.text("§c§lExit"));
+        barrier.setItemMeta(meta);
+        return barrier;
     }
 
     public Boolean doesPlayerHaveABankAccount(){

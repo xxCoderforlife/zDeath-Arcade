@@ -71,6 +71,8 @@ public class PlayerConfigManager {
         playerConfig.set(configPath + "Zombie-Kills", 0);
         playerConfig.set(configPath + "Deaths", 0);
         playerConfig.set(configPath + "Balance", 1500);
+        playerConfig.set(configPath + "Bounty.Has-Bounty", false);
+        playerConfig.set(configPath + "Bounty.Bounty-Amount", 0);
 
         saveConfig();
 
@@ -102,6 +104,20 @@ public class PlayerConfigManager {
     public void setDeaths(Double deaths){
         getConfig().set(configName + ".Deaths", deaths);
         saveConfig();
+    }
+
+    public Boolean hasBounty(){
+        return getConfig().getBoolean(configName + ".Bounty.Has-Bounty");
+    }
+
+    public void setHasBounty(Boolean hasBounty,Double bountyAmount){
+        getConfig().set(configName + ".Bounty.Has-Bounty", hasBounty);
+        getConfig().set(configName + ".Bounty.Bounty-Amount", bountyAmount);
+        saveConfig();
+    }
+
+    public Double getBounty(){
+        return getConfig().getDouble(configName + ".Bounty.Bounty-Amount");
     }
 }
 
