@@ -178,7 +178,7 @@ public class Main extends JavaPlugin {
         return bankDataFolder;
     }
 
-    public static Economy getEconomy() {
+    public Economy getEconomy() {
         return econ;
     }
 

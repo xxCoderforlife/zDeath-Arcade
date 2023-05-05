@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.milkbowl.vault.economy.Economy;
 
 public class BankAccountGUI implements Listener{
@@ -26,6 +27,7 @@ public class BankAccountGUI implements Listener{
     private Boolean isDepositingv;
     private Economy econ = plugin.getEconomy();
     private Component title = Component.text("§e§oBANK TRANSACTION MENU");
+    private Component error = Component.text("§4§lBROKE ALERT: You ain't got no Bread").hoverEvent(HoverEvent.showText(Component.text("§7§oYou can't move $0")));
 
     private Inventory inv;
 
@@ -61,6 +63,7 @@ public class BankAccountGUI implements Listener{
             inv.setItem(4, depoistAll());
         }else{
             inv.setItem(49, confirmWithdraw());
+            inv.setItem(4, withdrawlAll());
         }
 
     }
@@ -130,7 +133,8 @@ public class BankAccountGUI implements Listener{
                     p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + amountToMoveToBank + " §7to your bank account!");
                     p.closeInventory(Reason.PLUGIN);
                 }else{
-                    p.sendMessage("§c§lERROR: §7You do not have enough money to move that amount to your bank account!");
+                    p.closeInventory(Reason.PLUGIN);
+                    p.sendMessage(error);
                 }
             }else{
                 p.sendMessage("§c§lERROR: §7You cannot move a negative amount to your bank account!");
@@ -144,7 +148,8 @@ public class BankAccountGUI implements Listener{
                     p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + amountToMoveToBank + " §7to your player account!");
                     p.closeInventory(Reason.PLUGIN);
                 }else{
-                    p.sendMessage("§c§lERROR: §7You do not have enough money to move that amount to your player account!");
+                    p.closeInventory(Reason.PLUGIN);
+                    p.sendMessage(error);
                 }
             }else{
                 p.sendMessage("§c§lERROR: §7You cannot move a negative amount to your player account!");
@@ -152,22 +157,24 @@ public class BankAccountGUI implements Listener{
         }
         if(clicked.getItemMeta().displayName().equals(depoistAll().getItemMeta().displayName())){
                 if(econ.getBalance(p) > 0){
-                    econ.withdrawPlayer(p, econ.getBalance(p));
                     econ.bankDeposit(p.getUniqueId().toString(), econ.getBalance(p));
-                    p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + econ.getBalance(p) + " §7to your bank account!");
+                    econ.withdrawPlayer(p, econ.getBalance(p));
+                    p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + econ.bankBalance(p.getUniqueId().toString()).balance + " §7to your bank account!");
                     p.closeInventory(Reason.PLUGIN);
                 }else{
-                    p.sendMessage("§c§lERROR: §7You do not have enough money to move that amount to your bank account!");
+                    p.sendMessage(error);
+                    p.closeInventory(Reason.PLUGIN);
                 }
         }
         if(clicked.getItemMeta().displayName().equals(withdrawlAll().getItemMeta().displayName())){
             if(econ.bankBalance(p.getUniqueId().toString()).balance > 0){
                 econ.depositPlayer(p, econ.bankBalance(p.getUniqueId().toString()).balance);
                 econ.bankWithdraw(p.getUniqueId().toString(), econ.bankBalance(p.getUniqueId().toString()).balance);
-                p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + econ.bankBalance(p.getUniqueId().toString()).balance + " §7to your player account!");
+                p.sendMessage("§a§lSUCCESS: §7You have successfully moved §a§l$" + econ.getBalance(p) + " §7to your player account!");
                 p.closeInventory(Reason.PLUGIN);
             }else{
-                p.sendMessage("§c§lERROR: §7You do not have enough money to move that amount to your player account!");
+                p.closeInventory(Reason.PLUGIN);
+                p.sendMessage(error);
             }
         }
     }

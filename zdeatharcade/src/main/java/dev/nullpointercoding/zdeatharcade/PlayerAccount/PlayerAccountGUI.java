@@ -42,8 +42,6 @@ public class PlayerAccountGUI implements Listener{
         .anyMatch(handler -> handler.getListener() instanceof PlayerAccountGUI);
         if(!isEventRegistered){
             Bukkit.getPluginManager().registerEvents(this, plugin);
-        }else{
-            Bukkit.getConsoleSender().sendMessage("§c§lERROR: §7The PlayerAccountGUI event is already registered!");
         }
         this.p = p;
         inv = Bukkit.createInventory(null, 9, title);
@@ -63,7 +61,9 @@ public class PlayerAccountGUI implements Listener{
         ItemStack clicked = e.getCurrentItem();
         if(clicked == null || clicked.getItemMeta().displayName() == null){return;}
         if(clicked.getItemMeta().displayName().equals(balanceItem().getItemMeta().displayName())){
-            p.sendMessage("§7Your current balance is: " + econ.getBalance(p));
+            OtherPlayerAccounts otherPlayerAccounts = new OtherPlayerAccounts();
+            otherPlayerAccounts.openGUI(p);
+
         }
         if(clicked.getItemMeta().displayName().equals(bankAccount().getItemMeta().displayName())){
             BankGUI bankGUI = new BankGUI(p);
