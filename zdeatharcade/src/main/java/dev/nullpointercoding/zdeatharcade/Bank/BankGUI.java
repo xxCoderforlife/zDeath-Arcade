@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI.AccountType;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 
@@ -24,6 +25,7 @@ public class BankGUI implements Listener{
     private Economy econ = plugin.getEconomy();
     private final Inventory inv;
     private Component title = Component.text("§c§l         BANK MENU");
+    
 
     public BankGUI(Player p){
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -45,11 +47,11 @@ public class BankGUI implements Listener{
         if(clicked == null){return;}
         BankAccountGUI bankAccountGUI = new BankAccountGUI(p);
         if(clicked.getItemMeta().displayName().equals(depositToBank().getItemMeta().displayName())){
-            bankAccountGUI.setIsDespoisting(true);
+            bankAccountGUI.setIsDespoisting(true,AccountType.BANK);
             bankAccountGUI.openGUI(p);
         }
         if(clicked.getItemMeta().displayName().equals(withdrawFromBank().getItemMeta().displayName())){
-            bankAccountGUI.setIsDespoisting(false);
+            bankAccountGUI.setIsDespoisting(false,AccountType.BANK);
             bankAccountGUI.openGUI(p);
 
         }

@@ -13,12 +13,15 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
 
 public class OtherPlayerAccounts implements Listener{
 
 
     private Main plugin = Main.getInstance();
     private final Inventory inv;
+    private Player whoClicked;
     private final Component title = Component.text("§c§lPLAYER ACCOUNTS");
 
     public OtherPlayerAccounts(){
@@ -34,7 +37,7 @@ public class OtherPlayerAccounts implements Listener{
         for(Player p : Bukkit.getOnlinePlayers()){
             ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
-            meta.displayName(Component.text("§c§l" + p.displayName()));
+            meta.displayName(Component.text("§c§l" + p.getName()));
             meta.setOwningPlayer(p);
             skull.setItemMeta(meta);
             inv.addItem(skull);
@@ -44,6 +47,7 @@ public class OtherPlayerAccounts implements Listener{
     public void openGUI(Player p){
         addItems();
         p.openInventory(inv);
+        whoClicked = p;
     }
 
 
@@ -54,7 +58,10 @@ public class OtherPlayerAccounts implements Listener{
         Player p = (Player) e.getWhoClicked();
         ItemStack clicked = e.getCurrentItem();
         if(clicked == null || clicked.getItemMeta().displayName() == null){return;}
-        Player target = Bukkit.getPlayer(clicked.getItemMeta().displayName().toString().replace("§c§l", ""));
+        String name = PlainTextComponentSerializer.plainText().serialize(clicked.getItemMeta().displayName());
+        String cleanName = ChatColor.stripColor(name);
+        Bukkit.getConsoleSender().sendMessage(cleanName);
+        Player target = Bukkit.getPlayer(cleanName);
         PlayerProfile playerProfile = new PlayerProfile(target);
         playerProfile.openGUI(p);
 

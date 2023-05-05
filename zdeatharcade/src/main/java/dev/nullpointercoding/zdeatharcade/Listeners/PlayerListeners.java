@@ -2,7 +2,9 @@ package dev.nullpointercoding.zdeatharcade.Listeners;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,6 +21,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.Inventory;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
@@ -103,6 +106,18 @@ public class PlayerListeners implements Listener {
                 e.deathMessage(deathMessage);
             }
         }
+        if(p.getLastDamageCause() instanceof EntityDamageByEntityEvent){
+            EntityDamageByEntityEvent playerKiller = (EntityDamageByEntityEvent) p.getLastDamageCause();
+            if(playerKiller.getDamager() instanceof Player){
+                PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
+                PCM.setDeaths(PCM.getDeaths() + 1);
+                PCM.saveConfig();
+                final Component deathMessage = Component.text("§c§l" + p.getName() + " §7was killed by §c§l" + playerKiller.getDamager().getName() + " and has died " + "§e§o" +  PCM.getDeaths().intValue() + " times.");
+                playerInv.put(p, p.getInventory());
+                e.deathMessage(deathMessage);
+                checkForBounites(p);
+            }
+        }
     }
 
     @EventHandler
@@ -117,6 +132,16 @@ public class PlayerListeners implements Listener {
             p.getInventory().clear();
             p.getInventory().setContents(playerInv.get(p).getContents());
             playerInv.remove(p);
+        }
+    }
+
+    private void checkForBounites(Player p){
+        for(Entry<Player, HashMap<Player, Double>> m : BankAccountGUI.getBountyList().entrySet()){
+            if(m.getValue().containsKey(p)){
+                econ.withdrawPlayer(m.getKey(),m.getValue().get(p).doubleValue());
+                m.getValue().remove(p);
+                Bukkit.broadcast(Component.text(p.getKiller() + " has claimed the bounty on " + p.getName() + " and has been rewarded with " + m.getValue().get(p).doubleValue() + "$"));
+            }
         }
     }
 

@@ -65,7 +65,7 @@ public class ZombieHandler implements Listener{
             PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
             if(z.name().equals(zl1.name())){
                 econ.depositPlayer(p, 3);
-                pcm.setKills(pcm.getKills() + 1);
+                pcm.setKills();
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
                 e.getDrops().clear();
                 List<ItemStack> drops = new ArrayList<ItemStack>();
@@ -76,7 +76,7 @@ public class ZombieHandler implements Listener{
             }
             if(z.name().equals(zl2.name())){
                 econ.depositPlayer(p, 8);
-                pcm.setKills(pcm.getKills() + 1);
+                pcm.setKills();
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
                 e.getDrops().clear();
                 List<ItemStack> drops = new ArrayList<ItemStack>();

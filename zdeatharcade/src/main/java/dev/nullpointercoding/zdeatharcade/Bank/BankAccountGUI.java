@@ -1,5 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Bank;
 
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -15,7 +17,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.milkbowl.vault.economy.Economy;
@@ -25,11 +29,20 @@ public class BankAccountGUI implements Listener{
     private Double amountToMoveToBank = 0.0;
     private Player p;
     private Boolean isDepositingv;
-    private Economy econ = plugin.getEconomy();
+    private AccountType accountT;
+    private Economy econ = new VaultHook();
+    private static HashMap<Player,Double> bountyAmount = new HashMap<Player,Double>();
+    private static HashMap<Player,HashMap<Player,Double>> playerBounty = new HashMap<Player,HashMap<Player,Double>>();
     private Component title = Component.text("§e§oBANK TRANSACTION MENU");
     private Component error = Component.text("§4§lBROKE ALERT: You ain't got no Bread").hoverEvent(HoverEvent.showText(Component.text("§7§oYou can't move $0")));
 
     private Inventory inv;
+
+    public enum AccountType{
+        BANK(),
+        PLAYER(),
+        BOUNTY();
+    }
 
     public BankAccountGUI(Player p){
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -58,12 +71,24 @@ public class BankAccountGUI implements Listener{
         inv.setItem(26, remove50());
         inv.setItem(35, remove100());
         inv.setItem(44, remove1000());
-        if(isDepositingv){
-            inv.setItem(49, confirmDeposit());
-            inv.setItem(4, depoistAll());
-        }else{
-            inv.setItem(49, confirmWithdraw());
-            inv.setItem(4, withdrawlAll());
+        if(accountT.equals(AccountType.BANK)){
+            if(isDepositingv){
+                inv.setItem(49, confirmDeposit());
+                inv.setItem(4, depoistAll());
+            }else{
+                inv.setItem(49, confirmWithdraw());
+                inv.setItem(4, withdrawlAll());
+            }
+        }
+        if(accountT.equals(AccountType.PLAYER)){
+            if(isDepositingv){
+                inv.setItem(49, payPlayer());
+            }else{
+                inv.setItem(49, reqPlayer());
+            }
+        }
+        if(accountT.equals(AccountType.BOUNTY)){
+            inv.setItem(49, confirmBouty());
         }
 
     }
@@ -175,6 +200,38 @@ public class BankAccountGUI implements Listener{
             }else{
                 p.closeInventory(Reason.PLUGIN);
                 p.sendMessage(error);
+            }
+        }
+        if(clicked.getItemMeta().displayName().equals(payPlayer().getItemMeta().displayName())){
+            Player whoClicked = (Player) e.getWhoClicked();
+            if(econ.getBalance(whoClicked) > 0){
+                econ.withdrawPlayer(whoClicked, amountToMoveToBank);
+                econ.depositPlayer(p, amountToMoveToBank);
+                p.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully paid §a§l$" + amountToMoveToBank + " §7to " + whoClicked.getName() + "!"));
+                p.closeInventory(Reason.PLUGIN);
+            }
+        }
+        if(clicked.getItemMeta().displayName().equals(reqPlayer().getItemMeta().displayName())){
+            Player whoClicked = (Player) e.getWhoClicked();
+            p.sendMessage(Component.text(whoClicked.getName() + " wants you to send them " + amountToMoveToBank + "!"));
+            whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully requested §a§l$" + amountToMoveToBank + " §7from " + p.getName() + "!"));
+            p.closeInventory(Reason.PLUGIN);
+        }
+        if(clicked.getItemMeta().displayName().equals(confirmBouty().getItemMeta().displayName())){
+            Player whoClicked = (Player) e.getWhoClicked();
+            if(amountToMoveToBank > 0){
+                if(econ.getBalance(whoClicked) >= amountToMoveToBank){                    
+                    p.sendMessage("§a§lSUCCESS: §7You have successfully put a Bounty on " + p.getName());
+                    Bukkit.broadcast(Component.text(whoClicked + " set a bounty of $" + amountToMoveToBank + " on " + p.getName()));
+                    bountyAmount.put(whoClicked, amountToMoveToBank);
+                    playerBounty.put(p, bountyAmount);
+                    p.closeInventory(Reason.PLUGIN);
+                }else{
+                    p.closeInventory(Reason.PLUGIN);
+                    p.sendMessage(error);
+                }
+            }else{
+                p.sendMessage("§c§lERROR: §7You cannot move a negative amount to the bounty account!");
             }
         }
     }
@@ -295,9 +352,43 @@ public class BankAccountGUI implements Listener{
         all.setItemMeta(meta);
         return all;
     }
+    private ItemStack payPlayer(){
+        ItemStack conPay = new ItemStack(Material.GOLD_INGOT);
+        ItemMeta meta = conPay.getItemMeta();
+        meta.displayName(Component.text("§6§lPAY PLAYER"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        conPay.setItemMeta(meta);
+        return conPay;
+    }
 
-    public void setIsDespoisting(Boolean isDespoisting){
+    private ItemStack reqPlayer(){
+        ItemStack conPay = new ItemStack(Material.GOLD_INGOT);
+        ItemMeta meta = conPay.getItemMeta();
+        meta.displayName(Component.text("§6§lREQUEST PAYMENT"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        conPay.setItemMeta(meta);
+        return conPay;
+    }
+
+    private ItemStack confirmBouty(){
+        ItemStack confirm = new ItemStack(Material.LIME_WOOL);
+        ItemMeta meta = confirm.getItemMeta();
+        meta.displayName(Component.text("§a§lCONFIRM BOUNTY"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        confirm.setItemMeta(meta);
+        return confirm;
+    }
+
+    public void setIsDespoisting(Boolean isDespoisting,AccountType accountType){
         isDepositingv = isDespoisting;
+        accountT = accountType;
+    }
+
+    public static HashMap<Player,HashMap<Player, Double>> getBountyList(){
+        return playerBounty;
+    }
+    public static HashMap<Player,Double> getBountyAmount(){
+        return bountyAmount;
     }
 
 }

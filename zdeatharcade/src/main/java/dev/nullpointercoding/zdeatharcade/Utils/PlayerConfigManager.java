@@ -3,9 +3,12 @@ package dev.nullpointercoding.zdeatharcade.Utils;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import dev.nullpointercoding.zdeatharcade.Main;
@@ -86,8 +89,9 @@ public class PlayerConfigManager {
         return getConfig().getDouble(configName + ".Zombie-Kills");
     }
 
-    public void setKills(Double kills){
-        getConfig().set(configName + ".Zombie-Kills", kills);
+    public void setKills(){
+        Player p = Bukkit.getPlayer(configName);
+        getConfig().set(configName + ".Zombie-Kills", p.getStatistic(Statistic.KILL_ENTITY, EntityType.ZOMBIE));
         saveConfig();
     }
 

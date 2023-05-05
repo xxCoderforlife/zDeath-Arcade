@@ -1,0 +1,10 @@
+<profile>
+  <id>downloadSources</id>
+  <activation>
+    <activeByDefault>true</activeByDefault>
+  </activation>
+  <properties>
+      <downloadSources>true</downloadSources>
+      <downloadJavadocs>true</downloadJavadocs>
+  </properties>
+</profile>
