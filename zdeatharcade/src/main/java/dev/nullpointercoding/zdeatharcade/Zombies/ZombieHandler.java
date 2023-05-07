@@ -129,32 +129,32 @@ public class ZombieHandler implements Listener{
             Spider s = (Spider) c;
             Zombie z = (Zombie) s.getWorld().spawnEntity(s.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            s.remove();
+            e.setCancelled(true);
             
         }
         if(c.getType() == EntityType.SKELETON){
             Skeleton sk = (Skeleton) c;
             Zombie z = (Zombie) sk.getWorld().spawnEntity(sk.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            sk.remove();
+            e.setCancelled(true);
         }
         if(c.getType() == EntityType.CREEPER){
             Creeper cp = (Creeper) c;
             Zombie z = (Zombie) cp.getWorld().spawnEntity(cp.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            cp.remove();
+            e.setCancelled(true);
         }
         if(c.getType() == EntityType.SLIME){
             Slime sl = (Slime) c;
             Zombie z = (Zombie) sl.getWorld().spawnEntity(sl.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            sl.remove();
+            e.setCancelled(true);
         }
         if(c.getType() == EntityType.ENDERMAN){
             Enderman em = (Enderman) c;
             Zombie z = (Zombie) em.getWorld().spawnEntity(em.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            em.remove();
+            e.setCancelled(true);
         }
 
     }

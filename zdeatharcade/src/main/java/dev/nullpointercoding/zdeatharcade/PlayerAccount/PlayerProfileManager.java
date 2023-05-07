@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -28,8 +30,11 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI.AccountType;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public class PlayerProfileManager implements Listener{
     
@@ -37,7 +42,7 @@ public class PlayerProfileManager implements Listener{
     private final Inventory inv;
     private final Component title;
     private VaultHook econ = new VaultHook();
-    private Player p;
+    private Player target;
 
     public PlayerProfileManager(Player p){
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -45,18 +50,18 @@ public class PlayerProfileManager implements Listener{
         if(!isEventRegistered){
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
-        this.p = p;
+        this.target = p;
         title = Component.text(p.getName() + "'s Profile");
-        inv = Bukkit.createInventory(null, 54, title);
+        inv = Bukkit.createInventory(null, 36, title);
 
     }
 
     public void addItems(){
-        inv.setItem(10, playerHead());
-        inv.setItem(19, payPlayer());
-        inv.setItem(49, setBounty());
-        inv.setItem(20, requestPayMent());
-        inv.setItem(45, backToPlayers());
+        inv.setItem(0, playerHead());
+        inv.setItem(10, payPlayer());
+        inv.setItem(12, setBounty());
+        inv.setItem(11, requestPayMent());
+        inv.setItem(25, backToPlayers());
     }
 
     @EventHandler
@@ -66,24 +71,62 @@ public class PlayerProfileManager implements Listener{
         e.setCancelled(true);
         ItemStack clicked = e.getCurrentItem();
         if(clicked.getItemMeta().displayName().equals(requestPayMent().getItemMeta().displayName())){
-            BankAccountGUI bankGUI = new BankAccountGUI(p);
+            if(whoClicked == target){
+                sendPlayerBackOtherPlayersPage(whoClicked);
+                whoClicked.sendMessage(Component.text("§cYou can't request payment from yourself!"));
+                whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
+                return;
+            }
+            BankAccountGUI bankGUI = new BankAccountGUI(target);
             bankGUI.setIsDespoisting(true, AccountType.PLAYER);
             bankGUI.openGUI(whoClicked);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(payPlayer().getItemMeta().displayName())){
-            BankAccountGUI bankGUI = new BankAccountGUI(p);
+            if(whoClicked == target){
+                sendPlayerBackOtherPlayersPage(whoClicked);
+                whoClicked.sendMessage(Component.text("§cYou can't pay yourself!"));
+                whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
+                return;
+            }
+            BankAccountGUI bankGUI = new BankAccountGUI(target);
             bankGUI.setIsDespoisting(false, AccountType.PLAYER);
-            bankGUI.openGUI(whoClicked);        
+            bankGUI.openGUI(whoClicked);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);        
         }
         if(clicked.getItemMeta().displayName().equals(setBounty().getItemMeta().displayName())){
-            BankAccountGUI bankGUI = new BankAccountGUI(p);
+            if(whoClicked == target){
+                sendPlayerBackOtherPlayersPage(whoClicked);
+                whoClicked.sendMessage(Component.text("§cYou can't set a bounty on yourself!"));
+                whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
+                return;
+            }
+            BankAccountGUI bankGUI = new BankAccountGUI(target);
             bankGUI.setIsDespoisting(true, AccountType.BOUNTY);
             bankGUI.openGUI(whoClicked);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(backToPlayers().getItemMeta().displayName())){
-            whoClicked.closeInventory(Reason.PLUGIN);
-            OtherPlayerAccounts otherPlayerAccounts = new OtherPlayerAccounts();
-            otherPlayerAccounts.openGUI(whoClicked);
+            sendPlayerBackOtherPlayersPage(whoClicked);
+            whoClicked.playSound(whoClicked, Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.0f, 1.0f);
+        }
+        if(clicked.getItemMeta().displayName().equals(playerHead().getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 1.0f);
+        }
+        if(clicked.getItemMeta().displayName().equals(playerKills().getItemMeta().displayName())){
+
+        }
+        if(clicked.getItemMeta().displayName().equals(cashOnPerson().getItemMeta().displayName())){
+
+        }
+        if(clicked.getItemMeta().displayName().equals(bankedCash().getItemMeta().displayName())){
+
+        }
+        if(clicked.getItemMeta().displayName().equals(playerHealth().getItemMeta().displayName())){
+
+        }
+        if(clicked.getItemMeta().displayName().equals(playerZombieKills(whoClicked).getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_ZOMBIE_DEATH, SoundCategory.AMBIENT, 1.0f, 1.0f);
         }
     }
 
@@ -103,17 +146,12 @@ public class PlayerProfileManager implements Listener{
     private ItemStack playerHead(){
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.displayName(Component.text("§c§l" + p.getName()));
-        meta.setOwningPlayer(p);
+        meta.displayName(Component.text("§c§l" + target.getName()));
+        meta.setOwningPlayer(target);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Health: " + p.getHealth() + "/" + p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()));
-        lore.add(Component.text("Strength: " + p.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getBaseValue()));
-        lore.add(Component.text("Food: " + p.getFoodLevel()));
-        lore.add(Component.text("Cash: " + econ.getBalance(p)));
-        lore.add(Component.text("Banked Cash: " + econ.bankBalance(p.getUniqueId().toString()).balance));
-        lore.add(Component.text("Zombie Kills: " + p.getStatistic(org.bukkit.Statistic.KILL_ENTITY,EntityType.ZOMBIE)));
-        lore.add(Component.text("Player Kills: " + p.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
+        lore.add(Component.space());
+        lore.add(Component.text(target.getName() + " Stats",NamedTextColor.GRAY,TextDecoration.ITALIC));
         meta.lore(lore);
         item.setItemMeta(meta);
         return item;
@@ -157,10 +195,96 @@ public class PlayerProfileManager implements Listener{
         bar.setItemMeta(meta);
         return bar;
     }
+    private ItemStack playerZombieKills(Player whoClicked){
+        ItemStack head = new ItemStack(Material.ZOMBIE_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        meta.displayName(Component.text("§c§lZombie Kills"));
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.space());
+        lore.add(Component.text(target.getName() + " has killed " + target.getStatistic(org.bukkit.Statistic.KILL_ENTITY,EntityType.ZOMBIE) + " zombies"));
+        lore.add(Component.text("Your kills: " + whoClicked.getStatistic(org.bukkit.Statistic.KILL_ENTITY,EntityType.ZOMBIE)));
+        meta.lore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        head.setItemMeta(meta);
+        return head;
+    }
+    private ItemStack playerHealth(){
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        meta.displayName(Component.text("§c§lHealth"));
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.space());
+        lore.add(Component.text(target.getName() + " has " + target.getHealth() + "/" + target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() + " health"));
+        meta.lore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/fe7a810d2112275cc1821dcc6e29da3d2b8fc659af7290a3cb70be536ae2040a");
+        meta.setPlayerProfile(profile);
+        head.setItemMeta(meta);
+        return head;
+    }
+    private ItemStack cashOnPerson(){
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        meta.displayName(Component.text("§c§lCash"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Cash: " + econ.getBalance(target)));
+        meta.lore(lore);
+        PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/99e77fae5313bac19bf14577d50093e4738ebd70fd54a4de1a27475d0ec9538f");
+        meta.setPlayerProfile(profile);
+        item.setItemMeta(meta);
+        return item;
 
-    public void openGUI(Player p){
+    }
+    private ItemStack bankedCash(){
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        meta.displayName(Component.text("§c§lBanked Cash"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Banked Cash: " + econ.bankBalance(target.getUniqueId().toString()).balance));
+        meta.lore(lore);
+        PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/b25b27ce62ca88743840a95d1c39868f43ca60696a84f564fbd7dda259be00fe");
+        meta.setPlayerProfile(profile);
+        item.setItemMeta(meta);
+        return item;
+    }
+    private ItemStack playerKills(){
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        meta.displayName(Component.text("§c§lPlayer Kills"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Player Kills: " + target.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
+        meta.lore(lore);
+        PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/9dd36b762e0ebcae47c78308aaa2717aa77d14001ee40dcea863f5f195d23bd9");
+        meta.setPlayerProfile(profile);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+
+    private void sendPlayerBackOtherPlayersPage(Player playertoSend){
+        playertoSend.closeInventory(Reason.PLUGIN);
+        OtherPlayerAccounts otherPlayerAccounts = new OtherPlayerAccounts();
+        otherPlayerAccounts.openGUI(playertoSend);
+    }
+
+    private void addPlayerItemStats(Player whoOpened){
+        inv.setItem(22, playerZombieKills(whoOpened));
+        inv.setItem(21, playerHealth());
+        inv.setItem(19, cashOnPerson());
+        inv.setItem(20, bankedCash());
+        inv.setItem(23, playerKills());
+
+    }
+
+
+    public void openGUI(Player playerWhoOpened){
+        addPlayerItemStats(playerWhoOpened);
         addItems();
-        p.openInventory(inv);
+        BlankSpaceFiller.fillinBlankInv(inv, List.of(13,14,15,16,24));
+        playerWhoOpened.openInventory(inv);
     }
         private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); // We reuse the same "random" UUID all the time
     private static PlayerProfile getProfile(String url) {

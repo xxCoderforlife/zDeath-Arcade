@@ -6,6 +6,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
+
 
 public class PlayerAccountCommands implements CommandExecutor {
 
@@ -19,13 +26,25 @@ public class PlayerAccountCommands implements CommandExecutor {
                     p.sendMessage("§cYou do not have permission to use this command!");
                     return true;
                 }
-
+                if(!(isPlayerinSpawn(p))){
+                    p.sendMessage("§cYou must be in spawn to use this command!");
+                    return true;
+                }
                 PlayerAccountGUI gui = new PlayerAccountGUI(p);
                 gui.openGUI(p);
 
             }
         }
         return true;
+    }
+        private boolean isPlayerinSpawn(Player p) {
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionQuery query = container.createQuery();
+        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(p.getLocation()));
+        for (ProtectedRegion pr : set)
+            if (pr.getId().equalsIgnoreCase("spawn"))
+                return true;
+        return false;
     }
 
 }

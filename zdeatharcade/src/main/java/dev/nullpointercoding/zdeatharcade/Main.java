@@ -18,6 +18,7 @@ import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoTabCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultChat;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
+import dev.nullpointercoding.zdeatharcade.Zombies.ZombieCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieHandler;
 import net.milkbowl.vault.economy.Economy;
 
@@ -82,10 +83,12 @@ public class Main extends JavaPlugin {
 
     private void RegisterCommandsandEvents() {
         getCommand("zdeatharcade").setExecutor(new Commands());
+        getCommand("spawn").setExecutor(new Commands());
         getCommand("zdeatharcade").setTabCompleter(new TabCommands());
         getCommand("economy").setExecutor(new EcoCommands());
         getCommand("economy").setTabCompleter(new EcoTabCommands());
         getCommand("account").setExecutor(new PlayerAccountCommands());
+        getCommand("zombie").setExecutor(new ZombieCommands());
         getServer().getPluginManager().registerEvents(new ZombieHandler(), this);
         getServer().getPluginManager().registerEvents(new TheRange(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);

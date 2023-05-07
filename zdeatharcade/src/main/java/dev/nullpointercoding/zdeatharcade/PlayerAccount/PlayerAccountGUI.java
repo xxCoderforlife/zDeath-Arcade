@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +37,7 @@ public class PlayerAccountGUI implements Listener{
     private final Inventory inv;
     private Main plugin = Main.getInstance();
     private Economy econ = plugin.getEconomy();
-    private Player p;
+    private Player target;
     private Component title = Component.text("§c§lMONEY MANAGAMENT SYSTEM");
 
     public PlayerAccountGUI(Player p){
@@ -45,7 +46,7 @@ public class PlayerAccountGUI implements Listener{
         if(!isEventRegistered){
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
-        this.p = p;
+        this.target = p;
         inv = Bukkit.createInventory(null, 9, title);
     }
     
@@ -61,27 +62,32 @@ public class PlayerAccountGUI implements Listener{
     public void onInventoryClick(InventoryClickEvent e){
         if(!(e.getView().title().equals(title))){return;}
         e.setCancelled(true);
+        Player whoClicked = (Player) e.getWhoClicked();
         ItemStack clicked = e.getCurrentItem();
         if(clicked == null || clicked.getItemMeta().displayName() == null){return;}
         if(clicked.getItemMeta().displayName().equals(balanceItem().getItemMeta().displayName())){
             OtherPlayerAccounts otherPlayerAccounts = new OtherPlayerAccounts();
-            otherPlayerAccounts.openGUI(p);
-
+            otherPlayerAccounts.openGUI(whoClicked);
+            whoClicked.playSound(whoClicked, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(bankAccount().getItemMeta().displayName())){
-            BankGUI bankGUI = new BankGUI(p);
-            bankGUI.openGUI(p);
+            BankGUI bankGUI = new BankGUI(whoClicked);
+            bankGUI.openGUI(whoClicked);
+            whoClicked.playSound(whoClicked, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(noBankAccountFound().getItemMeta().displayName())){
-            p.closeInventory();
-            p.sendTitlePart(TitlePart.TITLE, Component.text("§a§oCreating your account now..."));
-            p.sendTitlePart(TitlePart.SUBTITLE, Component.text("§2§oHave a nice Day User: " + p.getUniqueId().toString()));
-            econ.createBank(p.getUniqueId().toString(), p);
+            whoClicked.closeInventory();
+            whoClicked.sendTitlePart(TitlePart.TITLE, Component.text("§a§oCreating your account now..."));
+            whoClicked.sendTitlePart(TitlePart.SUBTITLE, Component.text("§2§oHave a nice Day User: " + whoClicked.getUniqueId().toString()));
+            econ.createBank(whoClicked.getUniqueId().toString(), whoClicked);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(exit().getItemMeta().displayName())){
-            p.closeInventory(Reason.PLUGIN);
-            p.sendTitlePart(TitlePart.TITLE, Component.text("§c§oClosing Money Managment Terminal..."));
-            p.sendTitlePart(TitlePart.SUBTITLE, Component.text("§4§oHave a nice Day User: " + p.getUniqueId().toString()));
+            whoClicked.closeInventory(Reason.PLUGIN);
+            whoClicked.sendTitlePart(TitlePart.TITLE, Component.text("§c§oClosing Money Managment Terminal..."));
+            whoClicked.sendTitlePart(TitlePart.SUBTITLE, Component.text("§4§oHave a nice Day User: " + whoClicked.getUniqueId().toString()));
+            whoClicked.playSound(whoClicked, Sound.BLOCK_CHEST_CLOSE, 1.0f, 1.0f);
+
         }
     }
 
@@ -102,7 +108,7 @@ public class PlayerAccountGUI implements Listener{
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.space());
-        lore.add(Component.text("§7Your current balance is: " + econ.getBalance(p)));
+        lore.add(Component.text("§7Your current balance is: " + econ.getBalance(target)));
         meta.lore(lore);
         PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/8b5d160bbdaa308350325ee7a96f6059004a31338615d43564a4c722e28f7cec");
         meta.setPlayerProfile(profile);
@@ -116,7 +122,7 @@ public class PlayerAccountGUI implements Listener{
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.space());
-        lore.add(Component.text("§7Your current balance is: " + econ.bankBalance(p.getUniqueId().toString()).balance));
+        lore.add(Component.text("§7Your current balance is: " + econ.bankBalance(target.getUniqueId().toString()).balance));
         meta.lore(lore);
         PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/3b1309dac556911e55398038c4367f892d96cd5e8034fc232db920736879944c");
         meta.setPlayerProfile(profile);
@@ -149,7 +155,7 @@ public class PlayerAccountGUI implements Listener{
 
     public Boolean doesPlayerHaveABankAccount(){
         for(File f : plugin.getBankDataFolder().listFiles()){
-            if(f.getName().equals(p.getUniqueId().toString() + ".yml")){
+            if(f.getName().equals(target.getUniqueId().toString() + ".yml")){
                 return true;
             }
         }

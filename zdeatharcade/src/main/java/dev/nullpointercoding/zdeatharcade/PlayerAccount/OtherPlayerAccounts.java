@@ -2,6 +2,7 @@ package dev.nullpointercoding.zdeatharcade.PlayerAccount;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -66,12 +67,14 @@ public class OtherPlayerAccounts implements Listener {
             String cleanName = ChatColor.stripColor(name);
             Player target = Bukkit.getPlayer(cleanName);
             PlayerProfileManager playerProfile = new PlayerProfileManager(target);
+            p.playSound(target, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
             playerProfile.openGUI(p);
         }
         if(clicked.getItemMeta().displayName().equals(back().getItemMeta().displayName())){
             p.closeInventory(Reason.PLUGIN);
             PlayerAccountGUI gui = new PlayerAccountGUI(p);
             gui.openGUI(p);
+            p.playSound(p, Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.0f, 1.0f);
         }
 
     }

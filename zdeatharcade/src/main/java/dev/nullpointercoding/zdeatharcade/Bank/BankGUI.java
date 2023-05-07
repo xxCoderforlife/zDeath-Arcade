@@ -18,13 +18,11 @@ import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI.AccountType;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountGUI;
 import net.kyori.adventure.text.Component;
-import net.milkbowl.vault.economy.Economy;
 
 public class BankGUI implements Listener{
 
     private Main plugin = Main.getInstance();
     private Player p;
-    private Economy econ = plugin.getEconomy();
     private final Inventory inv;
     private Component title = Component.text("§c§l         BANK MENU");
     

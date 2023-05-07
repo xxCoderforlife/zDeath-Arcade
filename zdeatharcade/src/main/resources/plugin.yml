@@ -21,6 +21,16 @@ commands:
     description: Account Command For zDeath-Arcade
     usage: /account
     aliases: [ acc ]
+  spawn:
+    permission: 
+    description: Takes you back to spawn
+    usage: /spawn
+    aliases: [ sp,pleasesaveme ]
+  zombie:
+    permission: 
+    description: Zombie Command For zDeath-Arcade
+    usage: /zombie
+    aliases: [ z ]
 permissions:
   zdeatharcade.admin:
     description: Allows access to all zDeath-Arcade commands
@@ -30,4 +40,7 @@ permissions:
     default: op
   zdeatharcade.account:
     description: Allows you to access the AccountGUI
+    default: true
+  zdeatharcade.spawn:
+    description: Allows you to access the spawn command
     default: true

@@ -11,18 +11,23 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
 import dev.nullpointercoding.zdeatharcade.Utils.NPCConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
 import dev.nullpointercoding.zdeatharcade.Utils.ShootingRangeConfigManager;
-import dev.nullpointercoding.zdeatharcade.Utils.ZombieSpawnLocationManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
@@ -45,12 +50,13 @@ public class Commands implements CommandExecutor {
         }
         Player p = (Player) sender;
         if (cmd.getName().equalsIgnoreCase("zdeatharcade")) {
+            if (!(isPlayerinSpawn(p, "spawn"))) {
+                p.sendMessage("§cYou must be in the spawn to use this command.");
+                return true;
+            }
             if (args.length == 0) {
                 p.sendMessage("§9§oDefault Test Message");
             } else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("zombie")) {
-                    p.sendMessage("§9§oZombie Test Message");
-                }
                 if (args[0].equalsIgnoreCase("range")) {
                     if (isRangeSpawnSet) {
                         ShootingRangeConfigManager SRCM = new ShootingRangeConfigManager("config.yml");
@@ -72,63 +78,7 @@ public class Commands implements CommandExecutor {
                         p.sendMessage("§cThe range spawn has not been set yet.");
                     }
                 }
-                if(args[0].equalsIgnoreCase("money")){
-                    if(!(p.hasPermission("zdeatharcade.admin"))){
-                        p.sendMessage("§cYou do not have permission to use this command.");
-                        return true;
-                    }
-
-
-              }
             } else if (args.length == 2) {
-                if (args[0].equalsIgnoreCase("zombie")) {
-                    if (args[1].equalsIgnoreCase("setspawner")) {
-                        if (!(p.hasPermission("zdeatharcade.admin"))) {
-                            p.sendMessage("§cYou do not have permission to use this command.");
-                            return true;
-                        }
-
-                        if (p.getLocation().subtract(p.getLocation(), 0, 1, 0).getBlock().getType() == Material.AIR) {
-                            p.sendMessage("§cYou must be standing on a block to set a spawner.");
-                            return true;
-                        }
-                        String blockName = p.getLocation().subtract(p.getLocation(), 0, 1, 0).getBlock().getType()
-                                .name();
-                        Double playerX = p.getLocation().getX();
-                        Double playerY = p.getLocation().subtract(p.getLocation(), 0, 1, 0).getY();
-                        Double playerZ = p.getLocation().getZ();
-                        for (File f : plugin.getZombieSpawnLocationFolder().listFiles()) {
-                            if (f.getName().equalsIgnoreCase(blockName + " X: " + Double.toString(playerX) +
-                                    " Y: " + Double.toString(playerY) + " Z: " + Double.toString(playerZ) + ".yml")) {
-                                p.sendMessage("§cThis spawner already exists.");
-                                return true;
-                            }
-
-                        }
-
-                        ZombieSpawnLocationManager ZSLM = new ZombieSpawnLocationManager(
-                                blockName + " X: " + Double.toString(playerX) +
-                                        " Y: " + Double.toString(playerY) + " Z: " + Double.toString(playerZ) + ".yml");
-
-                        ZSLM.getConfig().set("X", playerX);
-                        ZSLM.getConfig().set("Y", playerY);
-                        ZSLM.getConfig().set("Z", playerZ);
-                        ZSLM.saveConfig();
-                        p.sendMessage("§aSuccessfully set zombie spawner.");
-                        p.sendMessage("There are now " + ZSLM.getZombieSpawnLocationFolder().listFiles().length
-                                + " zombie spawners.");
-                    }
-                    if(args[1].equalsIgnoreCase("killall")){
-                        if(!(p.hasPermission("zdeatharcade.admin"))){
-                            p.sendMessage("§cYou do not have permission to use this command.");
-                            return true;
-                        }
-                        for(Entity z : p.getWorld().getEntitiesByClass(Zombie.class)){
-                            z.remove();
-                        }
-                        p.sendMessage("§aSuccessfully removed all zombies.");
-                    }
-                }
                 if (args[0].equalsIgnoreCase("range")) {
                     if (args[1].equalsIgnoreCase("setspawn")) {
                         if (!(p.hasPermission("zdeatharcade.admin"))) {
@@ -230,7 +180,31 @@ public class Commands implements CommandExecutor {
             } else if (args.length == 4) {
             }
         }
+        if (cmd.getName().equalsIgnoreCase("spawn")) {
+            if (!p.hasPermission("zdeatharcade.spawn")) {
+                p.sendMessage("§cYou do not have permission to use this command.");
+                return true;
+            }
+            p.sendActionBar(Component.text("§b§oGetting ready..."));
+            ;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    p.sendTitlePart(TitlePart.TITLE, Component.text("§a§oWelcome back to Spawn"));
+                    p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
+                }
+            }.runTaskLater(plugin, 20 * 3);
+        }
         return true;
     }
-}
 
+    private boolean isPlayerinSpawn(Player p, String region) {
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionQuery query = container.createQuery();
+        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(p.getLocation()));
+        for (ProtectedRegion pr : set)
+            if (pr.getId().equalsIgnoreCase(region))
+                return true;
+        return false;
+    }
+}
