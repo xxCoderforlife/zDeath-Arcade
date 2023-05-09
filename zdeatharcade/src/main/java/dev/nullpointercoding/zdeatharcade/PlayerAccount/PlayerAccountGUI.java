@@ -10,7 +10,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -28,6 +27,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankGUI;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
 import net.milkbowl.vault.economy.Economy;
@@ -91,13 +91,15 @@ public class PlayerAccountGUI implements Listener{
         }
     }
 
-    public void openGUI(HumanEntity p){
+    public void openGUI(Player p){
+        p.playSound(p, Sound.BLOCK_CHEST_OPEN, 1.0f, 1.0f);
         if(doesPlayerHaveABankAccount()){
             addItems();
         }else{
             addItems();
             inv.setItem(4, noBankAccountFound());
         }
+        BlankSpaceFiller.fillinBlankInv(inv, List.of(0));
         p.openInventory(inv);
     }
 

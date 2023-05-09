@@ -70,7 +70,8 @@ public class PlayerConfigManager {
         playerConfig.set(configPath + "UUID", p.getUniqueId().toString());
         playerConfig.set(configPath + "Zombie-Kills", 0);
         playerConfig.set(configPath + "Deaths", 0);
-        playerConfig.set(configPath + "Balance", 1500);
+        playerConfig.set(configPath + "Cash", 1500);
+        playerConfig.set(configPath, "Tokens,2");
         playerConfig.set(configPath + "Bounty.Has-Bounty", false);
         playerConfig.set(configPath + "Bounty.Bounty-Amount", 0);
 
@@ -83,7 +84,19 @@ public class PlayerConfigManager {
     }
 
     public void setBalance(Double balance){
-        getConfig().set(configName + ".Balance", balance);
+        getConfig().set(configName + ".Balance", balance.intValue());
+        saveConfig();
+    }
+    public void addBalance(Double balance){
+        getConfig().set(configName + ".Balance", getBalance() + balance.intValue());
+        saveConfig();
+    }
+
+    public Integer getTokens(){
+        return getConfig().getInt(configName + ".Tokens");
+    }
+    public void setTokenes(Integer tokens){
+        getConfig().set(configName + ".Tokens", tokens);
         saveConfig();
     }
 
@@ -91,8 +104,7 @@ public class PlayerConfigManager {
         return getConfig().getDouble(configName + ".Zombie-Kills");
     }
 
-    public void setKills(){
-        Player p = Bukkit.getPlayer(configName);
+    public void setKills(Player p){
         getConfig().set(configName + ".Zombie-Kills", p.getStatistic(Statistic.KILL_ENTITY, EntityType.ZOMBIE));
         saveConfig();
     }

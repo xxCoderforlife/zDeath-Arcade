@@ -1,30 +1,38 @@
 package dev.nullpointercoding.zdeatharcade.ShootingRange;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+
+import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.NPCConfigManager;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public class RangeGunSmith implements Listener {
 
-    private NPC gunsmith;
     private Inventory gunsmithInv;
-    private Component shopTitle = Component.text("Gunsmith Freebies");
-    private NPCConfigManager gunsmithConfig = new NPCConfigManager("gunsmith.yml");
+    private Component shopTitle = Component.text("Gunsmith Freebies",NamedTextColor.RED,TextDecoration.BOLD);
+    private static Villager gunsmithNPC;
     private Gun fn_GUN;
     private Gun aa12_GUN;
     private Gun mp40_GUN;
@@ -41,21 +49,7 @@ public class RangeGunSmith implements Listener {
         gunsmithInventory();
     }
 
-    public NPC getGunSmith() {
-        return gunsmith;
-    }
 
-    @EventHandler
-    public void onGunSmithInteract(NPCRightClickEvent e) {
-        Player p = (Player) e.getClicker();
-        if (gunsmithConfig.getConfig().getInt("NPC.ID") == e.getNPC().getId()) {
-            p.openInventory(gunsmithInventory());
-            p.getLocation().getWorld().playEffect(p.getEyeLocation().add(0, 1, 0), Effect.BONE_MEAL_USE, 20, 20);
-        } else {
-            p.sendMessage("Not working");
-        }
-
-    }
 
     private Inventory gunsmithInventory() {
 
@@ -66,6 +60,18 @@ public class RangeGunSmith implements Listener {
         gunsmithInv.setItem(4, vz_GUN.getItemStack());
 
         return gunsmithInv;
+    }
+
+    @EventHandler
+    public void onGunSmithClick(PlayerInteractEntityEvent e){
+        if(e.getRightClicked().getType() == EntityType.VILLAGER){
+            e.setCancelled(true);
+            LivingEntity entity = (LivingEntity) e.getRightClicked();
+            if(entity.customName() == null){return;}
+            if(entity.customName().equals(RangeGunSmith.getGunSmithNPC().customName())){
+                e.getPlayer().openInventory(gunsmithInv);
+            }
+        }
     }
 
     @EventHandler
@@ -102,6 +108,27 @@ public class RangeGunSmith implements Listener {
             }
         }
 
+    }
+    public static Villager spawnGunsmithNPC(Player p,Integer npcID){
+        for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
+            if(f.getName().equalsIgnoreCase("gunsmith.yml")){
+                p.sendMessage(Component.text("Gunsmith already spawned!"));
+                return gunsmithNPC;
+            }
+        }
+        Location spawnLoc = p.getLocation().add(1, 0.0, 0);
+        gunsmithNPC = (Villager) p.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
+        gunsmithNPC.setInvulnerable(true);
+        gunsmithNPC.setSilent(true);
+        gunsmithNPC.setAI(false);
+        gunsmithNPC.customName(Component.text("Gunsmith",TextColor.color(228, 3, 3),TextDecoration.BOLD));
+        gunsmithNPC.setCustomNameVisible(true);
+        new NPCConfigManager("gunsmith",p.getWorld(),npcID,spawnLoc.getX(),spawnLoc.getY(),spawnLoc.getZ());
+        return gunsmithNPC;
+    }
+
+    public static Villager getGunSmithNPC(){
+        return gunsmithNPC;
     }
 
 }

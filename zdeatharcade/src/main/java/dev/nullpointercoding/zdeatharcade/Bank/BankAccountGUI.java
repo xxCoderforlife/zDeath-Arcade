@@ -1,6 +1,8 @@
 package dev.nullpointercoding.zdeatharcade.Bank;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,9 +22,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.TitlePart;
 import net.milkbowl.vault.economy.Economy;
 
@@ -59,6 +64,7 @@ public class BankAccountGUI implements Listener {
 
     public void openGUI(Player p) {
         addItems();
+        BlankSpaceFiller.fillinBlankInv(inv, List.of(0));
         p.openInventory(inv);
     }
 
@@ -388,6 +394,9 @@ public class BankAccountGUI implements Listener {
         ItemMeta meta = confirm.getItemMeta();
         meta.displayName(Component.text("§a§lCONFIRM DEPOSIT"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Click to confirm deposit",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        meta.lore(lore);
         confirm.setItemMeta(meta);
         return confirm;
     }
@@ -397,6 +406,9 @@ public class BankAccountGUI implements Listener {
         ItemMeta meta = confirm.getItemMeta();
         meta.displayName(Component.text("§a§lCONFIRM WITHDRAWAL"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Click to confirm withdrawal",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        meta.lore(lore);
         confirm.setItemMeta(meta);
         return confirm;
     }
@@ -407,6 +419,9 @@ public class BankAccountGUI implements Listener {
         meta.displayName(Component.text("§d§lWITHDRAW ALL"));
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Click to withdraw all your money from the bank",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        meta.lore(lore);
         all.setItemMeta(meta);
         return all;
     }
@@ -417,6 +432,9 @@ public class BankAccountGUI implements Listener {
         meta.displayName(Component.text("§d§lDEPOSIT ALL"));
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Click to deposit all your money into the bank",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        meta.lore(lore);
         all.setItemMeta(meta);
         return all;
     }

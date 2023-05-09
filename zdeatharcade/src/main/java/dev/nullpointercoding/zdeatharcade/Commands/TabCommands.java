@@ -30,7 +30,6 @@ public class TabCommands implements TabCompleter{
             }
             if(args[0].equalsIgnoreCase("range")){
                 tab.add("setspawn");
-                tab.add("resetspawn");
                 tab.add("gunsmith");
             }
 
@@ -38,7 +37,15 @@ public class TabCommands implements TabCompleter{
          if(args.length == 3){
             if(args[0].equalsIgnoreCase("range")){
                 if(args[1].equalsIgnoreCase("gunsmith")){
-                    tab.add("Enter the NPC ID Number");
+                    tab.add("remove");
+                    tab.add("set");
+                }
+            }
+         }
+         if(args.length == 4){
+            if(args[1].equalsIgnoreCase("gunsmith")){
+                if(args[2].equalsIgnoreCase("set")){
+                    tab.add("Enter Vendor ID");
                 }
             }
          }

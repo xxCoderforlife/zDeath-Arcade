@@ -1,9 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Commands;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -24,21 +22,17 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
-import dev.nullpointercoding.zdeatharcade.Utils.NPCConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
 import dev.nullpointercoding.zdeatharcade.Utils.ShootingRangeConfigManager;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
 
 public class Commands implements CommandExecutor {
 
     private Main plugin = Main.getInstance();
-    private Integer GUNSMITH_ID = 0;
     private Boolean isRangeSpawnSet = plugin.getIsRangeSpawnSet();
-    private List<String> comments = new ArrayList<String>();
     private static HashMap<Player, UUID> playersInRange = TheRange.playersInRange;
 
     @Override
@@ -113,22 +107,6 @@ public class Commands implements CommandExecutor {
                         return true;
 
                     }
-                    if (args[1].equalsIgnoreCase("resetspawn")) {
-                        if (!(p.hasPermission("zdeatharcade.admin"))) {
-                            p.sendMessage("§cYou do not have permission to use this command.");
-                            return true;
-                        }
-                        for (File f : plugin.getRangeConfigFolder().listFiles()) {
-                            if (f.getName().equalsIgnoreCase("config.yml")) {
-                                f.delete();
-                                p.sendMessage("§aSuccessfully reset Shooting Range spawn location.");
-                                isRangeSpawnSet = false;
-                                return true;
-                            }
-                        }
-                        p.sendMessage("§cThe Shooting Range spawn location has not been set.");
-                        p.sendMessage("§cUse the Command '/zdeatharcade range setspawn' to set the spawn location.");
-                    }
                     if (args[1].equalsIgnoreCase("gunsmith")) {
                         p.sendMessage("§cPlease enter the Vendor ID of the Gunsmith NPC.");
                     }
@@ -137,47 +115,32 @@ public class Commands implements CommandExecutor {
             } else if (args.length == 3) {
                 if (args[0].equalsIgnoreCase("range")) {
                     if (args[1].equalsIgnoreCase("gunsmith")) {
-                        try {
-                            GUNSMITH_ID = Integer.parseInt(args[2]);
-                            NPCConfigManager NPCM = new NPCConfigManager("gunsmith.yml");
-                            NPC gunsmithNPC = CitizensAPI.getNPCRegistry().getById(GUNSMITH_ID);
-                            Location npcLOC = gunsmithNPC.getStoredLocation();
+                        if (args[2].equalsIgnoreCase("remove")) {
                             for (File f : plugin.getNPCDataFolder().listFiles()) {
                                 if (f.getName().equalsIgnoreCase("gunsmith.yml")) {
+                                    RangeGunSmith.getGunSmithNPC().remove();
                                     f.delete();
-                                    try {
-                                        NPCM.updateConfig(f);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    comments.add("NPC Date File used for reading and credential validating");
-                                    NPCM.getConfig().set("NPC.Name", gunsmithNPC.getName());
-                                    NPCM.getConfig().set("NPC.ID", GUNSMITH_ID);
-                                    NPCM.getConfig().set("NPC.Location.X", npcLOC.getX());
-                                    NPCM.getConfig().set("NPC.Location.Y", npcLOC.getY());
-                                    NPCM.getConfig().set("NPC.Location.Z", npcLOC.getZ());
-                                    NPCM.getConfig().set("NPC.Location.World", npcLOC.getWorld().getName());
-                                    NPCM.getConfig().setComments("NPC", comments);
-                                    NPCM.saveConfig();
-                                    p.sendMessage("The Gunsmith has been updated with the ID: " + GUNSMITH_ID);
-                                    return true;
+                                    p.sendMessage("The Gunsmith has been removed.");
+                                    RangeGunSmith.getGunSmithNPC().remove();
                                 }
                             }
-                            comments.add("NPC Date File used for reading and credential validating");
-                            NPCM.getConfig().set("NPC.Name", gunsmithNPC.getName());
-                            NPCM.getConfig().set("NPC.ID", GUNSMITH_ID);
-                            NPCM.getConfig().set("NPC.Location.X", npcLOC.getX());
-                            NPCM.getConfig().set("NPC.Location.Y", npcLOC.getY());
-                            NPCM.getConfig().set("NPC.Location.Z", npcLOC.getZ());
-                            NPCM.getConfig().set("NPC.Location.World", npcLOC.getWorld().getName());
-                            NPCM.getConfig().setComments("NPC", comments);
-                            NPCM.saveConfig();
+                        }
+                        if(args[2].equalsIgnoreCase("set")){
+                            p.sendMessage(Component.text("Usage: /zdeatharcade range gunsmith set <Vendor ID>"));
+                        }
+                    }
+                }
+            } else if (args.length == 4) {
+                if(args[1].equalsIgnoreCase("gunsmith")){
+                    if(args[2].equalsIgnoreCase("set")){
+                        try {
+                            Integer id = Integer.parseInt(args[3]);
+                            RangeGunSmith.spawnGunsmithNPC(p,id);
                         } catch (NumberFormatException e) {
                             p.sendMessage("§cVendor ID must be a number.");
                         }
                     }
                 }
-            } else if (args.length == 4) {
             }
         }
         if (cmd.getName().equalsIgnoreCase("spawn")) {
@@ -186,7 +149,6 @@ public class Commands implements CommandExecutor {
                 return true;
             }
             p.sendActionBar(Component.text("§b§oGetting ready..."));
-            ;
             new BukkitRunnable() {
                 @Override
                 public void run() {

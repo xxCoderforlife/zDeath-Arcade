@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,10 +31,12 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI.AccountType;
+import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class PlayerProfileManager implements Listener{
@@ -51,7 +54,8 @@ public class PlayerProfileManager implements Listener{
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
         this.target = p;
-        title = Component.text(p.getName() + "'s Profile");
+        title = Component.text(p.getName() + "'s Profile",TextColor.color(32, 181, 77),TextDecoration.UNDERLINED)
+        .hoverEvent(Component.text(p.getName() + "'s Profile and Stats"));
         inv = Bukkit.createInventory(null, 36, title);
 
     }
@@ -104,25 +108,33 @@ public class PlayerProfileManager implements Listener{
             BankAccountGUI bankGUI = new BankAccountGUI(target);
             bankGUI.setIsDespoisting(true, AccountType.BOUNTY);
             bankGUI.openGUI(whoClicked);
-            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 1.0f);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(backToPlayers().getItemMeta().displayName())){
             sendPlayerBackOtherPlayersPage(whoClicked);
             whoClicked.playSound(whoClicked, Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.0f, 1.0f);
         }
         if(clicked.getItemMeta().displayName().equals(playerHead().getItemMeta().displayName())){
-            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 1.0f);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1.0f, 1.0f);
         }
-        if(clicked.getItemMeta().displayName().equals(playerKills().getItemMeta().displayName())){
+        if(clicked.getItemMeta().displayName().equals(playerKills(whoClicked).getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1.0f, 1.0f);
 
         }
-        if(clicked.getItemMeta().displayName().equals(cashOnPerson().getItemMeta().displayName())){
+        if(clicked.getItemMeta().displayName().equals(cashOnPerson(whoClicked).getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
         }
-        if(clicked.getItemMeta().displayName().equals(bankedCash().getItemMeta().displayName())){
+        if(clicked.getItemMeta().displayName().equals(bankedCash(whoClicked).getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
         }
         if(clicked.getItemMeta().displayName().equals(playerHealth().getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_BURP, 1.0f, 1.0f);
+
+        }
+        if(clicked.getItemMeta().displayName().equals(token(whoClicked).getItemMeta().displayName())){
+            whoClicked.playSound(whoClicked, Sound.ENTITY_VILLAGER_YES, 1.0f, 1.0f);
 
         }
         if(clicked.getItemMeta().displayName().equals(playerZombieKills(whoClicked).getItemMeta().displayName())){
@@ -202,7 +214,7 @@ public class PlayerProfileManager implements Listener{
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
         lore.add(Component.text(target.getName() + " has killed " + target.getStatistic(org.bukkit.Statistic.KILL_ENTITY,EntityType.ZOMBIE) + " zombies"));
-        lore.add(Component.text("Your kills: " + whoClicked.getStatistic(org.bukkit.Statistic.KILL_ENTITY,EntityType.ZOMBIE)));
+        lore.add(Component.text("Your Zombie kills: " + whoClicked.getStatistic(org.bukkit.Statistic.KILL_ENTITY,EntityType.ZOMBIE)));
         meta.lore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         head.setItemMeta(meta);
@@ -222,13 +234,15 @@ public class PlayerProfileManager implements Listener{
         head.setItemMeta(meta);
         return head;
     }
-    private ItemStack cashOnPerson(){
+    private ItemStack cashOnPerson(Player whoClicked){
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.displayName(Component.text("§c§lCash"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.space());
         lore.add(Component.text("Cash: " + econ.getBalance(target)));
+        lore.add(Component.text("Your Cash: " + econ.getBalance((Player) whoClicked)));
         meta.lore(lore);
         PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/99e77fae5313bac19bf14577d50093e4738ebd70fd54a4de1a27475d0ec9538f");
         meta.setPlayerProfile(profile);
@@ -236,29 +250,49 @@ public class PlayerProfileManager implements Listener{
         return item;
 
     }
-    private ItemStack bankedCash(){
+    private ItemStack bankedCash(Player whoClicked){
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.displayName(Component.text("§c§lBanked Cash"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.space());
         lore.add(Component.text("Banked Cash: " + econ.bankBalance(target.getUniqueId().toString()).balance));
+        lore.add(Component.text("Your Banked Cash: " + econ.bankBalance(whoClicked.getUniqueId().toString()).balance));
         meta.lore(lore);
         PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/b25b27ce62ca88743840a95d1c39868f43ca60696a84f564fbd7dda259be00fe");
         meta.setPlayerProfile(profile);
         item.setItemMeta(meta);
         return item;
     }
-    private ItemStack playerKills(){
+    private ItemStack playerKills(Player whoClicked){
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.displayName(Component.text("§c§lPlayer Kills"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.space());
         lore.add(Component.text("Player Kills: " + target.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
+        lore.add(Component.text("Your Player Kills: " + whoClicked.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
         meta.lore(lore);
         PlayerProfile profile = getProfile("https://textures.minecraft.net/texture/9dd36b762e0ebcae47c78308aaa2717aa77d14001ee40dcea863f5f195d23bd9");
         meta.setPlayerProfile(profile);
+        item.setItemMeta(meta);
+        return item;
+    }
+    private ItemStack token(Player whoClicked){
+        PlayerConfigManager tarConfig = new PlayerConfigManager(target.getUniqueId().toString());
+        PlayerConfigManager pConfig = new PlayerConfigManager(whoClicked.getUniqueId().toString());
+        ItemStack item = new ItemStack(Material.SUNFLOWER);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text("§c§lTokens"));
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES,ItemFlag.HIDE_ENCHANTS);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.space());
+        lore.add(Component.text("Tokens: " + tarConfig.getTokens()));
+        lore.add(Component.text("Your Tokens: " + pConfig.getTokens()));
+        meta.lore(lore);
         item.setItemMeta(meta);
         return item;
     }
@@ -271,11 +305,12 @@ public class PlayerProfileManager implements Listener{
     }
 
     private void addPlayerItemStats(Player whoOpened){
-        inv.setItem(22, playerZombieKills(whoOpened));
-        inv.setItem(21, playerHealth());
-        inv.setItem(19, cashOnPerson());
-        inv.setItem(20, bankedCash());
-        inv.setItem(23, playerKills());
+        inv.setItem(23, playerZombieKills(whoOpened));
+        inv.setItem(22, playerHealth());
+        inv.setItem(21, token(whoOpened));
+        inv.setItem(19, cashOnPerson(whoOpened));
+        inv.setItem(20, bankedCash(whoOpened));
+        inv.setItem(24, playerKills(whoOpened));
 
     }
 

@@ -123,7 +123,7 @@ public class VaultHook implements Economy{
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer arg0, double arg1) {
         PlayerConfigManager pcm = new PlayerConfigManager(arg0.getUniqueId().toString());
-        pcm.setBalance(pcm.getBalance() + arg1);
+        pcm.addBalance(pcm.getBalance() + arg1);
         return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS, "Successfully deposited " + arg1 + " into " + arg0.getName() + "'s account!");
     }
 

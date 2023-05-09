@@ -8,6 +8,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
 import dev.nullpointercoding.zdeatharcade.Commands.Commands;
 import dev.nullpointercoding.zdeatharcade.Commands.TabCommands;
 import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
@@ -55,7 +56,6 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        // Plugin startup logic
         System.out.println("ZDeathArcade has been loaded!");
     }
 
@@ -76,6 +76,7 @@ public class Main extends JavaPlugin {
     public static Random getSpawnChance() {
         return spawmChance;
     }
+
 
     private void registerEcon() {
         Bukkit.getServer().getServicesManager().register(Economy.class, new VaultHook(), plugin, ServicePriority.Highest);

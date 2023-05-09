@@ -31,7 +31,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
-
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -44,7 +43,9 @@ public class ZombieHandler implements Listener{
     private File ZSLM = plugin.getZombieSpawnLocationFolder();
     private FileConfiguration config = new YamlConfiguration();
     private HashMap<File,Integer> zombieSpawnLocations = new HashMap<File,Integer>();
+    private HashMap<ItemStack,Integer> zombieDropsLvl1 = new HashMap<ItemStack,Integer>();
     private static Random r = Main.getRandom();
+    private ZombieDrops zDrops = new ZombieDrops();
     private static Random spawnChance = Main.getSpawnChance();
 
     //Zombies
@@ -63,20 +64,26 @@ public class ZombieHandler implements Listener{
         if(z.getKiller() instanceof Player){
             Player p = (Player) z.getKiller();
             PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
+            for(ItemStack s : zDrops.getLevel1Drops()){
+                zombieDropsLvl1.put(s, randoInt(1, 100));
+            }
             if(z.name().equals(zl1.name())){
-                econ.depositPlayer(p, 3);
-                pcm.setKills();
+                pcm.addBalance(3.0);
+                pcm.setKills(p);
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
                 e.getDrops().clear();
-                List<ItemStack> drops = new ArrayList<ItemStack>();
-                drops.add(new ItemStack(Material.IRON_INGOT, 1));
-                drops.add(new ItemStack(Material.GOLD_INGOT, 1));
-                drops.add(new ItemStack(Material.DIAMOND, 1));
-                e.getDrops().addAll(drops);
+                List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl1.values());
+                for(ItemStack is : zombieDropsLvl1.keySet()){
+                    if(zombieDropsLvl1.get(is) == Collections.max(nums)){
+                        e.getDrops().add(is);
+                        zombieDropsLvl1.clear();
+                        return;
+                    }
+                }
             }
             if(z.name().equals(zl2.name())){
                 econ.depositPlayer(p, 8);
-                pcm.setKills();
+                pcm.setKills(p);
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
                 e.getDrops().clear();
                 List<ItemStack> drops = new ArrayList<ItemStack>();

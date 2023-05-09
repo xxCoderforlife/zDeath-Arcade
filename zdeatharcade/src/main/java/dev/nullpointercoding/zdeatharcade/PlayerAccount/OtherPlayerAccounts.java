@@ -1,5 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.PlayerAccount;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,6 +17,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.Pages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
@@ -23,7 +27,8 @@ public class OtherPlayerAccounts implements Listener {
 
     private Main plugin = Main.getInstance();
     private final Inventory inv;
-    private final Component title = Component.text("§c§lPLAYER ACCOUNTS");
+    private final Component title = Component.text("§c§l    PLAYER ACCOUNTS");
+    private ArrayList<ItemStack> playerHeads;
 
     public OtherPlayerAccounts() {
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -31,11 +36,25 @@ public class OtherPlayerAccounts implements Listener {
         if (!isEventRegistered) {
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
-        inv = Bukkit.createInventory(null, 27, title);
+        inv = Bukkit.createInventory(null, 36, title);
     }
 
     private void addItems() {
-        inv.setItem(18, back());
+        ItemStack filler = BlankSpaceFiller.fillerItem();
+        inv.setItem(18, filler);
+        inv.setItem(19, filler);
+        inv.setItem(20, filler);
+        inv.setItem(21, filler);
+        inv.setItem(22, filler);
+        inv.setItem(23, filler);
+        inv.setItem(24, filler);
+        inv.setItem(25, filler);
+        inv.setItem(29, filler);
+        inv.setItem(30, filler);
+        inv.setItem(31, filler);
+        inv.setItem(32, filler);
+        inv.setItem(33, filler);
+        inv.setItem(34, filler);
         for (Player p : Bukkit.getOnlinePlayers()) {
             ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
@@ -43,21 +62,23 @@ public class OtherPlayerAccounts implements Listener {
             meta.setOwningPlayer(p);
             skull.setItemMeta(meta);
             inv.addItem(skull);
+        playerHeads = new ArrayList<>();
+        playerHeads.add(skull);
         }
     }
 
     public void openGUI(Player p) {
         addItems();
-        p.openInventory(inv);
+        new Pages(p,playerHeads,title);
     }
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent e) {
-        if (!(e.getView().title().equals(title))) {
-            return;
-        }
+        if (!(e.getView().title().equals(title))) {return;}
         e.setCancelled(true);
         Player p = (Player) e.getWhoClicked();
+        if(!(Pages.users.containsKey(p.getUniqueId()))){return;}
+        Pages inv = Pages.users.get(p.getUniqueId());
         ItemStack clicked = e.getCurrentItem();
         if (clicked == null || clicked.getItemMeta().displayName() == null) {
             return;
@@ -76,6 +97,22 @@ public class OtherPlayerAccounts implements Listener {
             gui.openGUI(p);
             p.playSound(p, Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.0f, 1.0f);
         }
+        if(clicked.getItemMeta().displayName().equals(Pages.nextPageName)){
+            if(inv.currpage >= inv.pages.size()-1){
+                return;
+            }else{
+                //Next page exists, flip the page
+                inv.currpage += 1;
+                p.openInventory(inv.pages.get(inv.currpage));
+            }
+        }
+        if(clicked.getItemMeta().displayName().equals(Pages.previousPageName)){
+             if(inv.currpage > 0){
+             //Flip to previous page
+                 inv.currpage -= 1;
+                 p.openInventory(inv.pages.get(inv.currpage));
+             }
+        }
 
     }
 
@@ -86,5 +123,7 @@ public class OtherPlayerAccounts implements Listener {
         back.setItemMeta(meta);
         return back;
     }
+
+
 
 }
