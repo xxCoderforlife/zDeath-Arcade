@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.material.Skull;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 
@@ -34,6 +33,7 @@ import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages.BuyPage;
+import dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages.SellPage;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieDrops;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -87,7 +87,7 @@ public class BlackMarketVendor implements Listener {
                 new BuyPage().openInventory(whoClicked);
             }
             if (clickedMeta.displayName().equals(sellGUI().getItemMeta().displayName())) {
-                checkForItems(whoClicked, zDrops.ironOreDrop(), ironOrePrice);
+                new SellPage().openInventory(whoClicked);
             }
             if (clickedMeta.displayName().equals(dailyDeal().getItemMeta().displayName())) {
                 checkForItems(whoClicked, zDrops.redstoneOreDrop(), redstoneOrePrice);
@@ -178,6 +178,9 @@ public class BlackMarketVendor implements Listener {
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell Exctoic Items", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
         meta.lore(lore);
+        PlayerProfile profile = CustomInvFunctions.getProfile(
+                "https://textures.minecraft.net/texture/b423289510c54b67df023580979c465d0481c769c865bf4b465cf478749f1c4f");
+        meta.setPlayerProfile(profile);
         sellHead.setItemMeta(meta);
         return sellHead;
     }

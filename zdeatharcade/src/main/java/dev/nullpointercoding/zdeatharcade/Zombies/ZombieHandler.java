@@ -33,6 +33,8 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -47,6 +49,7 @@ public class ZombieHandler implements Listener {
     private HashMap<File, Integer> zombieSpawnLocations = new HashMap<File, Integer>();
     private HashMap<ItemStack, Integer> zombieDropsLvl1 = new HashMap<ItemStack, Integer>();
     private HashMap<ItemStack, Integer> zombieDropsLvl2 = new HashMap<ItemStack, Integer>();
+    private HashMap<ItemStack, Integer> zombieDropsLvl3 = new HashMap<ItemStack, Integer>();
     private static Random r = Main.getRandom();
     private ZombieDrops zDrops = new ZombieDrops();
     private static Random spawnChance = Main.getSpawnChance();
@@ -54,6 +57,7 @@ public class ZombieHandler implements Listener {
     // Zombies
     private ZombieLevel1 zl1 = new ZombieLevel1();
     private ZombieLevel2 zl2 = new ZombieLevel2();
+    private ZombieLevel3 zl3 = new ZombieLevel3();
 
     private static int randoInt(int min, int max) {
         int randoNum = r.nextInt((max - min) + 1) + min;
@@ -104,6 +108,33 @@ public class ZombieHandler implements Listener {
                     }
                 }
             }
+            if(z.name().equals(zl3.name())){
+                econ.depositPlayer(p, 1.8d);
+                pcm.setKills(p);
+                p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
+                for (ItemStack s : zDrops.getCustomItems()) {
+                    zombieDropsLvl3.put(s, randoInt(1, 100));
+                    zombieDropsLvl3.put(new ItemStack(Material.AIR), randoInt(1, 100));
+                    Integer ran = randoInt(1, 100000);
+                    if(ran == 3){
+                    List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl3.values());
+                    for (ItemStack is : zombieDropsLvl3.keySet()) {
+                        if (zombieDropsLvl3.get(is) == Collections.max(nums)) {
+                            e.getDrops().add(is);
+                            zombieDropsLvl3.clear();
+                            return;
+                        }
+                    }
+                    
+
+                    }else{
+                        e.getDrops().add(new ItemStack(Material.AIR));
+                        zombieDropsLvl3.clear();
+                        return;
+                    }
+                }
+                
+            }
         }
     }
 
@@ -133,13 +164,36 @@ public class ZombieHandler implements Listener {
                             config.getDouble("Z"));
                     if (spawnChance.nextInt(100) > 50) {
                         zl1.convertToLevel1Zombie(z);
-                        z.teleportAsync(locToTP);
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                z.teleportAsync(locToTP);
+                            }
+                        }.runTaskLater(plugin, 6);
                         zombieSpawnLocations.clear();
                         return;
                     }
                     if (spawnChance.nextInt(100) > 40) {
                         zl2.convertToLevel1Zombie(z);
-                        z.teleportAsync(locToTP);
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                z.teleportAsync(locToTP);
+                            }
+                        }.runTaskLater(plugin, 6);
+                        zombieSpawnLocations.clear();
+                        return;
+                    }
+                    if(spawnChance.nextInt(100) > 30){
+                        zl3.convertToLevel3Zombie(z);
+                        new BukkitRunnable(){
+
+                            @Override
+                            public void run() {
+                                z.teleportAsync(locToTP);
+                            }
+
+                        }.runTaskLater(plugin, 6);
                         zombieSpawnLocations.clear();
                         return;
                     }
