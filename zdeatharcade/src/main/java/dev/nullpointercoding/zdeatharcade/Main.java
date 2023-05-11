@@ -17,8 +17,13 @@ import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoTabCommands;
-import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultChat;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
+import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
+import dev.nullpointercoding.zdeatharcade.Vendors.FarmerVendor;
+import dev.nullpointercoding.zdeatharcade.Vendors.GunVendor;
+import dev.nullpointercoding.zdeatharcade.Vendors.MinerVendor;
+import dev.nullpointercoding.zdeatharcade.Vendors.VendorCommands;
+import dev.nullpointercoding.zdeatharcade.Vendors.VendorTabCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieHandler;
 import net.milkbowl.vault.economy.Economy;
@@ -29,7 +34,6 @@ public class Main extends JavaPlugin {
     private static Random r;
     private static Random spawmChance;
     private static Economy econ = null;
-    private VaultChat vaultChat;
     private Boolean isRangeSpawnSet;
     private File zombieSpawnLocations = new File(getDataFolder() + File.separator + "Zombie Spawn Locations");
     private File rangeConfigFolder = new File(getDataFolder() + File.separator + "Shooting Range");
@@ -37,6 +41,7 @@ public class Main extends JavaPlugin {
     private File NPCDataFolder = new File(getDataFolder() + File.separator + "NPC Data");
     private File PlayerDataFolder = new File(getDataFolder() + File.separator + "Player Data");
     private File bankDataFolder = new File(getDataFolder() + File.separator + "Bank Data");
+    private File customGuns = new File(getDataFolder() + File.separator + "Custom Guns");
 
     @Override
     public void onEnable() {
@@ -45,11 +50,13 @@ public class Main extends JavaPlugin {
         r = new Random();
         spawmChance = new Random();
         createConfigFolders();
-        RegisterCommandsandEvents();
+        registerEcon();
         if (!setupEconomy()) {
             System.out.println("Vault not found! Disabling plugin!");
             getServer().getPluginManager().disablePlugin(this);
+            return;
         }
+        RegisterCommandsandEvents();
         System.out.println("ZDeathArcade has been enabled!");
 
     }
@@ -90,12 +97,18 @@ public class Main extends JavaPlugin {
         getCommand("economy").setTabCompleter(new EcoTabCommands());
         getCommand("account").setExecutor(new PlayerAccountCommands());
         getCommand("zombie").setExecutor(new ZombieCommands());
+        getCommand("vendor").setExecutor(new VendorCommands());
+        getCommand("vendor").setTabCompleter(new VendorTabCommands());
         getServer().getPluginManager().registerEvents(new ZombieHandler(), this);
         getServer().getPluginManager().registerEvents(new TheRange(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);
         getServer().getPluginManager().registerEvents(new RangeGunSmith(), this);
-        registerEcon();
+        getServer().getPluginManager().registerEvents(new FarmerVendor(), this);
+        getServer().getPluginManager().registerEvents(new MinerVendor(), this);
+        getServer().getPluginManager().registerEvents(new GunVendor(), this);
+        getServer().getPluginManager().registerEvents(new BlackMarketVendor(), this);
     }
+
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -136,6 +149,10 @@ public class Main extends JavaPlugin {
         if(!bankDataFolder.exists()){
             bankDataFolder.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aBankData folder has been created!");
+        }
+        if(!customGuns.exists()){
+            customGuns.mkdirs();
+            Bukkit.getConsoleSender().sendMessage("§aCustomGuns folder has been created!");
         }
         if (!rangeConfigFolder.exists()) {
             rangeConfigFolder.mkdirs();
@@ -181,8 +198,11 @@ public class Main extends JavaPlugin {
     public File getBankDataFolder(){
         return bankDataFolder;
     }
+    public File getCustomGunsFolder(){
+        return customGuns;
+    }
 
-    public Economy getEconomy() {
+    public static Economy getEconomy() {
         return econ;
     }
 

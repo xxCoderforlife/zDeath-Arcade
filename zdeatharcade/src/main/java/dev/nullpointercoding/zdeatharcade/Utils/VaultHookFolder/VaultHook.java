@@ -1,6 +1,8 @@
 package dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -306,5 +308,12 @@ public class VaultHook implements Economy{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withdrawPlayer'");
     }
+    public static double round(double value, int places) {
+    if (places < 0) throw new IllegalArgumentException();
+
+    BigDecimal bd = BigDecimal.valueOf(value);
+    bd = bd.setScale(places, RoundingMode.HALF_UP);
+    return bd.doubleValue();
+}
     
 }

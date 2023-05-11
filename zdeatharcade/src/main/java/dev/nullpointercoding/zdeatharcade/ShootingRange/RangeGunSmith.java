@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -25,7 +26,6 @@ import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class RangeGunSmith implements Listener {
@@ -33,6 +33,7 @@ public class RangeGunSmith implements Listener {
     private Inventory gunsmithInv;
     private Component shopTitle = Component.text("Gunsmith Freebies",NamedTextColor.RED,TextDecoration.BOLD);
     private static Villager gunsmithNPC;
+    private static final Component name = Component.text("Gunsmith",NamedTextColor.RED,TextDecoration.ITALIC);
     private Gun fn_GUN;
     private Gun aa12_GUN;
     private Gun mp40_GUN;
@@ -68,7 +69,7 @@ public class RangeGunSmith implements Listener {
             e.setCancelled(true);
             LivingEntity entity = (LivingEntity) e.getRightClicked();
             if(entity.customName() == null){return;}
-            if(entity.customName().equals(RangeGunSmith.getGunSmithNPC().customName())){
+            if(entity.customName().equals(name)){
                 e.getPlayer().openInventory(gunsmithInv);
             }
         }
@@ -118,10 +119,13 @@ public class RangeGunSmith implements Listener {
         }
         Location spawnLoc = p.getLocation().add(1, 0.0, 0);
         gunsmithNPC = (Villager) p.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
-        gunsmithNPC.setInvulnerable(true);
         gunsmithNPC.setSilent(true);
+        gunsmithNPC.setCollidable(false);
+        gunsmithNPC.setVillagerType(Villager.Type.TAIGA);
+        gunsmithNPC.setProfession(Profession.ARMORER);
+        gunsmithNPC.setPersistent(true);
         gunsmithNPC.setAI(false);
-        gunsmithNPC.customName(Component.text("Gunsmith",TextColor.color(228, 3, 3),TextDecoration.BOLD));
+        gunsmithNPC.customName(name);
         gunsmithNPC.setCustomNameVisible(true);
         new NPCConfigManager("gunsmith",p.getWorld(),npcID,spawnLoc.getX(),spawnLoc.getY(),spawnLoc.getZ());
         return gunsmithNPC;
@@ -130,5 +134,6 @@ public class RangeGunSmith implements Listener {
     public static Villager getGunSmithNPC(){
         return gunsmithNPC;
     }
+
 
 }

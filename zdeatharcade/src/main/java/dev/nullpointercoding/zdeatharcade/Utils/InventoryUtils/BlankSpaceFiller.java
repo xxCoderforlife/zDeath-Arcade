@@ -25,6 +25,13 @@ public class BlankSpaceFiller {
             }
         }
     }
+    public static void fillinBlankInv(@NotNull Inventory inv){
+        for(int i = 0; i < inv.getSize(); i++){
+            if(inv.getItem(i) == null){
+                inv.setItem(i, fillerItem());
+            }
+        }
+    }
 
     public static ItemStack fillerItem(){
         ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);

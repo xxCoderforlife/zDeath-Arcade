@@ -3,6 +3,8 @@ package dev.nullpointercoding.zdeatharcade.Listeners;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +72,7 @@ public class PlayerListeners implements Listener {
             SPI.deletePlayerInventoryFile();
         }
         // Check if Player config exists
-        Economy econ = Main.getInstance().getEconomy();
+        Economy econ = Main.getEconomy();
         if (econ != null) { // add null check here
             if (econ.createPlayerAccount(p)) {
                 Bukkit.getConsoleSender().sendMessage("Account created for: " + p.getName());
@@ -100,6 +102,7 @@ public class PlayerListeners implements Listener {
             }
         }
         leftWithBounty(p);
+        setLastLoginPlayer(p);
     }
 
     @EventHandler
@@ -139,7 +142,8 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerReSpawn(PlayerRespawnEvent e) {
         Player p = (Player) e.getPlayer();
-        final Double toTake = econ.getBalance(p) * 0.23;
+        Double toTake = econ.getBalance(p) * 0.08;
+        VaultHook.round(toTake, 2);
         if (playerInv.containsKey(p)) {
             econ.withdrawPlayer(p, toTake);
             p.sendTitlePart(TitlePart.TITLE, Component.text("§4§lYOU DIED"));
@@ -162,6 +166,14 @@ public class PlayerListeners implements Listener {
                 p.getKiller().getInventory().addItem(bountyHead());
             }
         }
+    }
+    private void setLastLoginPlayer(Player player){
+        PlayerConfigManager pcm = new PlayerConfigManager(player.getUniqueId().toString());
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        pcm.setLastLogin(myFormatObj.format(now));
+        pcm.setClientBrand(player.getClientBrandName());
+        pcm.saveConfig();
     }
 
     private void joinedWithBounty(Player playerWithBounty) {
@@ -193,6 +205,7 @@ public class PlayerListeners implements Listener {
         head.setItemMeta(meta);
         return head;
     }
+
 
     private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); // We reuse the
                                                                                                      // same "random"

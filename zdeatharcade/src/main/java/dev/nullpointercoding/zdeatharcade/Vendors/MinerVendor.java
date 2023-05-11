@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.material.Skull;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 
@@ -33,26 +32,23 @@ import dev.nullpointercoding.zdeatharcade.Utils.NPCConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
-import dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages.BuyPage;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieDrops;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class BlackMarketVendor implements Listener {
+public class MinerVendor implements Listener{
     private Inventory inv;
     private Double coalOrePrice = 1.0;
     private Double ironOrePrice = 1.5;
     private Double redstoneOrePrice = 1.8;
     private Double emerabldPrice = 2.0;
-    private static Villager blackMarketVendor;
+    private static Villager minerVendor;
     ZombieDrops zDrops = new ZombieDrops();
-    private final Component title = Component.text("     Black Market", NamedTextColor.DARK_PURPLE,
-            TextDecoration.ITALIC);
-    private static final Component name = Component.text("Black Market Dealer", NamedTextColor.LIGHT_PURPLE,
-            TextDecoration.ITALIC);
+    private Component title = Component.text("     Miner Shop", NamedTextColor.DARK_GREEN,TextDecoration.ITALIC);
+    private static final Component name = Component.text("Miner", NamedTextColor.GREEN, TextDecoration.ITALIC);
 
-    public BlackMarketVendor() {
+    public MinerVendor() {
         inv = Bukkit.createInventory(null, 27, title);
     }
 
@@ -82,17 +78,16 @@ public class BlackMarketVendor implements Listener {
             if (clickedMeta.displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
                 whoClicked.closeInventory();
             }
-            if (clickedMeta.displayName().equals(buyGUI().getItemMeta().displayName())) {
-                whoClicked.closeInventory();
-                new BuyPage().openInventory(whoClicked);
+            if (clickedMeta.displayName().equals(sellCoalOre().getItemMeta().displayName())) {
+                checkForItems(whoClicked, zDrops.coalOreDrop(), coalOrePrice);
             }
-            if (clickedMeta.displayName().equals(sellGUI().getItemMeta().displayName())) {
+            if (clickedMeta.displayName().equals(sellIronOre().getItemMeta().displayName())) {
                 checkForItems(whoClicked, zDrops.ironOreDrop(), ironOrePrice);
             }
-            if (clickedMeta.displayName().equals(dailyDeal().getItemMeta().displayName())) {
+            if (clickedMeta.displayName().equals(sellRedstoneOre().getItemMeta().displayName())) {
                 checkForItems(whoClicked, zDrops.redstoneOreDrop(), redstoneOrePrice);
             }
-            if (clickedMeta.displayName().equals(buyTokens().getItemMeta().displayName())) {
+            if (clickedMeta.displayName().equals(sellEmeramldOre().getItemMeta().displayName())) {
                 checkForItems(whoClicked, zDrops.emeraldOreDrop(), emerabldPrice);
 
             }
@@ -103,6 +98,7 @@ public class BlackMarketVendor implements Listener {
         return inv;
     }
 
+
     public void openInventory(Player player) {
         addItem();
         BlankSpaceFiller.fillinBlankInv(inv, List.of(0));
@@ -111,99 +107,107 @@ public class BlackMarketVendor implements Listener {
 
     private void addItem() {
         inv.setItem(0, vendorHead());
-        inv.setItem(10, buyGUI());
-        inv.setItem(12, sellGUI());
-        inv.setItem(14, dailyDeal());
+        inv.setItem(10, sellCoalOre());
+        inv.setItem(11, sellIronOre());
+        inv.setItem(12, sellRedstoneOre());
+        inv.setItem(13, sellEmeramldOre());
         inv.setItem(16, CustomInvFunctions.getBackButton());
-        inv.setItem(26, buyTokens());
     }
 
-    public static Villager spawnblackMarketVendor(Player player, Integer npcID) {
+    public static Villager spawnMinerVendor(Player player, Integer npcID) {
         for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
-            if (f.getName().equalsIgnoreCase("blackmarketvendor.yml")) {
-                player.sendMessage(Component.text("Black Market Vendor Spawned already spawned!"));
-                return blackMarketVendor;
+            if (f.getName().equalsIgnoreCase("minervendor.yml")) {
+                player.sendMessage(Component.text("Mine Vendor Spawned already spawned!"));
+                return minerVendor;
             }
         }
         Location spawnLoc = player.getLocation().add(1, 0.0, 0);
-        blackMarketVendor = (Villager) player.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
-        blackMarketVendor.setVillagerType(Type.JUNGLE);
-        blackMarketVendor.setProfession(Profession.WEAPONSMITH);
-        blackMarketVendor.setPersistent(true);
-        blackMarketVendor.setCollidable(false);
-        blackMarketVendor.setSilent(true);
-        blackMarketVendor.setAI(false);
-        blackMarketVendor.customName(name);
-        blackMarketVendor.setCustomNameVisible(true);
-        new NPCConfigManager("blackmarketvendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
+        minerVendor = (Villager) player.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
+        minerVendor.setVillagerType(Type.TAIGA);
+        minerVendor.setProfession(Profession.MASON);
+        minerVendor.setPersistent(true);
+        minerVendor.setCollidable(false);
+        minerVendor.setSilent(true);
+        minerVendor.setAI(false);
+        minerVendor.customName(name);
+        minerVendor.setCustomNameVisible(true);
+        new NPCConfigManager("minervendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
-        return blackMarketVendor;
+        return minerVendor;
     }
 
-    public static void removeblackMarketVendor() {
-        for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
-            if (f.getName().equalsIgnoreCase("blackmarketvendor.yml")) {
+    public static void removeMinerVendor(){
+        for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
+            if(f.getName().equalsIgnoreCase("minervendor.yml")){
                 f.delete();
-                blackMarketVendor.remove();
+                minerVendor.remove();
             }
+
         }
     }
 
     public static Villager getLevel1Vendor() {
-        return blackMarketVendor;
+        return minerVendor;
     }
 
-    private ItemStack buyGUI() {
-        ItemStack buyHead = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) buyHead.getItemMeta();
-        meta.displayName(Component.text("Buy Items", NamedTextColor.GREEN, TextDecoration.ITALIC));
+    private ItemStack sellCoalOre() {
+        ItemStack coalOre = new ItemStack(Material.COAL_ORE);
+        ItemMeta meta = coalOre.getItemMeta();
+        meta.displayName(Component.text("Coal Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Buy Exctoic Items", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
+        lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
+                .append(Component.text("$", NamedTextColor.GREEN))
+                .append(Component.text(coalOrePrice.doubleValue(), NamedTextColor.GREEN)));
         meta.lore(lore);
-        PlayerProfile profile = CustomInvFunctions.getProfile(
-                "https://textures.minecraft.net/texture/89e23af2797f10f588fa4c5a8fa9c515785258e459baac02f6963156a4babe25");
-        meta.setPlayerProfile(profile);
-        buyHead.setItemMeta(meta);
-        return buyHead;
+        coalOre.setItemMeta(meta);
+        return coalOre;
     }
 
-    private ItemStack sellGUI() {
-        ItemStack sellHead = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) sellHead.getItemMeta();
+    private ItemStack sellIronOre() {
+        ItemStack ironOre = new ItemStack(Material.IRON_ORE);
+        ItemMeta meta = ironOre.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Sell Items", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(Component.text("Iron Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Sell Exctoic Items", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
+        lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
+                .append(Component.text("$", NamedTextColor.GREEN))
+                .append(Component.text(ironOrePrice.doubleValue(), NamedTextColor.GREEN)));
         meta.lore(lore);
-        sellHead.setItemMeta(meta);
-        return sellHead;
+        ironOre.setItemMeta(meta);
+        return ironOre;
     }
 
-    private ItemStack dailyDeal() {
-        ItemStack beacon = new ItemStack(Material.BEACON);
-        ItemMeta meta = beacon.getItemMeta();
+    private ItemStack sellRedstoneOre() {
+        ItemStack redstoneOre = new ItemStack(Material.REDSTONE_ORE);
+        ItemMeta meta = redstoneOre.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Daily Deal", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(Component.text("Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Click to see the Daily Deal", NamedTextColor.GRAY, TextDecoration.ITALIC));
+        lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
+                .append(Component.text("$", NamedTextColor.GREEN))
+                .append(Component.text(redstoneOrePrice.doubleValue(), NamedTextColor.GREEN)));
         meta.lore(lore);
-        beacon.setItemMeta(meta);
-        return beacon;
+        redstoneOre.setItemMeta(meta);
+        return redstoneOre;
     }
 
-    private ItemStack buyTokens(){
-        ItemStack token = new ItemStack(Material.SUNFLOWER);
-        ItemMeta meta = token.getItemMeta();
-        meta.displayName(Component.text("Buy Tokens", NamedTextColor.GREEN, TextDecoration.ITALIC));
+    private ItemStack sellEmeramldOre() {
+        ItemStack emeraldOre = new ItemStack(Material.EMERALD_ORE);
+        ItemMeta meta = emeraldOre.getItemMeta();
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        meta.displayName(Component.text("Emeramld Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Click to buy Tokens", NamedTextColor.GRAY, TextDecoration.ITALIC));
+        lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
+                .append(Component.text("$", NamedTextColor.GREEN))
+                .append(Component.text(emerabldPrice.doubleValue(), NamedTextColor.GREEN)));
         meta.lore(lore);
-        token.setItemMeta(meta);
-        return token;
+        emeraldOre.setItemMeta(meta);
+        return emeraldOre;
     }
 
     private ItemStack vendorHead() {
@@ -211,10 +215,10 @@ public class BlackMarketVendor implements Listener {
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         meta.displayName(name);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Buy and Sell Excotic Items", NamedTextColor.GRAY, TextDecoration.ITALIC));
+        lore.add(Component.text("Buys Ores", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
         PlayerProfile profile = CustomInvFunctions.getProfile(
-                "https://textures.minecraft.net/texture/25fafa2be55bd15aea6e2925f5d24f8068e0f4a2616f3b92b380d94912f0ec5f");
+                "https://textures.minecraft.net/texture/621ec612f8f78984a08f8290bd3f1c1892b4f7827b524dbab7eaacc9dd9e22b2");
         meta.setPlayerProfile(profile);
         head.setItemMeta(meta);
         return head;
@@ -242,8 +246,7 @@ public class BlackMarketVendor implements Listener {
             if (s == null || s.getItemMeta() == null || !s.getItemMeta().hasDisplayName()) {
                 continue;
             }
-            if (s.getItemMeta().displayName() != null
-                    && s.getItemMeta().displayName().equals(itemToCheckFor.getItemMeta().displayName())) {
+            if (s.getItemMeta().displayName() != null && s.getItemMeta().displayName().equals(itemToCheckFor.getItemMeta().displayName())) {
                 doesPlayerHaveItem = true;
                 break;
             }

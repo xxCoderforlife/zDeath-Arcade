@@ -44,7 +44,7 @@ public class Commands implements CommandExecutor {
         }
         Player p = (Player) sender;
         if (cmd.getName().equalsIgnoreCase("zdeatharcade")) {
-            if (!(isPlayerinSpawn(p, "spawn"))) {
+            if (!(isPlayerinSpawn(p, "spawn")) && !(p.hasPermission("zdeatharcade.admin"))) {
                 p.sendMessage("§cYou must be in the spawn to use this command.");
                 return true;
             }

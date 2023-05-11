@@ -54,8 +54,7 @@ public class PlayerProfileManager implements Listener{
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
         this.target = p;
-        title = Component.text(p.getName() + "'s Profile",TextColor.color(32, 181, 77),TextDecoration.UNDERLINED)
-        .hoverEvent(Component.text(p.getName() + "'s Profile and Stats"));
+        title = Component.text(p.getName() + "'s Profile",TextColor.color(32, 181, 77),TextDecoration.UNDERLINED);
         inv = Bukkit.createInventory(null, 36, title);
 
     }

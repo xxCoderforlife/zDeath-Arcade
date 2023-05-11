@@ -37,11 +37,12 @@ public class Pages {
             }else{
 //Add the item to the current page as per normal
                 page.addItem(items.get(i));
+
             }
         }
         pages.add(page);
 //open page 0 for the specified player
-        BlankSpaceFiller.fillinBlankInv(pages.get(currpage),List.of(0));
+        BlankSpaceFiller.fillinBlankInv(pages.get(currpage));
         p.openInventory(pages.get(currpage));
         users.put(p.getUniqueId(), this);
     }

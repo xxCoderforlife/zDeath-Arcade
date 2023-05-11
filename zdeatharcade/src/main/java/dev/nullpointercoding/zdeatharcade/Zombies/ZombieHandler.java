@@ -17,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
@@ -29,6 +30,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import dev.nullpointercoding.zdeatharcade.Main;
@@ -36,93 +38,106 @@ import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.milkbowl.vault.economy.Economy;
 
-public class ZombieHandler implements Listener{
+public class ZombieHandler implements Listener {
 
     private Main plugin = Main.getInstance();
     Economy econ = new VaultHook();
     private File ZSLM = plugin.getZombieSpawnLocationFolder();
     private FileConfiguration config = new YamlConfiguration();
-    private HashMap<File,Integer> zombieSpawnLocations = new HashMap<File,Integer>();
-    private HashMap<ItemStack,Integer> zombieDropsLvl1 = new HashMap<ItemStack,Integer>();
+    private HashMap<File, Integer> zombieSpawnLocations = new HashMap<File, Integer>();
+    private HashMap<ItemStack, Integer> zombieDropsLvl1 = new HashMap<ItemStack, Integer>();
+    private HashMap<ItemStack, Integer> zombieDropsLvl2 = new HashMap<ItemStack, Integer>();
     private static Random r = Main.getRandom();
     private ZombieDrops zDrops = new ZombieDrops();
     private static Random spawnChance = Main.getSpawnChance();
 
-    //Zombies
+    // Zombies
     private ZombieLevel1 zl1 = new ZombieLevel1();
     private ZombieLevel2 zl2 = new ZombieLevel2();
 
-    private static int randoInt(int min,int max){
+    private static int randoInt(int min, int max) {
         int randoNum = r.nextInt((max - min) + 1) + min;
         return randoNum;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onZombieDeath(EntityDeathEvent e){
-        if(!(e.getEntity() instanceof Zombie)){return;}
+    public void onZombieDeath(EntityDeathEvent e) {
+        if (!(e.getEntity() instanceof Zombie)) {
+            return;
+        }
         Zombie z = (Zombie) e.getEntity();
-        if(z.getKiller() instanceof Player){
+        if (z.getKiller() instanceof Player) {
             Player p = (Player) z.getKiller();
             PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
-            for(ItemStack s : zDrops.getLevel1Drops()){
-                zombieDropsLvl1.put(s, randoInt(1, 100));
-            }
-            if(z.name().equals(zl1.name())){
-                pcm.addBalance(3.0);
+            e.getDrops().clear();
+            if (z.name().equals(zl1.name())) {
+                pcm.addBalance(0.6d);
                 pcm.setKills(p);
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
-                e.getDrops().clear();
+                for (ItemStack s : zDrops.getLevel1Drops()) {
+                    zombieDropsLvl1.put(s, randoInt(1, 100));
+                    zombieDropsLvl1.put(new ItemStack(Material.AIR), randoInt(1, 100));
+                }
                 List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl1.values());
-                for(ItemStack is : zombieDropsLvl1.keySet()){
-                    if(zombieDropsLvl1.get(is) == Collections.max(nums)){
+                for (ItemStack is : zombieDropsLvl1.keySet()) {
+                    if (zombieDropsLvl1.get(is) == Collections.max(nums)) {
                         e.getDrops().add(is);
                         zombieDropsLvl1.clear();
                         return;
                     }
                 }
             }
-            if(z.name().equals(zl2.name())){
-                econ.depositPlayer(p, 8);
+            if (z.name().equals(zl2.name())) {
+                econ.depositPlayer(p, 1.0d);
                 pcm.setKills(p);
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
-                e.getDrops().clear();
-                List<ItemStack> drops = new ArrayList<ItemStack>();
-                drops.add(new ItemStack(Material.IRON_INGOT, 1));
-                drops.add(new ItemStack(Material.GOLD_INGOT, 1));
-                drops.add(new ItemStack(Material.DIAMOND, 1));
-                e.getDrops().addAll(drops);
+                for (ItemStack s : zDrops.getLevel2Drops()) {
+                    zombieDropsLvl2.put(s, randoInt(1, 100));
+                    zombieDropsLvl2.put(new ItemStack(Material.AIR), randoInt(1, 100));
+                }
+                List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl2.values());
+                for (ItemStack is : zombieDropsLvl2.keySet()) {
+                    if (zombieDropsLvl2.get(is) == Collections.max(nums)) {
+                        e.getDrops().add(is);
+                        zombieDropsLvl2.clear();
+                        return;
+                    }
+                }
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void disableAllOtherMobSpawns(CreatureSpawnEvent e){
+    public void disableAllOtherMobSpawns(CreatureSpawnEvent e) {
         LivingEntity c = e.getEntity();
-        if(c.getType() == EntityType.ZOMBIE){
+        if (c.getType() == EntityType.ZOMBIE) {
             Zombie z = (Zombie) c;
-            if(ZSLM.listFiles().length == 0){
-                Bukkit.getConsoleSender().sendMessage("No zombie spawn locations found! Please create some in the ZombieSpawnLocations folder!");
+            if(!(z.getChunk().isLoaded())){e.setCancelled(true); return;}
+            if (ZSLM.listFiles().length == 0) {
+                Bukkit.getConsoleSender().sendMessage(
+                        "No zombie spawn locations found! Please create some in the ZombieSpawnLocations folder!");
                 return;
             }
-            for(File f : ZSLM.listFiles()){
+            for (File f : ZSLM.listFiles()) {
                 zombieSpawnLocations.put(f, randoInt(1, 1000));
             }
             List<Integer> nums = new ArrayList<Integer>(zombieSpawnLocations.values());
-            for(File f : ZSLM.listFiles()){
-                if(zombieSpawnLocations.get(f) == Collections.max(nums)){
-                    try{
+            for (File f : ZSLM.listFiles()) {
+                if (zombieSpawnLocations.get(f) == Collections.max(nums)) {
+                    try {
                         config.load(f);
-                    }catch(Exception ex){
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                    Location locToTP = new Location(z.getWorld(), config.getDouble("X"), config.getDouble("Y") + 1, config.getDouble("Z"));
-                    if(spawnChance.nextInt(100) > 50){
+                    Location locToTP = new Location(z.getWorld(), config.getDouble("X"), config.getDouble("Y") + 1,
+                            config.getDouble("Z"));
+                    if (spawnChance.nextInt(100) > 50) {
                         zl1.convertToLevel1Zombie(z);
                         z.teleportAsync(locToTP);
                         zombieSpawnLocations.clear();
                         return;
                     }
-                    if(spawnChance.nextInt(100) > 40){
+                    if (spawnChance.nextInt(100) > 40) {
                         zl2.convertToLevel1Zombie(z);
                         z.teleportAsync(locToTP);
                         zombieSpawnLocations.clear();
@@ -132,32 +147,32 @@ public class ZombieHandler implements Listener{
             }
 
         }
-        if(c.getType() == EntityType.SPIDER){
+        if (c.getType() == EntityType.SPIDER) {
             Spider s = (Spider) c;
             Zombie z = (Zombie) s.getWorld().spawnEntity(s.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             e.setCancelled(true);
-            
+
         }
-        if(c.getType() == EntityType.SKELETON){
+        if (c.getType() == EntityType.SKELETON) {
             Skeleton sk = (Skeleton) c;
             Zombie z = (Zombie) sk.getWorld().spawnEntity(sk.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             e.setCancelled(true);
         }
-        if(c.getType() == EntityType.CREEPER){
+        if (c.getType() == EntityType.CREEPER) {
             Creeper cp = (Creeper) c;
             Zombie z = (Zombie) cp.getWorld().spawnEntity(cp.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             e.setCancelled(true);
         }
-        if(c.getType() == EntityType.SLIME){
+        if (c.getType() == EntityType.SLIME) {
             Slime sl = (Slime) c;
             Zombie z = (Zombie) sl.getWorld().spawnEntity(sl.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
             e.setCancelled(true);
         }
-        if(c.getType() == EntityType.ENDERMAN){
+        if (c.getType() == EntityType.ENDERMAN) {
             Enderman em = (Enderman) c;
             Zombie z = (Zombie) em.getWorld().spawnEntity(em.getLocation(), EntityType.ZOMBIE);
             disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
@@ -167,13 +182,28 @@ public class ZombieHandler implements Listener{
     }
 
     @EventHandler
-    public void onZombieTarget(EntityTargetLivingEntityEvent e){
-        if(e.getEntity() instanceof Zombie){
+    public void onZombieTarget(EntityTargetLivingEntityEvent e) {
+        if (e.getEntity() instanceof Zombie) {
             Zombie z = (Zombie) e.getEntity();
-            if(z.getTarget() instanceof Player){
-                if(!z.isCustomNameVisible()){
+            if (z.getTarget() instanceof Player) {
+                if (!z.isCustomNameVisible()) {
                     zl1.convertToLevel1Zombie(z);
                 }
+            }
+        }
+    }
+    @EventHandler
+    public void onDropSpawnUtil(ItemSpawnEvent e){
+        Item i = e.getEntity();
+        ItemStack is = i.getItemStack();
+        
+        if(e.getEntity().getItemStack().getType() == Material.ROTTEN_FLESH){
+            e.setCancelled(true);
+        }
+        for(ItemStack s : zDrops.getAllZombieDrops()){
+            if(s.getType() == is.getType()){
+                i.customName(s.getItemMeta().displayName());
+                i.setCustomNameVisible(true);
             }
         }
     }

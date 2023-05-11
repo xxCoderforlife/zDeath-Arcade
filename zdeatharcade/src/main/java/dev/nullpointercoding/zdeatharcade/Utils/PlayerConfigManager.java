@@ -2,8 +2,9 @@ package dev.nullpointercoding.zdeatharcade.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 
 public class PlayerConfigManager {
     
@@ -64,14 +66,19 @@ public class PlayerConfigManager {
 
     public void updatePlayerDataFile(Player p){
         YamlConfiguration playerConfig = (YamlConfiguration) config;
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = now.format(myFormatObj);
 
         String configPath = new String(configName + '.');
         playerConfig.set(configPath + "Player", p.getName());
         playerConfig.set(configPath + "UUID", p.getUniqueId().toString());
+        playerConfig.set(configPath + "Player-Client-Brand", p.getClientBrandName());
+        playerConfig.set(configPath + "LastLogin", formattedDate);
         playerConfig.set(configPath + "Zombie-Kills", 0);
         playerConfig.set(configPath + "Deaths", 0);
         playerConfig.set(configPath + "Cash", 1500);
-        playerConfig.set(configPath, "Tokens,2");
+        playerConfig.set(configPath + "Tokens", 0);
         playerConfig.set(configPath + "Bounty.Has-Bounty", false);
         playerConfig.set(configPath + "Bounty.Bounty-Amount", 0);
 
@@ -80,22 +87,33 @@ public class PlayerConfigManager {
 
     }
     public Double getBalance(){
-        return getConfig().getDouble(configName + ".Balance");
+        Double cleanBal = getConfig().getDouble(configName + ".Balance");
+        return VaultHook.round(cleanBal, 2);
     }
 
     public void setBalance(Double balance){
-        getConfig().set(configName + ".Balance", balance.intValue());
+        VaultHook.round(balance, 2);
+        getConfig().set(configName + ".Balance", balance.doubleValue());
         saveConfig();
     }
     public void addBalance(Double balance){
-        getConfig().set(configName + ".Balance", getBalance() + balance.intValue());
+        VaultHook.round(balance, 2);
+        getConfig().set(configName + ".Balance", getBalance() + balance.doubleValue());
+        saveConfig();
+    }
+    public void setLastLogin(String dateandtime){
+        getConfig().set(configName + ".LastLogin", dateandtime);
+        saveConfig();
+    }
+    public void setClientBrand(String clientBrand){
+        getConfig().set(configName + ".Player-Client-Brand", clientBrand);
         saveConfig();
     }
 
-    public Integer getTokens(){
-        return getConfig().getInt(configName + ".Tokens");
+    public Double getTokens(){
+        return getConfig().getDouble(configName + ".Tokens");
     }
-    public void setTokenes(Integer tokens){
+    public void setTokens(Double tokens){
         getConfig().set(configName + ".Tokens", tokens);
         saveConfig();
     }
@@ -131,5 +149,6 @@ public class PlayerConfigManager {
     public Double getBounty(){
         return getConfig().getDouble(configName + ".Bounty.Bounty-Amount");
     }
+
 }
 

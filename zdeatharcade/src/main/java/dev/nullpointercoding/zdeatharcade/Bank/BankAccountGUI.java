@@ -133,6 +133,7 @@ public class BankAccountGUI implements Listener {
         if (clicked == null) {
             return;
         }
+        VaultHook.round(amountToMoveToBank, 2);
         Player whoClicked = (Player) e.getWhoClicked();
         if (clicked.getItemMeta().displayName().equals(addOne().getItemMeta().displayName())) {
             amountToMoveToBank = amountToMoveToBank + 1;

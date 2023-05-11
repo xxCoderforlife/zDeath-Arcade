@@ -16,59 +16,119 @@ import net.kyori.adventure.text.format.TextDecoration;
 public class ZombieDrops {
     
 
+
     //Level 1 Drops
-    public ItemStack hayDrop(){
+    public final ItemStack hayDrop(){
         ItemStack hay = new ItemStack(Material.HAY_BLOCK,1);
         ItemMeta hayMeta = hay.getItemMeta();
         hayMeta.displayName(Component.text("Hay Block",NamedTextColor.AQUA,TextDecoration.ITALIC));
         hayMeta.addEnchant(Enchantment.DURABILITY, 1, false);
         hayMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Sell this at the shop for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Sell this at the Farmer for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
         hayMeta.lore(lore);
         hay.setItemMeta(hayMeta);
         return hay;
     }
-    public ItemStack beefDrop(){
-        ItemStack beef = new ItemStack(Material.BEEF,1);
-        ItemMeta beefMeta = beef.getItemMeta();
-        beefMeta.displayName(Component.text("Beef",NamedTextColor.AQUA,TextDecoration.ITALIC));
-        beefMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-        beefMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
+    public final ItemStack wheatDrop(){
+        ItemStack wheat = new ItemStack(Material.WHEAT);
+        ItemMeta wheatMeta = wheat.getItemMeta();
+        wheatMeta.displayName(Component.text("Wheat",NamedTextColor.AQUA,TextDecoration.ITALIC));
+        wheatMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        wheatMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Sell this at the shop for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
-        beefMeta.lore(lore);
-        beef.setItemMeta(beefMeta);
-        return beef;
+        lore.add(Component.text("Sell this at the Farmer for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        wheatMeta.lore(lore);
+        wheat.setItemMeta(wheatMeta);
+        return wheat;
     }
-    public ItemStack grassBlockDrop(){
-        ItemStack grassBlock = new ItemStack(Material.GRASS_BLOCK,1);
+    public final ItemStack grassBlockDrop(){
+        ItemStack grassBlock = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta grassBlockMeta = grassBlock.getItemMeta();
         grassBlockMeta.displayName(Component.text("Grass Block",NamedTextColor.AQUA,TextDecoration.ITALIC));
         grassBlockMeta.addEnchant(Enchantment.DURABILITY, 1, false);
         grassBlockMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Sell this at the shop for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Sell this at the Farmer for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
         grassBlockMeta.lore(lore);
         grassBlock.setItemMeta(grassBlockMeta);
         return grassBlock;
     }
-    public ItemStack coalBlockDrop(){
-        ItemStack coalBlock = new ItemStack(Material.COAL_BLOCK,1);
-        ItemMeta coalBlockMeta = coalBlock.getItemMeta();
-        coalBlockMeta.displayName(Component.text("Coal Block",NamedTextColor.AQUA,TextDecoration.ITALIC));
-        coalBlockMeta.addEnchant(Enchantment.DURABILITY, 1, false);
-        coalBlockMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
+    public final ItemStack seedsDrop(){
+        ItemStack seeds = new ItemStack(Material.WHEAT_SEEDS);
+        ItemMeta seedsMeta = seeds.getItemMeta();
+        seedsMeta.displayName(Component.text("Coal Block",NamedTextColor.AQUA,TextDecoration.ITALIC));
+        seedsMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        seedsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Sell this at the shop for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
-        coalBlockMeta.lore(lore);
-        coalBlock.setItemMeta(coalBlockMeta);
-        return coalBlock;
+        lore.add(Component.text("Sell this at the Farmer for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        seedsMeta.lore(lore);
+        seeds.setItemMeta(seedsMeta);
+        return seeds;
     }
     public ItemStack[] getLevel1Drops(){
-        ItemStack[] level1Drops = {hayDrop(),beefDrop(),grassBlockDrop(),coalBlockDrop()};
+        ItemStack[] level1Drops = {hayDrop(),wheatDrop(),grassBlockDrop(),seedsDrop()};
         return level1Drops;
     }
 
     //Level 2 Drops
+
+    public final ItemStack coalOreDrop(){
+        ItemStack coalOre = new ItemStack(Material.COAL_ORE);
+        ItemMeta coalOreMeta = coalOre.getItemMeta();
+        coalOreMeta.displayName(Component.text("Coal Ore",NamedTextColor.GREEN,TextDecoration.ITALIC));
+        coalOreMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        coalOreMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Sell this at the Miner for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        coalOreMeta.lore(lore);
+        coalOre.setItemMeta(coalOreMeta);
+        return coalOre;
+    }
+    public final ItemStack ironOreDrop(){
+        ItemStack ironOre = new ItemStack(Material.IRON_ORE);
+        ItemMeta ironOreMeta = ironOre.getItemMeta();
+        ironOreMeta.displayName(Component.text("Iron Ore",NamedTextColor.GREEN,TextDecoration.ITALIC));
+        ironOreMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        ironOreMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Sell this at the Miner for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        ironOreMeta.lore(lore);
+        ironOre.setItemMeta(ironOreMeta);
+        return ironOre;
+    }
+    public final ItemStack redstoneOreDrop(){
+        ItemStack redstone = new ItemStack(Material.REDSTONE_ORE);
+        ItemMeta redstoneMeta = redstone.getItemMeta();
+        redstoneMeta.displayName(Component.text("Redstone Ore",NamedTextColor.GREEN,TextDecoration.ITALIC));
+        redstoneMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        redstoneMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Sell this at the Miner for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        redstoneMeta.lore(lore);
+        redstone.setItemMeta(redstoneMeta);
+        return redstone;
+    }
+    public final ItemStack emeraldOreDrop(){
+        ItemStack emerald = new ItemStack(Material.EMERALD_ORE);
+        ItemMeta emeraldMeta = emerald.getItemMeta();
+        emeraldMeta.displayName(Component.text("Emerald Ore",NamedTextColor.GREEN,TextDecoration.ITALIC));
+        emeraldMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        emeraldMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS,ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<Component>();
+        lore.add(Component.text("Sell this at the Miner for money!",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        emeraldMeta.lore(lore);
+        emerald.setItemMeta(emeraldMeta);
+        return emerald;
+    }
+
+    public ItemStack[] getLevel2Drops(){
+        ItemStack[] level2Drops = {coalOreDrop(),ironOreDrop(),redstoneOreDrop(),emeraldOreDrop()};
+        return level2Drops;
+    }
+
+    public ItemStack[] getAllZombieDrops(){
+        ItemStack[] allZombieDrops = {hayDrop(),wheatDrop(),grassBlockDrop(),seedsDrop(),coalOreDrop(),ironOreDrop(),redstoneOreDrop(),emeraldOreDrop()};
+        return allZombieDrops;
+    }
 }

@@ -13,11 +13,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.Pages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -88,10 +88,10 @@ public class OtherPlayerAccounts implements Listener {
             String cleanName = ChatColor.stripColor(name);
             Player target = Bukkit.getPlayer(cleanName);
             PlayerProfileManager playerProfile = new PlayerProfileManager(target);
-            p.playSound(target, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
+            p.playSound(p, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
             playerProfile.openGUI(p);
         }
-        if(clicked.getItemMeta().displayName().equals(back().getItemMeta().displayName())){
+        if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
             p.closeInventory(Reason.PLUGIN);
             PlayerAccountGUI gui = new PlayerAccountGUI(p);
             gui.openGUI(p);
@@ -116,13 +116,6 @@ public class OtherPlayerAccounts implements Listener {
 
     }
 
-    private ItemStack back() {
-        ItemStack back = new ItemStack(Material.BARRIER);
-        ItemMeta meta = back.getItemMeta();
-        meta.displayName(Component.text("§c§lBACK"));
-        back.setItemMeta(meta);
-        return back;
-    }
 
 
 

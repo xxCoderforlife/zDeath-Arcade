@@ -31,6 +31,11 @@ commands:
     description: Zombie Command For zDeath-Arcade
     usage: /zombie
     aliases: [ z ]
+  vendor:
+    permission: 
+    description: Vendor Command For zDeath-Arcade
+    usage: /vendor
+    aliases: [ v ]
 permissions:
   zdeatharcade.admin:
     description: Allows access to all zDeath-Arcade commands
@@ -44,3 +49,6 @@ permissions:
   zdeatharcade.spawn:
     description: Allows you to access the spawn command
     default: true
+  zdeatharcade.vendor:
+    description: Allows you to access the vendor command
+    default: op

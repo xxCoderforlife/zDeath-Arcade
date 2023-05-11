@@ -36,7 +36,7 @@ public class PlayerAccountGUI implements Listener{
 
     private final Inventory inv;
     private Main plugin = Main.getInstance();
-    private Economy econ = plugin.getEconomy();
+    private Economy econ = Main.getEconomy();
     private Player target;
     private Component title = Component.text("§c§lMONEY MANAGAMENT SYSTEM");
 
