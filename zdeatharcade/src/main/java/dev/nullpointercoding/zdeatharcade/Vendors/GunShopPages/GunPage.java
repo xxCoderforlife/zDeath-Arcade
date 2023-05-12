@@ -45,6 +45,7 @@ public class GunPage implements Listener {
     private Double umpPrice = 6000.0;
     private Double p30Price = 10000.0;
     private Double fnfalPrice = 12000.0;
+    private final Component star = Component.text('★',NamedTextColor.YELLOW, TextDecoration.BOLD);
     private HashMap<Gun, Double> guns = new HashMap<Gun, Double>();
 
     public GunPage() {
@@ -116,7 +117,7 @@ public class GunPage implements Listener {
     private ItemStack createGunItem(Gun gun, Double price) {
         ItemStack gunItem = gun.getItemStack();
         ItemMeta meta = gunItem.getItemMeta();
-        meta.displayName(Component.text("       " + gun.getDisplayName()));
+        meta.displayName(star.append(Component.text(" " + gun.getDisplayName() + " ").append(star)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Price: ", NamedTextColor.GREEN)
                 .append(Component.text("$" + price, NamedTextColor.WHITE)));

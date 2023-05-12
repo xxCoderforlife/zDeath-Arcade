@@ -52,19 +52,19 @@ public class VendorCommands implements CommandExecutor{
                             if(args[0].equalsIgnoreCase("remove")){
                                 if(args[1].equalsIgnoreCase("farmer")){
                                     player.sendMessage(Component.text("Removing Farmer Vendor"));
-                                    FarmerVendor.removeFarmerVendor();;
+                                    FarmerVendor.removeFarmerVendor(player);;
                                 } 
                                 if(args[1].equalsIgnoreCase("miner")){
                                     player.sendMessage(Component.text("Removing Miner Vendor"));
-                                    MinerVendor.removeMinerVendor();
+                                    MinerVendor.removeMinerVendor(player);
                                 }
                                 if(args[1].equalsIgnoreCase("blackmarket")){
                                     player.sendMessage(Component.text("Removing BlackMarket Vendor"));
-                                    BlackMarketVendor.removeblackMarketVendor();
+                                    BlackMarketVendor.removeblackMarketVendor(player);
                                 }
                                 if(args[1].equalsIgnoreCase("gunvendor")){
                                     player.sendMessage(Component.text("Removing Gun Vendor"));
-                                    GunVendor.removeGunVendor();
+                                    GunVendor.removeGunVendor(player);
                                 }
                                 
                             }

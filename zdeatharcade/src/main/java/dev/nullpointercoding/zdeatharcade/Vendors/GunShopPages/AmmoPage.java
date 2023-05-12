@@ -31,6 +31,7 @@ public class AmmoPage implements Listener {
     private Double shellPrice = 65.0;
     private final Inventory inv;
     private final Component title = Component.text("Ammo Page", NamedTextColor.GOLD, TextDecoration.ITALIC);
+    private final Component star = Component.text('★',NamedTextColor.YELLOW, TextDecoration.BOLD);
     private HashMap<Ammo, Double> ammos = new HashMap<Ammo, Double>();
 
     public AmmoPage() {
@@ -91,10 +92,10 @@ public class AmmoPage implements Listener {
     private ItemStack createAmmoItem(Ammo ammo, Double price) {
         ItemStack gunItem = ammo.getItemStack();
         ItemMeta meta = gunItem.getItemMeta();
-        meta.displayName(Component.text("       " + ammo.getDisplayName()));
+        meta.displayName(star.append(Component.text(" " + ammo.getDisplayName() + " ").append(star)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Price: ", NamedTextColor.GREEN, TextDecoration.ITALIC)
-                .append(Component.text(price + " for 1", NamedTextColor.WHITE, TextDecoration.ITALIC)));
+                .append(Component.text("$" + price + " for 50", NamedTextColor.WHITE, TextDecoration.ITALIC)));
         meta.lore(lore);
         gunItem.setItemMeta(meta);
         ammos.put(ammo, price);

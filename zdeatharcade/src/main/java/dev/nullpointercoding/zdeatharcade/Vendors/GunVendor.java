@@ -48,7 +48,9 @@ public class GunVendor implements Listener{
     private static Villager gunVendor;
     ZombieDrops zDrops = new ZombieDrops();
     private Component title = Component.text("     Gun Shop", NamedTextColor.DARK_GREEN,TextDecoration.ITALIC);
-    private static final Component name = Component.text("Gun Shop", NamedTextColor.GREEN, TextDecoration.ITALIC);
+    private static final Component name = Component.text().content("Gun Vendor").color(NamedTextColor.DARK_GREEN).decoration(TextDecoration.ITALIC, true).build();
+    private static final Component gunVendorSyb = Component.text().content("\u263B").color(NamedTextColor.DARK_GREEN).decoration(TextDecoration.ITALIC, true).build();
+    private static final Component fullName = gunVendorSyb.append(name).append(gunVendorSyb);
 
     public GunVendor() {
         inv = Bukkit.createInventory(null, 27, title);
@@ -62,7 +64,7 @@ public class GunVendor implements Listener{
             if (entity.customName() == null) {
                 return;
             }
-            if (entity.customName().equals(name)) {
+            if (entity.customName().equals(fullName)) {
                 openInventory(e.getPlayer());
             }
         }
@@ -128,20 +130,23 @@ public class GunVendor implements Listener{
         gunVendor.setCollidable(false);
         gunVendor.setSilent(true);
         gunVendor.setAI(false);
-        gunVendor.customName(name);
+        gunVendor.customName(gunVendorSyb.append(name).append(gunVendorSyb));
         gunVendor.setCustomNameVisible(true);
         new NPCConfigManager("gunvendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
         return gunVendor;
     }
 
-    public static void removeGunVendor() {
+    public static void removeGunVendor(Player p) {
         for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
             if(f.getName().equalsIgnoreCase("gunvendor.yml")){
                 f.delete();
-                gunVendor.remove();
             }
-
+        }
+        for(LivingEntity le : p.getWorld().getLivingEntities()){
+            if(le.customName().equals(fullName)){
+                le.remove();
+            }
         }
     }
 
@@ -152,7 +157,7 @@ public class GunVendor implements Listener{
     private ItemStack gunPage() {
         ItemStack rpg = QualityArmory.getGunByName("rpg").getItemStack();
         ItemMeta meta = rpg.getItemMeta();
-        meta.displayName(Component.text("Gun Page", NamedTextColor.RED, TextDecoration.ITALIC));
+        meta.displayName(gunVendorSyb.append(Component.text(" Gun Page", NamedTextColor.RED, TextDecoration.ITALIC)));
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
@@ -167,7 +172,7 @@ public class GunVendor implements Listener{
         ItemMeta meta = ammo.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Ammo", NamedTextColor.GOLD, TextDecoration.ITALIC));
+        meta.displayName(gunVendorSyb.append(Component.text(" Ammo", NamedTextColor.GOLD, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to open Ammo Page", NamedTextColor.GRAY,TextDecoration.ITALIC));
         meta.lore(lore);
@@ -180,7 +185,7 @@ public class GunVendor implements Listener{
         ItemMeta meta = grenade.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Equipment", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(gunVendorSyb.append(Component.text(" Equipment", NamedTextColor.GREEN, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to open Equipment Page", NamedTextColor.GRAY,TextDecoration.ITALIC));
         meta.lore(lore);
@@ -191,7 +196,7 @@ public class GunVendor implements Listener{
     private ItemStack vendorHead() {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        meta.displayName(name);
+        meta.displayName(gunVendorSyb.append(name).append(gunVendorSyb));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sells Guns", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);

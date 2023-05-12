@@ -46,7 +46,9 @@ public class MinerVendor implements Listener{
     private static Villager minerVendor;
     ZombieDrops zDrops = new ZombieDrops();
     private Component title = Component.text("     Miner Shop", NamedTextColor.DARK_GREEN,TextDecoration.ITALIC);
-    private static final Component name = Component.text("Miner", NamedTextColor.GREEN, TextDecoration.ITALIC);
+    private static final Component minerSyb = Component.text('⛏',NamedTextColor.GREEN,TextDecoration.BOLD);
+    private static final Component name = Component.text(" Miner ", NamedTextColor.GREEN, TextDecoration.ITALIC).toBuilder().build();
+    private static final Component fullName = minerSyb.append(name).append(minerSyb);
 
     public MinerVendor() {
         inv = Bukkit.createInventory(null, 27, title);
@@ -60,7 +62,7 @@ public class MinerVendor implements Listener{
             if (entity.customName() == null) {
                 return;
             }
-            if (entity.customName().equals(name)) {
+            if (entity.customName().equals(fullName)) {
                 openInventory(e.getPlayer());
             }
         }
@@ -129,20 +131,23 @@ public class MinerVendor implements Listener{
         minerVendor.setCollidable(false);
         minerVendor.setSilent(true);
         minerVendor.setAI(false);
-        minerVendor.customName(name);
+        minerVendor.customName(minerSyb.append(name).append(minerSyb));
         minerVendor.setCustomNameVisible(true);
         new NPCConfigManager("minervendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
         return minerVendor;
     }
 
-    public static void removeMinerVendor(){
+    public static void removeMinerVendor(Player p){
         for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
             if(f.getName().equalsIgnoreCase("minervendor.yml")){
                 f.delete();
-                minerVendor.remove();
             }
-
+        }
+        for(LivingEntity le : p.getWorld().getLivingEntities()){
+            if(le.customName().equals(fullName)){
+                le.remove();
+            }
         }
     }
 
@@ -153,7 +158,7 @@ public class MinerVendor implements Listener{
     private ItemStack sellCoalOre() {
         ItemStack coalOre = new ItemStack(Material.COAL_ORE);
         ItemMeta meta = coalOre.getItemMeta();
-        meta.displayName(Component.text("Coal Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(minerSyb.append(Component.text(" Coal Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)));
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
@@ -170,7 +175,7 @@ public class MinerVendor implements Listener{
         ItemMeta meta = ironOre.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Iron Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(minerSyb.append(Component.text("Iron Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(minerSyb));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -185,7 +190,7 @@ public class MinerVendor implements Listener{
         ItemMeta meta = redstoneOre.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(minerSyb.append(Component.text("Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(minerSyb));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -200,7 +205,7 @@ public class MinerVendor implements Listener{
         ItemMeta meta = emeraldOre.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Emeramld Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(minerSyb.append(Component.text("Emeramld Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -213,7 +218,7 @@ public class MinerVendor implements Listener{
     private ItemStack vendorHead() {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        meta.displayName(name);
+        meta.displayName(minerSyb.append(name).append(minerSyb));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Buys Ores", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);

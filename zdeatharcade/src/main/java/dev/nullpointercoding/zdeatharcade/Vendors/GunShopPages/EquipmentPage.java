@@ -33,6 +33,7 @@ public class EquipmentPage implements Listener{
     private Double molotovPrice = 60.0;
     private Double proxMinePrice = 60.0;
     private Double inciGPrice = 60.0;
+    private final Component star = Component.text('★',NamedTextColor.YELLOW, TextDecoration.BOLD);
     private final Inventory inv;
     private final Component title = Component.text("Equipment Page", NamedTextColor.GOLD, TextDecoration.ITALIC);
     private HashMap<CustomBaseObject, Double> equipment = new HashMap<CustomBaseObject, Double>();
@@ -94,17 +95,17 @@ public class EquipmentPage implements Listener{
         }
     }
 
-    private ItemStack createMiscItem(Grenade cbo, Double price) {
-        ItemStack gunItem = QualityArmory.getCustomItemAsItemStack(cbo);
-        ItemMeta meta = gunItem.getItemMeta();
-        meta.displayName(Component.text("       " + cbo.getDisplayName()));
+    private ItemStack createMiscItem(CustomBaseObject cbo, Double price) {
+        ItemStack cboItem = QualityArmory.getCustomItemAsItemStack(cbo);
+        ItemMeta meta = cboItem.getItemMeta();
+        meta.displayName(star.append(Component.text(" " + cbo.getDisplayName() + " ").append(star)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Price: ", NamedTextColor.GREEN, TextDecoration.ITALIC)
-                .append(Component.text(price + " for 50", NamedTextColor.WHITE, TextDecoration.ITALIC)));
+                .append(Component.text("$" + price + " for 1", NamedTextColor.WHITE, TextDecoration.ITALIC)));
         meta.lore(lore);
-        gunItem.setItemMeta(meta);
+        cboItem.setItemMeta(meta);
         equipment.put(cbo, price);
-        return gunItem;
+        return cboItem;
 
     }
 }

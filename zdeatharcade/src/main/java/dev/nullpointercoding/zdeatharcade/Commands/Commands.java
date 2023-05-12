@@ -118,10 +118,8 @@ public class Commands implements CommandExecutor {
                         if (args[2].equalsIgnoreCase("remove")) {
                             for (File f : plugin.getNPCDataFolder().listFiles()) {
                                 if (f.getName().equalsIgnoreCase("gunsmith.yml")) {
-                                    RangeGunSmith.getGunSmithNPC().remove();
-                                    f.delete();
                                     p.sendMessage("The Gunsmith has been removed.");
-                                    RangeGunSmith.getGunSmithNPC().remove();
+                                    RangeGunSmith.removeGunSmithNPC(p);
                                 }
                             }
                         }

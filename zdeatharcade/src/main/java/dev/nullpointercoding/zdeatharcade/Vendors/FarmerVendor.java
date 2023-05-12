@@ -44,7 +44,9 @@ public class FarmerVendor implements Listener {
     private Double grassBlockPrice = 0.20;
     private Double seedsPrice = 0.40;
     private static Villager farmerVendor;
-    private static final Component name = Component.text("Farmer", NamedTextColor.AQUA, TextDecoration.ITALIC);
+    private static final Component name = Component.text(" Farmer ", NamedTextColor.AQUA, TextDecoration.ITALIC).toBuilder().build();
+    private static final Component farmerSyb = Component.text('☼', NamedTextColor.DARK_GREEN, TextDecoration.BOLD);
+    private static final Component fullName = farmerSyb.append(name).append(farmerSyb);
     private final Component title = Component.text("       Farmer Shop", NamedTextColor.DARK_AQUA,
             TextDecoration.ITALIC);
     private ZombieDrops zDrops = new ZombieDrops();
@@ -61,7 +63,7 @@ public class FarmerVendor implements Listener {
             if (entity.customName() == null) {
                 return;
             }
-            if (entity.customName().equals(name)) {
+            if (entity.customName().equals(fullName)) {
                 openInventory(e.getPlayer());
             }
         }
@@ -140,18 +142,23 @@ public class FarmerVendor implements Listener {
         farmerVendor.setCollidable(false);
         farmerVendor.setSilent(true);
         farmerVendor.setAI(false);
-        farmerVendor.customName(name);
+        farmerVendor.customName(farmerSyb.append(name).append(farmerSyb));
         farmerVendor.setCustomNameVisible(true);
         new NPCConfigManager("farmervendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
         return farmerVendor;
     }
 
-    public static void removeFarmerVendor() {
+    public static void removeFarmerVendor(Player p) {
         for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
             if (f.getName().equalsIgnoreCase("farmervendor.yml")) {
                 f.delete();
-                farmerVendor.remove();
+
+            }
+        }
+        for(LivingEntity le : p.getWorld().getLivingEntities()){
+            if(le.customName().equals(fullName)){
+                le.remove();
             }
         }
     }
@@ -163,7 +170,7 @@ public class FarmerVendor implements Listener {
     private ItemStack sellHayBlock() {
         ItemStack hayBlock = new ItemStack(Material.HAY_BLOCK);
         ItemMeta meta = hayBlock.getItemMeta();
-        meta.displayName(Component.text("Hay Block", NamedTextColor.AQUA, TextDecoration.ITALIC));
+        meta.displayName(farmerSyb.append(Component.text(" Hay Block", NamedTextColor.AQUA, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -176,7 +183,7 @@ public class FarmerVendor implements Listener {
     private ItemStack sellWheat() {
         ItemStack wheat = new ItemStack(Material.WHEAT);
         ItemMeta meta = wheat.getItemMeta();
-        meta.displayName(Component.text("Wheat", NamedTextColor.AQUA, TextDecoration.ITALIC));
+        meta.displayName(farmerSyb.append(Component.text(" Wheat", NamedTextColor.AQUA, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -189,7 +196,7 @@ public class FarmerVendor implements Listener {
     private ItemStack sellGrassBlock() {
         ItemStack grassBlock = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta meta = grassBlock.getItemMeta();
-        meta.displayName(Component.text("Grass Block", NamedTextColor.AQUA, TextDecoration.ITALIC));
+        meta.displayName(farmerSyb.append(Component.text(" Grass Block", NamedTextColor.AQUA, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -202,7 +209,7 @@ public class FarmerVendor implements Listener {
     private ItemStack sellSeeds() {
         ItemStack seeds = new ItemStack(Material.WHEAT_SEEDS);
         ItemMeta meta = seeds.getItemMeta();
-        meta.displayName(Component.text("Wheat Seeds", NamedTextColor.AQUA, TextDecoration.ITALIC));
+        meta.displayName(farmerSyb.append(Component.text("Wheat Seeds", NamedTextColor.AQUA, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -215,7 +222,7 @@ public class FarmerVendor implements Listener {
     private ItemStack vendorHead() {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        meta.displayName(Component.text("Farmer Vendor", NamedTextColor.AQUA, TextDecoration.ITALIC));
+        meta.displayName(farmerSyb.append(name).append(farmerSyb));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Buys Grass and Stuff", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);

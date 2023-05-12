@@ -30,10 +30,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 public class RangeGunSmith implements Listener {
 
+    private static Main plugin = Main.getInstance();
     private Inventory gunsmithInv;
     private Component shopTitle = Component.text("Gunsmith Freebies",NamedTextColor.RED,TextDecoration.BOLD);
     private static Villager gunsmithNPC;
-    private static final Component name = Component.text("Gunsmith",NamedTextColor.RED,TextDecoration.ITALIC);
+    private static final Component name = Component.text(" Gunsmith ",NamedTextColor.RED,TextDecoration.ITALIC).toBuilder().build();
+    private static final Component gunSmithSyb = Component.text('⚒',NamedTextColor.RED,TextDecoration.BOLD);
+    private static final Component fullName = gunSmithSyb.append(name).append(gunSmithSyb);
     private Gun fn_GUN;
     private Gun aa12_GUN;
     private Gun mp40_GUN;
@@ -69,7 +72,7 @@ public class RangeGunSmith implements Listener {
             e.setCancelled(true);
             LivingEntity entity = (LivingEntity) e.getRightClicked();
             if(entity.customName() == null){return;}
-            if(entity.customName().equals(name)){
+            if(entity.customName().equals(fullName)){
                 e.getPlayer().openInventory(gunsmithInv);
             }
         }
@@ -125,7 +128,7 @@ public class RangeGunSmith implements Listener {
         gunsmithNPC.setProfession(Profession.ARMORER);
         gunsmithNPC.setPersistent(true);
         gunsmithNPC.setAI(false);
-        gunsmithNPC.customName(name);
+        gunsmithNPC.customName(gunSmithSyb.append(name).append(gunSmithSyb));
         gunsmithNPC.setCustomNameVisible(true);
         new NPCConfigManager("gunsmith",p.getWorld(),npcID,spawnLoc.getX(),spawnLoc.getY(),spawnLoc.getZ());
         return gunsmithNPC;
@@ -133,6 +136,20 @@ public class RangeGunSmith implements Listener {
 
     public static Villager getGunSmithNPC(){
         return gunsmithNPC;
+    }
+
+    public static void removeGunSmithNPC(Player p){
+        for(File f : plugin.getNPCDataFolder().listFiles()){
+            if(f.getName().equalsIgnoreCase("gunsmith.yml")){
+                f.delete();
+            }
+
+        }
+        for(LivingEntity le : p.getWorld().getLivingEntities()){
+            if(le.customName().equals(fullName)){
+
+            }
+        }
     }
 
 

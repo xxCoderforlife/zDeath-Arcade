@@ -49,8 +49,11 @@ public class BlackMarketVendor implements Listener {
     ZombieDrops zDrops = new ZombieDrops();
     private final Component title = Component.text("     Black Market", NamedTextColor.DARK_PURPLE,
             TextDecoration.ITALIC);
-    private static final Component name = Component.text("Black Market Dealer", NamedTextColor.LIGHT_PURPLE,
-            TextDecoration.ITALIC);
+    private final static Component key = Component.text('♛',NamedTextColor.YELLOW,TextDecoration.BOLD);
+
+    private static final Component name = Component.text(" Black Market Dealer ", NamedTextColor.LIGHT_PURPLE,
+            TextDecoration.ITALIC).toBuilder().build();
+    private final static Component fullName = key.append(name).append(key);
 
     public BlackMarketVendor() {
         inv = Bukkit.createInventory(null, 27, title);
@@ -64,7 +67,7 @@ public class BlackMarketVendor implements Listener {
             if (entity.customName() == null) {
                 return;
             }
-            if (entity.customName().equals(name)) {
+            if (entity.customName().equals(fullName)) {
                 openInventory(e.getPlayer());
             }
         }
@@ -133,18 +136,23 @@ public class BlackMarketVendor implements Listener {
         blackMarketVendor.setCollidable(false);
         blackMarketVendor.setSilent(true);
         blackMarketVendor.setAI(false);
-        blackMarketVendor.customName(name);
+        blackMarketVendor.customName(key.append(name).append(key));
         blackMarketVendor.setCustomNameVisible(true);
         new NPCConfigManager("blackmarketvendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
         return blackMarketVendor;
     }
 
-    public static void removeblackMarketVendor() {
+    public static void removeblackMarketVendor(Player p) {
         for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
             if (f.getName().equalsIgnoreCase("blackmarketvendor.yml")) {
                 f.delete();
                 blackMarketVendor.remove();
+            }
+        }
+        for(LivingEntity le : p.getWorld().getLivingEntities()){
+            if(le.customName().equals(fullName)){
+                le.remove();
             }
         }
     }
@@ -156,7 +164,7 @@ public class BlackMarketVendor implements Listener {
     private ItemStack buyGUI() {
         ItemStack buyHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) buyHead.getItemMeta();
-        meta.displayName(Component.text("Buy Items", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(key.append(Component.text("Buy Items", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(key));
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
@@ -174,7 +182,7 @@ public class BlackMarketVendor implements Listener {
         SkullMeta meta = (SkullMeta) sellHead.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Sell Items", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(key.append(Component.text("Sell Items", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(key));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell Exctoic Items", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
         meta.lore(lore);
@@ -190,7 +198,7 @@ public class BlackMarketVendor implements Listener {
         ItemMeta meta = beacon.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(Component.text("Daily Deal", NamedTextColor.GREEN, TextDecoration.ITALIC));
+        meta.displayName(key.append(Component.text("Daily Deal", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(key));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to see the Daily Deal", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
@@ -212,7 +220,7 @@ public class BlackMarketVendor implements Listener {
     private ItemStack vendorHead() {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        meta.displayName(name);
+        meta.displayName(key.append(name).append(key));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Buy and Sell Excotic Items", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
