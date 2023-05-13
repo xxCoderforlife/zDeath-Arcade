@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -23,6 +24,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import com.destroystokyo.paper.profile.PlayerProfile;
 
 import dev.nullpointercoding.zdeatharcade.Main;
@@ -48,6 +51,7 @@ public class BlackMarketVendor implements Listener {
     private static final Component name = Component.text(" Black Market Dealer ", NamedTextColor.LIGHT_PURPLE,
             TextDecoration.ITALIC).toBuilder().build();
     private final static Component fullName = key.append(name).append(key);
+    private static Location particleLoc;
 
     public BlackMarketVendor() {
         inv = Bukkit.createInventory(null, 27, fullName);
@@ -122,15 +126,8 @@ public class BlackMarketVendor implements Listener {
                 return blackMarketVendor;
             }
         }
-        int radius = 2;
         Location spawnLoc = player.getLocation().add(1, 0.0, 0);
         blackMarketVendor = (Villager) player.getWorld().spawnEntity(spawnLoc, EntityType.VILLAGER);
-        for (double y = 0; y <= 50; y += 0.05) {
-            double x = radius * Math.cos(y);
-            double z = radius * Math.sin(y);
-            double newY = y;
-        }
-        
         blackMarketVendor.setVillagerType(Type.JUNGLE);
         blackMarketVendor.setProfession(Profession.WEAPONSMITH);
         blackMarketVendor.setPersistent(true);
@@ -141,6 +138,19 @@ public class BlackMarketVendor implements Listener {
         blackMarketVendor.setCustomNameVisible(true);
         new NPCConfigManager("blackmarketvendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
+        double radius = 2;
+        for (double t = 0; t <= 2*Math.PI*radius; t += 0.05) {
+        double x = (radius * Math.cos(t)) + spawnLoc.getX();
+        double z = (spawnLoc.getZ() + radius * Math.sin(t));
+        particleLoc = new Location(player.getWorld(), x - 1 , spawnLoc.getY() + 2, z);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                blackMarketVendor.getWorld().spawnParticle(Particle.TOTEM, particleLoc, 1);
+            }
+
+        }.runTaskTimer(Main.getInstance(), 10, 20);
+    }
         return blackMarketVendor;
     }
 
