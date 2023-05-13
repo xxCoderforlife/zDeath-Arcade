@@ -47,13 +47,12 @@ public class GunVendor implements Listener{
     private Double emerabldPrice = 2.0;
     private static Villager gunVendor;
     ZombieDrops zDrops = new ZombieDrops();
-    private Component title = Component.text("     Gun Shop", NamedTextColor.DARK_GREEN,TextDecoration.ITALIC);
-    private static final Component name = Component.text().content("Gun Vendor").color(NamedTextColor.DARK_GREEN).decoration(TextDecoration.ITALIC, true).build();
-    private static final Component gunVendorSyb = Component.text().content("\u263B").color(NamedTextColor.DARK_GREEN).decoration(TextDecoration.ITALIC, true).build();
+    private static final Component name = Component.text(" Gun Shop ",NamedTextColor.BLUE,TextDecoration.ITALIC);
+    private static final Component gunVendorSyb = Component.text('☤',NamedTextColor.BLUE,TextDecoration.BOLD);
     private static final Component fullName = gunVendorSyb.append(name).append(gunVendorSyb);
 
     public GunVendor() {
-        inv = Bukkit.createInventory(null, 27, title);
+        inv = Bukkit.createInventory(null, 27, fullName);
     }
 
     @EventHandler
@@ -72,7 +71,7 @@ public class GunVendor implements Listener{
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getView().title().equals(title)) {
+        if (e.getView().title().equals(fullName)) {
             e.setCancelled(true);
             if (e.getCurrentItem() == null) {
                 return;
@@ -144,8 +143,11 @@ public class GunVendor implements Listener{
             }
         }
         for(LivingEntity le : p.getWorld().getLivingEntities()){
-            if(le.customName().equals(fullName)){
-                le.remove();
+            Component name = le.customName();
+            if(name != null){
+                if(name.equals(fullName)){
+                    le.remove();
+                }
             }
         }
     }

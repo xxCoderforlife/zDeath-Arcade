@@ -32,7 +32,6 @@ public class RangeGunSmith implements Listener {
 
     private static Main plugin = Main.getInstance();
     private Inventory gunsmithInv;
-    private Component shopTitle = Component.text("Gunsmith Freebies",NamedTextColor.RED,TextDecoration.BOLD);
     private static Villager gunsmithNPC;
     private static final Component name = Component.text(" Gunsmith ",NamedTextColor.RED,TextDecoration.ITALIC).toBuilder().build();
     private static final Component gunSmithSyb = Component.text('⚒',NamedTextColor.RED,TextDecoration.BOLD);
@@ -49,7 +48,7 @@ public class RangeGunSmith implements Listener {
         mp40_GUN = QualityArmory.getGunByName("mp40");
         pkp_GUN = QualityArmory.getGunByName("pkp");
         vz_GUN = QualityArmory.getGunByName("vz58");
-        gunsmithInv = Bukkit.createInventory(null, 9, shopTitle);
+        gunsmithInv = Bukkit.createInventory(null, 9, fullName);
         gunsmithInventory();
     }
 
@@ -82,7 +81,7 @@ public class RangeGunSmith implements Listener {
     public void playerOpenInventory(InventoryOpenEvent ev) {
         Player p = (Player) ev.getPlayer();
         InventoryView view = ev.getView();
-        if (view.title().equals(shopTitle)) {
+        if (view.title().equals(fullName)) {
             p.playSound(p, Sound.ITEM_ARMOR_EQUIP_LEATHER, 2.0f, 12.0f);
 
         }
@@ -91,11 +90,9 @@ public class RangeGunSmith implements Listener {
     @EventHandler
     public void gunSmithInvClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (e.getView().title().equals(shopTitle)) {
+        if (e.getView().title().equals(fullName)) {
             e.setCancelled(true);
-            if (e.getCurrentItem() == null) {
-                return;
-            }
+            if(e.getCurrentItem() != null){
             if (QualityArmory.isGun(e.getCurrentItem())) {
                 Gun gun = QualityArmory.getGun(e.getCurrentItem());
                 for (ItemStack g : p.getInventory().getContents()) {
@@ -109,6 +106,7 @@ public class RangeGunSmith implements Listener {
                 p.getInventory().addItem(gun.getItemStack());
                 p.playSound(p, Sound.ITEM_ARMOR_EQUIP_TURTLE, (float) 1, (float) 0.80);
                 p.closeInventory();
+            }
             }
         }
 
@@ -146,8 +144,11 @@ public class RangeGunSmith implements Listener {
 
         }
         for(LivingEntity le : p.getWorld().getLivingEntities()){
-            if(le.customName().equals(fullName)){
-
+            Component name = le.customName();
+            if(name != null){
+                if(name.equals(fullName)){
+                    le.remove();
+                }
             }
         }
     }

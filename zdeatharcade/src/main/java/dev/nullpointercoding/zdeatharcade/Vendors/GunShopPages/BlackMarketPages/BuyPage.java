@@ -78,17 +78,17 @@ public class BuyPage implements Listener {
     public void openInventory(Player player) {
         player.sendTitlePart(TitlePart.TITLE, Component.text("Loading Black Market....", NamedTextColor.LIGHT_PURPLE));
         player.sendTitlePart(TitlePart.SUBTITLE, Component.text("Please wait", NamedTextColor.DARK_PURPLE));
-        player.sendTitlePart(TitlePart.TIMES, Title.Times.times(Duration.ofSeconds(2), Duration.ofSeconds(2), Duration.ofSeconds(1)));
+        player.sendTitlePart(TitlePart.TIMES, Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)));
         new BukkitRunnable(){
 
             @Override
             public void run() {
                     customGuns = new ArrayList<ItemStack>();
-                    customGuns.add(createGunItem(gunV, gunV.getPrice()));
-                    guns.put(gunV, gunV.getPrice());
+                    customGuns.add(createGunItem(gunV, gunConfig.getDouble("price")));
+                    guns.put(gunV, gunConfig.getDouble("price"));
                 new Pages(player,customGuns, title);
             }
-        }.runTaskLater(plugin, 20 * 5);
+        }.runTaskLater(plugin, 20 * 4);
             
     }
 
@@ -112,8 +112,8 @@ public class BuyPage implements Listener {
                         whoClicked.sendMessage(
                                 Component.text("You have bought a " + gun.getDisplayName() + " for " + guns.get(gun) + "tokens"));
                     } else {
-                        whoClicked.sendMessage(Component.text("You do not have enough money to buy this gun",
-                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(Component.text("You need $")));
+                        whoClicked.sendMessage(Component.text("You do not have enough Tokens to buy this gun",
+                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(Component.text("Buy Tokens at the Black Market Dealer",NamedTextColor.GRAY)));
                     }
                 }
             }

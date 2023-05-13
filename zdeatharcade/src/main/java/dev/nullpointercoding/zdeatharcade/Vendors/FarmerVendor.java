@@ -47,12 +47,10 @@ public class FarmerVendor implements Listener {
     private static final Component name = Component.text(" Farmer ", NamedTextColor.AQUA, TextDecoration.ITALIC).toBuilder().build();
     private static final Component farmerSyb = Component.text('☼', NamedTextColor.DARK_GREEN, TextDecoration.BOLD);
     private static final Component fullName = farmerSyb.append(name).append(farmerSyb);
-    private final Component title = Component.text("       Farmer Shop", NamedTextColor.DARK_AQUA,
-            TextDecoration.ITALIC);
     private ZombieDrops zDrops = new ZombieDrops();
 
     public FarmerVendor() {
-        inv = Bukkit.createInventory(null, 27, title);
+        inv = Bukkit.createInventory(null, 27, fullName);
     }
 
     @EventHandler
@@ -71,7 +69,7 @@ public class FarmerVendor implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getView().title().equals(title)) {
+        if (e.getView().title().equals(fullName)) {
             e.setCancelled(true);
             if (e.getCurrentItem() == null) {
                 return;
@@ -157,8 +155,11 @@ public class FarmerVendor implements Listener {
             }
         }
         for(LivingEntity le : p.getWorld().getLivingEntities()){
-            if(le.customName().equals(fullName)){
-                le.remove();
+            Component name = le.customName();
+            if(name != null){
+                if(name.equals(fullName)){
+                    le.remove();
+                }
             }
         }
     }
@@ -209,7 +210,7 @@ public class FarmerVendor implements Listener {
     private ItemStack sellSeeds() {
         ItemStack seeds = new ItemStack(Material.WHEAT_SEEDS);
         ItemMeta meta = seeds.getItemMeta();
-        meta.displayName(farmerSyb.append(Component.text("Wheat Seeds", NamedTextColor.AQUA, TextDecoration.ITALIC)));
+        meta.displayName(farmerSyb.append(Component.text(" Wheat Seeds", NamedTextColor.AQUA, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))

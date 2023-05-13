@@ -43,6 +43,7 @@ public class Main extends JavaPlugin {
     private File bankDataFolder = new File(getDataFolder() + File.separator + "Bank Data");
     private File customGuns = new File(getDataFolder() + File.separator + "Custom Guns");
     private File customZombieDrops = new File(getDataFolder() + File.separator + "Custom Zombie Drops");
+    private File dailyDealFolder = new File(getDataFolder() + File.separator + "Daily Deals");
 
     @Override
     public void onEnable() {
@@ -163,6 +164,10 @@ public class Main extends JavaPlugin {
             customZombieDrops.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aCustomZombieDrops folder has been created!");
         }
+        if(!dailyDealFolder.exists()){
+            dailyDealFolder.mkdirs();
+            Bukkit.getConsoleSender().sendMessage("§aDailyDeal folder has been created!");
+        }
 
         if (!rangeConfigFolder.exists()) {
             rangeConfigFolder.mkdirs();
@@ -213,6 +218,9 @@ public class Main extends JavaPlugin {
     }
     public File getCustomZombieDropsFolder(){
         return customZombieDrops;
+    }
+    public File getDailyDealFolder(){
+        return dailyDealFolder;
     }
 
     public static Economy getEconomy() {
