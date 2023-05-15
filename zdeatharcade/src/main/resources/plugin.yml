@@ -36,6 +36,11 @@ commands:
     description: Vendor Command For zDeath-Arcade
     usage: /vendor
     aliases: [ v ]
+  token:
+    permission: 
+    description: Token Command For zDeath-Arcade
+    usage: /token
+    aliases: [ t ]
 permissions:
   zdeatharcade.admin:
     description: Allows access to all zDeath-Arcade commands

@@ -48,7 +48,7 @@ public class GunVendor implements Listener{
     private static Villager gunVendor;
     ZombieDrops zDrops = new ZombieDrops();
     private static final Component name = Component.text(" Gun Shop ",NamedTextColor.BLUE,TextDecoration.ITALIC);
-    private static final Component gunVendorSyb = Component.text('☤',NamedTextColor.BLUE,TextDecoration.BOLD);
+    private static final Component gunVendorSyb = Component.text('☤',NamedTextColor.DARK_BLUE,TextDecoration.BOLD);
     private static final Component fullName = gunVendorSyb.append(name).append(gunVendorSyb);
 
     public GunVendor() {

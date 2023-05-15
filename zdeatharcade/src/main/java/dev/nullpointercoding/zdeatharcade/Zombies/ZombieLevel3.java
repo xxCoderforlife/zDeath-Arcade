@@ -14,13 +14,16 @@ public class ZombieLevel3 {
     private final Component name = Component.text("Zombie").color(TextColor.color(10, 214, 68)).appendSpace()
             .append(level);
 
-    public LivingEntity convertToLevel3Zombie(final Zombie z) {
+    public final LivingEntity convertToLevel3Zombie(final Zombie z) {
         Zombie z3 = (Zombie) z;
         z3.customName(name);
         z3.setAge(1);
         z3.getEquipment().clear();
+        z3.setSilent(true);
+        z3.setCanPickupItems(false);
         z3.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(18.0);
         z3.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.28);
+        z3.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(0.5);
         z3.setCustomNameVisible(true);
         z3.setShouldBurnInDay(false);
         return z;

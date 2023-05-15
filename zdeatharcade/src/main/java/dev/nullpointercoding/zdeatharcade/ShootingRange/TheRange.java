@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -137,12 +139,13 @@ public class TheRange implements Listener {
                  double x = (radius * Math.cos(t)) + blockLoc.getX();
                  double z = (blockLoc.getZ() + radius * Math.sin(t));
                  Location particleLoc = new Location(blockLoc.getWorld(), x, blockLoc.getY() + 1, z);
-                 Particle particle = Particle.FLAME;
-                 blockLoc.getWorld().spawnParticle(particle, particleLoc, 1);
-                 p.getWorld().playSound(p, Sound.BLOCK_ANVIL_HIT, (float) 1.0, (float) 0.0);
+                 Particle particle = Particle.REDSTONE;
+                 DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 1);
+                 blockLoc.getWorld().spawnParticle(particle, particleLoc,50,dustOptions);
+                 p.getWorld().playSound(p, Sound.BLOCK_ANVIL_HIT, (float) 1.0, (float) 1.0);
                }
             blockLoc.getBlock().setType(Material.AIR);
-            p.sendMessage("§aYou hit a target!");
+            p.sendActionBar(Component.text("§a§lHIT!"));
             new BukkitRunnable(){
                 @Override
                 public void run() {

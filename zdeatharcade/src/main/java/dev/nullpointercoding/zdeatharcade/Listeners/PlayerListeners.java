@@ -33,6 +33,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
+import dev.nullpointercoding.zdeatharcade.Utils.ParticleEffects;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -48,6 +49,7 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
+        ParticleEffects.startEffects();
         Player p = e.getPlayer();
         SavePlayerInventoryToFile SPI = new SavePlayerInventoryToFile(p.getUniqueId().toString());
         if (SPI.getPlayersThatQuitConfig() == null)
@@ -167,7 +169,8 @@ public class PlayerListeners implements Listener {
             }
         }
     }
-    private void setLastLoginPlayer(Player player){
+
+    private void setLastLoginPlayer(Player player) {
         PlayerConfigManager pcm = new PlayerConfigManager(player.getUniqueId().toString());
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -206,12 +209,8 @@ public class PlayerListeners implements Listener {
         return head;
     }
 
-
-    private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); // We reuse the
-                                                                                                     // same "random"
-                                                                                                     // UUID all the
-                                                                                                     // time
-
+    // Get a player profile with a skin from a URL
+    private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); 
     private static PlayerProfile getProfile(String url) {
         PlayerProfile profile = (PlayerProfile) Bukkit.createProfile(RANDOM_UUID); // Get a new player profile
         PlayerTextures textures = profile.getTextures();

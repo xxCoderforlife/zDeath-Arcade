@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import net.milkbowl.vault.economy.Economy;
 
 public class EcoCommands implements CommandExecutor {
@@ -63,6 +64,61 @@ public class EcoCommands implements CommandExecutor {
                     econ.depositPlayer(target, amount);
                     sender.sendMessage("§aSet " + target.getName() + "'s balance to " + amount + "!");
                     return true;
+                }
+            }
+        }
+        if(cmd.getName().equalsIgnoreCase("token")){
+            if(sender instanceof Player){
+                Player player = (Player) sender;
+                if(args.length == 0){
+                    player.sendMessage("§cUsage: /token <add|remove|set> <player> <amount>");
+                    return true;
+                }
+                if(args.length == 1){
+                    player.sendMessage("§cUsage: /token <add|remove|set> <player> <amount>");
+                    return true;
+                }
+                if(args.length == 2){
+                    player.sendMessage("§cUsage: /token <add|remove|set> <player> <amount>");
+                    return true;
+                }
+                if(args.length == 3){
+                    if(args[0].equalsIgnoreCase("add")){
+                        Player target = plugin.getServer().getPlayer(args[1]);
+                        if(target == null){
+                            player.sendMessage("§cPlayer not found!");
+                            return true;
+                        }
+                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
+                        int amount = Integer.parseInt(args[2]);
+                        pcm.setTokens((double) amount + pcm.getTokens());
+                        player.sendMessage("§aAdded " + amount + " to " + target.getName() + "'s tokens!");
+                        return true;
+                    }
+                    if(args[0].equalsIgnoreCase("remove")){
+                        Player target = plugin.getServer().getPlayer(args[1]);
+                        if(target == null){
+                            player.sendMessage("§cPlayer not found!");
+                            return true;
+                        }
+                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
+                        int amount = Integer.parseInt(args[2]);
+                        pcm.setTokens(pcm.getTokens() - (double) amount);
+                        player.sendMessage("§aRemoved " + amount + " from " + target.getName() + "'s tokens!");
+                        return true;
+                    }
+                    if(args[0].equalsIgnoreCase("set")){
+                        Player target = plugin.getServer().getPlayer(args[1]);
+                        if(target == null){
+                            player.sendMessage("§cPlayer not found!");
+                            return true;
+                        }
+                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
+                        int amount = Integer.parseInt(args[2]);
+                        pcm.setTokens((double) amount);
+                        player.sendMessage("§aSet " + target.getName() + "'s tokens to " + amount + "!");
+                        return true;
+                    }
                 }
             }
         }

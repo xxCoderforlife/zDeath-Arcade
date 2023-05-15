@@ -38,6 +38,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
+import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
 import net.milkbowl.vault.economy.Economy;
 
 public class ZombieHandler implements Listener {
@@ -70,53 +71,41 @@ public class ZombieHandler implements Listener {
             return;
         }
         Zombie z = (Zombie) e.getEntity();
-        if (z.getKiller() instanceof Player) {
-            Player p = (Player) z.getKiller();
-            PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
-            e.getDrops().clear();
-            if (z.name().equals(zl1.name())) {
-                pcm.addBalance(0.6d);
-                pcm.setKills(p);
-                p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
-                for (ItemStack s : zDrops.getLevel1Drops()) {
-                    zombieDropsLvl1.put(s, randoInt(1, 100));
-                    zombieDropsLvl1.put(new ItemStack(Material.AIR), randoInt(1, 100));
-                }
-                List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl1.values());
-                for (ItemStack is : zombieDropsLvl1.keySet()) {
-                    if (zombieDropsLvl1.get(is) == Collections.max(nums)) {
-                        e.getDrops().add(is);
-                        zombieDropsLvl1.clear();
-                        return;
-                    }
+        e.getDrops().clear();
+        if (z.name().equals(zl1.name())) {
+            for (ItemStack s : zDrops.getLevel1Drops()) {
+                zombieDropsLvl1.put(s, randoInt(1, 100));
+                zombieDropsLvl1.put(new ItemStack(Material.AIR), randoInt(1, 100));
+            }
+            List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl1.values());
+            for (ItemStack is : zombieDropsLvl1.keySet()) {
+                if (zombieDropsLvl1.get(is) == Collections.max(nums)) {
+                    e.getDrops().add(is);
+                    zombieDropsLvl1.clear();
+                    return;
                 }
             }
-            if (z.name().equals(zl2.name())) {
-                econ.depositPlayer(p, 1.0d);
-                pcm.setKills(p);
-                p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
-                for (ItemStack s : zDrops.getLevel2Drops()) {
-                    zombieDropsLvl2.put(s, randoInt(1, 100));
-                    zombieDropsLvl2.put(new ItemStack(Material.AIR), randoInt(1, 100));
-                }
-                List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl2.values());
-                for (ItemStack is : zombieDropsLvl2.keySet()) {
-                    if (zombieDropsLvl2.get(is) == Collections.max(nums)) {
-                        e.getDrops().add(is);
-                        zombieDropsLvl2.clear();
-                        return;
-                    }
+        }
+        if (z.name().equals(zl2.name())) {
+            for (ItemStack s : zDrops.getLevel2Drops()) {
+                zombieDropsLvl2.put(s, randoInt(1, 100));
+                zombieDropsLvl2.put(new ItemStack(Material.AIR), randoInt(1, 100));
+            }
+            List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl2.values());
+            for (ItemStack is : zombieDropsLvl2.keySet()) {
+                if (zombieDropsLvl2.get(is) == Collections.max(nums)) {
+                    e.getDrops().add(is);
+                    zombieDropsLvl2.clear();
+                    return;
                 }
             }
-            if(z.name().equals(zl3.name())){
-                econ.depositPlayer(p, 1.8d);
-                pcm.setKills(p);
-                p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
-                for (ItemStack s : zDrops.getCustomItems()) {
-                    zombieDropsLvl3.put(s, randoInt(1, 100));
-                    zombieDropsLvl3.put(new ItemStack(Material.AIR), randoInt(1, 100));
-                    Integer ran = randoInt(1, 100000);
-                    if(ran == 3){
+        }
+        if (z.name().equals(zl3.name())) {
+            for (ItemStack s : zDrops.getCustomItems()) {
+                zombieDropsLvl3.put(s, randoInt(1, 100));
+                zombieDropsLvl3.put(new ItemStack(Material.AIR), randoInt(1, 100));
+                Integer ran = randoInt(1, 100000);
+                if (ran == 3) {
                     List<Integer> nums = new ArrayList<Integer>(zombieDropsLvl3.values());
                     for (ItemStack is : zombieDropsLvl3.keySet()) {
                         if (zombieDropsLvl3.get(is) == Collections.max(nums)) {
@@ -125,17 +114,44 @@ public class ZombieHandler implements Listener {
                             return;
                         }
                     }
-                    
 
-                    }else{
-                        e.getDrops().add(new ItemStack(Material.AIR));
-                        zombieDropsLvl3.clear();
-                        return;
-                    }
+                } else {
+                    e.getDrops().add(new ItemStack(Material.AIR));
+                    zombieDropsLvl3.clear();
+                    return;
                 }
-                
             }
+
         }
+    }
+
+    @EventHandler
+    public void onZombieKill(QAWeaponDamageEntityEvent e) {
+        Player p = (Player) e.getPlayer();
+        if (!(e.getDamaged() instanceof Zombie)) {
+            return;
+        }
+        Zombie z = (Zombie) e.getDamaged();
+        PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
+        if (z.name().equals(zl1.name())) {
+            pcm.addBalance(0.2d);
+            pcm.setKills(p);
+            p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
+            return;
+        }
+        if (z.name().equals(zl2.name())) {
+            pcm.addBalance(0.4d);
+            pcm.setKills(p);
+            p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
+            return;
+        }
+        if (z.name().equals(zl3.name())) {
+            pcm.addBalance(0.6d);
+            pcm.setKills(p);
+            p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
+            return;
+        }
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -143,7 +159,10 @@ public class ZombieHandler implements Listener {
         LivingEntity c = e.getEntity();
         if (c.getType() == EntityType.ZOMBIE) {
             Zombie z = (Zombie) c;
-            if(!(z.getChunk().isLoaded())){e.setCancelled(true); return;}
+            if (!(z.getChunk().isLoaded())) {
+                e.setCancelled(true);
+                return;
+            }
             if (ZSLM.listFiles().length == 0) {
                 Bukkit.getConsoleSender().sendMessage(
                         "No zombie spawn locations found! Please create some in the ZombieSpawnLocations folder!");
@@ -184,9 +203,9 @@ public class ZombieHandler implements Listener {
                         zombieSpawnLocations.clear();
                         return;
                     }
-                    if(spawnChance.nextInt(100) > 30){
+                    if (spawnChance.nextInt(100) > 30) {
                         zl3.convertToLevel3Zombie(z);
-                        new BukkitRunnable(){
+                        new BukkitRunnable() {
 
                             @Override
                             public void run() {
@@ -246,16 +265,17 @@ public class ZombieHandler implements Listener {
             }
         }
     }
+
     @EventHandler
-    public void onDropSpawnUtil(ItemSpawnEvent e){
+    public void onDropSpawnUtil(ItemSpawnEvent e) {
         Item i = e.getEntity();
         ItemStack is = i.getItemStack();
-        
-        if(e.getEntity().getItemStack().getType() == Material.ROTTEN_FLESH){
+
+        if (e.getEntity().getItemStack().getType() == Material.ROTTEN_FLESH) {
             e.setCancelled(true);
         }
-        for(ItemStack s : zDrops.getAllZombieDrops()){
-            if(s.getType() == is.getType()){
+        for (ItemStack s : zDrops.getAllZombieDrops()) {
+            if (s.getType() == is.getType()) {
                 i.customName(s.getItemMeta().displayName());
                 i.setCustomNameVisible(true);
             }

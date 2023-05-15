@@ -1,4 +1,4 @@
-package dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages;
+package dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketPages;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,12 +14,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.Pages;
+import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -73,6 +76,10 @@ public class SellPage implements Listener {
                 .deserialize(dropItemConfig.getString("displayname"));
         if (clicked.getItemMeta().displayName().equals(comName)) {
             checkForItems((Player) e.getWhoClicked(), clicked, dropItemConfig.getDouble("worth"));
+        }
+        if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+            e.getWhoClicked().closeInventory(Reason.PLUGIN);
+            new BlackMarketVendor().openInventory((Player) e.getWhoClicked());
         }
     }
 

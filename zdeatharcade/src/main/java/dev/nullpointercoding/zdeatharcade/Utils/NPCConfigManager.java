@@ -2,9 +2,11 @@ package dev.nullpointercoding.zdeatharcade.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -36,6 +38,7 @@ public class NPCConfigManager {
     }
     public NPCConfigManager(String configName){
         this.configName = configName;
+        configHandler();
     }
     
     public String getConfigName(){
@@ -52,6 +55,17 @@ public class NPCConfigManager {
             plugin.saveResource(configName, false);
         }
     }
+
+    public static List<String> getNPCs(){
+        List<String> npcList = new ArrayList<>();
+        for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
+            if(f.getName().endsWith(".yml")){
+                String name = f.getName().replace(".yml", "");
+                npcList.add(name);
+            }
+        }
+        return npcList;
+    } 
 
     private void configHandler(){
         configFile = new File(plugin.getNPCDataFolder() + File.separator + configName + ".yml");
@@ -70,12 +84,15 @@ public class NPCConfigManager {
         }catch(IOException  | InvalidConfigurationException e){
             e.printStackTrace();
         }
+        if(!config.contains("NPC.World")){
         config.set("NPC.Name", configName);
-        config.set("NPC.world", npcWorld.getName());
+        config.set("NPC.World", npcWorld.getName());
         config.set("NPC.id", npcID);
         config.set("NPC.xLoc", npcxLoc);
         config.set("NPC.yLoc", npcyLoc);
         config.set("NPC.zLoc", npczLoc);
+        config.set("NPC.Effect", "FLAME");
+        }
         saveConfig();
     }
 
@@ -96,7 +113,7 @@ public class NPCConfigManager {
     }
 
     public void setNPCWorld(World world){
-        config.set("NPC.world", world.getName());
+        config.set("NPC.World", world.getName());
         saveConfig();
     }
     public void setNPCID(Integer npcID){
@@ -115,16 +132,12 @@ public class NPCConfigManager {
         config.set("NPC.zLoc", zLoc);
         saveConfig();
     }
-    public void setNPCyaw(Float yaw){
-        config.set("NPC.yaw", yaw);
-        saveConfig();
-    }
-    public void setNPCpitch(Float pitch){
-        config.set("NPC.pitch", pitch);
-        saveConfig();
+    public Particle getNPCEffect(){
+        Particle effect = Particle.valueOf(config.getString("NPC.Effect").toUpperCase());
+        return effect;
     }
     public World getWorld(){
-        World npcWorld = Bukkit.getWorld(config.getString("NPC.world"));
+        World npcWorld = Bukkit.getWorld(config.getString("NPC.World"));
         return npcWorld;
     }
     public Integer getNPCID(){

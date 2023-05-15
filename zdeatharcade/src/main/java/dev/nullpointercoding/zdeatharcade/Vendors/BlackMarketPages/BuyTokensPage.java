@@ -1,4 +1,4 @@
-package dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages;
+package dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketPages;
 
 import java.util.ArrayList;
 import java.util.List;

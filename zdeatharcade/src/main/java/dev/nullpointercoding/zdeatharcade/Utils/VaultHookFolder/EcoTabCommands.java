@@ -17,32 +17,34 @@ public class EcoTabCommands implements TabCompleter {
             @NotNull String arg2, @NotNull String[] args) {
 
         List<String> tab = new ArrayList<String>();
-        if (args.length == 0) {
+        if (cmd.getName().equalsIgnoreCase("economy") || cmd.getName().equalsIgnoreCase("token")) {
+            if (args.length == 0) {
 
-        }
-        if (args.length == 1) {
-            tab.add("add");
-            tab.add("remove");
-            tab.add("set");
-        }
-        if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("take")
-                    || args[0].equalsIgnoreCase("set")) {
-                for(Player p : Bukkit.getOnlinePlayers()){
-                    tab.add(p.getName());
+            }
+            if (args.length == 1) {
+                tab.add("add");
+                tab.add("remove");
+                tab.add("set");
+            }
+            if (args.length == 2) {
+                if (args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("take")
+                        || args[0].equalsIgnoreCase("set")) {
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        tab.add(p.getName());
+                    }
                 }
-            }
-            if (args[0].equalsIgnoreCase("bank")) {
-                tab.add("create");
-                tab.add("delete");
-                tab.add("info");
-            }
+                if (args[0].equalsIgnoreCase("bank")) {
+                    tab.add("create");
+                    tab.add("delete");
+                    tab.add("info");
+                }
 
-        }
-        if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("bank")) {
-                if (args[1].equalsIgnoreCase("delete")) {
-                    tab.add("Still need to add the bank file system.");
+            }
+            if (args.length == 3) {
+                if (args[0].equalsIgnoreCase("bank")) {
+                    if (args[1].equalsIgnoreCase("delete")) {
+                        tab.add("Still need to add the bank file system.");
+                    }
                 }
             }
         }

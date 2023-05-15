@@ -45,7 +45,7 @@ public class FarmerVendor implements Listener {
     private Double seedsPrice = 0.40;
     private static Villager farmerVendor;
     private static final Component name = Component.text(" Farmer ", NamedTextColor.AQUA, TextDecoration.ITALIC).toBuilder().build();
-    private static final Component farmerSyb = Component.text('☼', NamedTextColor.DARK_GREEN, TextDecoration.BOLD);
+    private static final Component farmerSyb = Component.text('☼', NamedTextColor.DARK_AQUA, TextDecoration.BOLD);
     private static final Component fullName = farmerSyb.append(name).append(farmerSyb);
     private ZombieDrops zDrops = new ZombieDrops();
 

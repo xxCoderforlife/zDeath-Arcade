@@ -15,6 +15,7 @@ import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountCommands;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
+import dev.nullpointercoding.zdeatharcade.Utils.ParticleEffects;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoTabCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -101,6 +102,8 @@ public class Main extends JavaPlugin {
         getCommand("zombie").setExecutor(new ZombieCommands());
         getCommand("vendor").setExecutor(new VendorCommands());
         getCommand("vendor").setTabCompleter(new VendorTabCommands());
+        getCommand("token").setExecutor(new EcoCommands());
+        getCommand("token").setTabCompleter(new EcoTabCommands());
         getServer().getPluginManager().registerEvents(new ZombieHandler(), this);
         getServer().getPluginManager().registerEvents(new TheRange(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);

@@ -1,4 +1,4 @@
-package dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages;
+package dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketPages;
 
 import java.io.File;
 import java.time.Duration;
@@ -15,13 +15,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.Pages;
+import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.api.QualityArmory;
 import me.zombie_striker.qg.guns.Gun;
@@ -117,6 +120,11 @@ public class BuyPage implements Listener {
                     }
                 }
             }
+        }
+        if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+            Player whoClicked = (Player) e.getWhoClicked();
+            whoClicked.closeInventory(Reason.PLUGIN);
+            new BlackMarketVendor().openInventory(whoClicked);
         }
     }
 

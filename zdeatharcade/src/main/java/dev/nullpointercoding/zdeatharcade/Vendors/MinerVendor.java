@@ -45,7 +45,7 @@ public class MinerVendor implements Listener{
     private Double emerabldPrice = 2.0;
     private static Villager minerVendor;
     ZombieDrops zDrops = new ZombieDrops();
-    private static final Component minerSyb = Component.text('⛏',NamedTextColor.GREEN,TextDecoration.BOLD);
+    private static final Component minerSyb = Component.text('⛏',NamedTextColor.DARK_GREEN,TextDecoration.BOLD);
     private static final Component name = Component.text(" Miner ", NamedTextColor.GREEN, TextDecoration.ITALIC).toBuilder().build();
     private static final Component fullName = minerSyb.append(name).append(minerSyb);
 

@@ -15,13 +15,16 @@ public class ZombieLevel2 {
     private final Component name = Component.text("Zombie").color(TextColor.color(10, 214, 68)).appendSpace()
             .append(level);
 
-    public LivingEntity convertToLevel1Zombie(final Zombie z) {
+    public final LivingEntity convertToLevel1Zombie(final Zombie z) {
         Zombie z2 = (Zombie) z;
         z2.customName(name);
         z2.setAge(1);
+        z2.setSilent(true);
+        z2.setCanPickupItems(false);
         z2.getEquipment().clear();
         z2.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(12.0);
         z2.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.22);
+        z2.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(0.3);
         z2.setCustomNameVisible(true);
         z2.setShouldBurnInDay(false);
         return z;

@@ -1,4 +1,4 @@
-package dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.BlackMarketPages;
+package dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketPages;
 
 import java.io.File;
 import java.time.Duration;
@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,6 +24,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
+import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
 import me.zombie_striker.customitemmanager.CustomBaseObject;
 import me.zombie_striker.qg.api.QualityArmory;
 import net.kyori.adventure.text.Component;
@@ -82,7 +85,9 @@ public class DailyDealPage implements Listener {
 
             @Override
             public void run() {
+                dailyDealInv.setItem(8, CustomInvFunctions.getBackButton());
                 dailyDealInv.setItem(4, createDailyDealItem());
+                player.stopAllSounds();
                 player.openInventory(dailyDealInv);
             }
         }.runTaskLater(plugin, 20 * 4);
@@ -93,6 +98,7 @@ public class DailyDealPage implements Listener {
         if (e.getView().title().equals(title)) {
             e.setCancelled(true);
             Player whoClicked = (Player) e.getWhoClicked();
+            ItemStack clicked = e.getCurrentItem();
             if (e.getCurrentItem() != null) {
                 if (QualityArmory.isCustomItem(e.getCurrentItem())) {
                     PlayerConfigManager pcm = new PlayerConfigManager(whoClicked.getUniqueId().toString());
@@ -107,6 +113,10 @@ public class DailyDealPage implements Listener {
                             whoClicked.sendMessage("You do not have enough tokens to buy this item!");
                         }
                     }
+                }
+                if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+                    whoClicked.closeInventory(Reason.PLUGIN);
+                    new BlackMarketVendor().openInventory(whoClicked);
                 }
             }
         }

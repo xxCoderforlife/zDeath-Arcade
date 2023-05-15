@@ -34,7 +34,7 @@ public class RangeGunSmith implements Listener {
     private Inventory gunsmithInv;
     private static Villager gunsmithNPC;
     private static final Component name = Component.text(" Gunsmith ",NamedTextColor.RED,TextDecoration.ITALIC).toBuilder().build();
-    private static final Component gunSmithSyb = Component.text('⚒',NamedTextColor.RED,TextDecoration.BOLD);
+    private static final Component gunSmithSyb = Component.text('⚒',NamedTextColor.DARK_RED,TextDecoration.BOLD);
     private static final Component fullName = gunSmithSyb.append(name).append(gunSmithSyb);
     private Gun fn_GUN;
     private Gun aa12_GUN;
