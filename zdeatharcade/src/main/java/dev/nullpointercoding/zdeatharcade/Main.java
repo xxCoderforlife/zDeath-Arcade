@@ -8,14 +8,12 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
 import dev.nullpointercoding.zdeatharcade.Commands.Commands;
 import dev.nullpointercoding.zdeatharcade.Commands.TabCommands;
 import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountCommands;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
-import dev.nullpointercoding.zdeatharcade.Utils.ParticleEffects;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoTabCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -23,8 +21,10 @@ import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
 import dev.nullpointercoding.zdeatharcade.Vendors.FarmerVendor;
 import dev.nullpointercoding.zdeatharcade.Vendors.GunVendor;
 import dev.nullpointercoding.zdeatharcade.Vendors.MinerVendor;
+import dev.nullpointercoding.zdeatharcade.Vendors.SnackVendor;
 import dev.nullpointercoding.zdeatharcade.Vendors.VendorCommands;
 import dev.nullpointercoding.zdeatharcade.Vendors.VendorTabCommands;
+import dev.nullpointercoding.zdeatharcade.Vendors.Snacks.SnackEatEvent;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieHandler;
 import net.milkbowl.vault.economy.Economy;
@@ -87,9 +87,9 @@ public class Main extends JavaPlugin {
         return spawmChance;
     }
 
-
     private void registerEcon() {
-        Bukkit.getServer().getServicesManager().register(Economy.class, new VaultHook(), plugin, ServicePriority.Highest);
+        Bukkit.getServer().getServicesManager().register(Economy.class, new VaultHook(), plugin,
+                ServicePriority.Highest);
     }
 
     private void RegisterCommandsandEvents() {
@@ -112,8 +112,9 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MinerVendor(), this);
         getServer().getPluginManager().registerEvents(new GunVendor(), this);
         getServer().getPluginManager().registerEvents(new BlackMarketVendor(), this);
+        getServer().getPluginManager().registerEvents(new SnackVendor(), this);
+        getServer().getPluginManager().registerEvents(new SnackEatEvent(), this);
     }
-
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -151,23 +152,23 @@ public class Main extends JavaPlugin {
             PlayerDataFolder.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aPlayerData folder has been created!");
         }
-        if(!bankDataFolder.exists()){
+        if (!bankDataFolder.exists()) {
             bankDataFolder.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aBankData folder has been created!");
         }
-        if(!customGuns.exists()){
+        if (!customGuns.exists()) {
             customGuns.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aCustomGuns folder has been created!");
         }
-        if(!customZombieDrops.exists()){
+        if (!customZombieDrops.exists()) {
             customZombieDrops.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aCustomZombieDrops folder has been created!");
         }
-        if(!customZombieDrops.exists()){
+        if (!customZombieDrops.exists()) {
             customZombieDrops.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aCustomZombieDrops folder has been created!");
         }
-        if(!dailyDealFolder.exists()){
+        if (!dailyDealFolder.exists()) {
             dailyDealFolder.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aDailyDeal folder has been created!");
         }
@@ -213,16 +214,20 @@ public class Main extends JavaPlugin {
     public File getPlayerDataFolder() {
         return PlayerDataFolder;
     }
-    public File getBankDataFolder(){
+
+    public File getBankDataFolder() {
         return bankDataFolder;
     }
-    public File getCustomGunsFolder(){
+
+    public File getCustomGunsFolder() {
         return customGuns;
     }
-    public File getCustomZombieDropsFolder(){
+
+    public File getCustomZombieDropsFolder() {
         return customZombieDrops;
     }
-    public File getDailyDealFolder(){
+
+    public File getDailyDealFolder() {
         return dailyDealFolder;
     }
 

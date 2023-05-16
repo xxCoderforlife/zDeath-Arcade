@@ -45,7 +45,7 @@ public class GunPage implements Listener {
     private Double umpPrice = 6000.0;
     private Double p30Price = 10000.0;
     private Double fnfalPrice = 12000.0;
-    private final Component star = Component.text('★',NamedTextColor.YELLOW, TextDecoration.BOLD);
+    private final Component star = Component.text('★', NamedTextColor.YELLOW, TextDecoration.BOLD);
     private HashMap<Gun, Double> guns = new HashMap<Gun, Double>();
 
     public GunPage() {
@@ -99,7 +99,8 @@ public class GunPage implements Listener {
                     if (Main.getEconomy().getBalance(whoClicked) >= guns.get(gun)) {
                         Main.getEconomy().withdrawPlayer(whoClicked, guns.get(gun));
                         whoClicked.getInventory().addItem(gun.getItemStack());
-                        whoClicked.sendMessage(Component.text("You have bought a " + gun.getDisplayName() + " for $" + guns.get(gun)));
+                        whoClicked.sendMessage(
+                                Component.text("You have bought a " + gun.getDisplayName() + " for $" + guns.get(gun)));
                     } else {
                         whoClicked.sendMessage(Component.text("You do not have enough money to buy this gun",
                                 NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(Component.text("You need $")));

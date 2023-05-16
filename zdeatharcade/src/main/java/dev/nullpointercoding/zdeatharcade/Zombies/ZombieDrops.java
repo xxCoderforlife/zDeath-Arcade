@@ -23,7 +23,7 @@ public class ZombieDrops {
     private File dropItemFile;
     private YamlConfiguration dropItemConfig;
 
-    public ZombieDrops(){
+    public ZombieDrops() {
         for (File f : plugin.getCustomZombieDropsFolder().listFiles()) {
             if (f.getName().endsWith(".yml")) {
                 dropItemFile = f;
@@ -173,8 +173,10 @@ public class ZombieDrops {
         item.setItemMeta(meta);
         return item;
     }
-    public ItemStack[]getCustomItems() {
-        ItemStack[] customItems = { createDropFromFile(dropItemConfig.getString("material"), dropItemConfig.getString("displayname"), dropItemConfig.getDouble("worth")) };
+
+    public ItemStack[] getCustomItems() {
+        ItemStack[] customItems = { createDropFromFile(dropItemConfig.getString("material"),
+                dropItemConfig.getString("displayname"), dropItemConfig.getDouble("worth")) };
         return customItems;
     }
 }

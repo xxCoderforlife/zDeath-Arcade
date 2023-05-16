@@ -24,14 +24,14 @@ public class ParticleEffects {
         for (double t = 0; t <= 2 * Math.PI * radius; t += 0.05) {
             double x = (radius * Math.cos(t)) + spawnLoc.getX();
             double z = (spawnLoc.getZ() + radius * Math.sin(t));
-            Location particleLoc = new Location(npcConfig.getWorld(), x - 0.8d , spawnLoc.getY() - 1.0d, z - 0.6d);
+            Location particleLoc = new Location(npcConfig.getWorld(), x - 0.8d, spawnLoc.getY() - 1.0d, z - 0.6d);
             bmparticleTask = new BukkitRunnable() {
                 @Override
                 public void run() {
                     double red = 174 / 255D;
                     double green = 33 / 255D;
                     double blue = 218 / 255D;
-                    npcConfig.getWorld().spawnParticle(Particle.SPELL_MOB, particleLoc,0,red,green,blue, 1);
+                    npcConfig.getWorld().spawnParticle(Particle.SPELL_MOB, particleLoc, 0, red, green, blue, 1);
                 }
 
             }.runTaskTimer(Main.getInstance(), 10, 10);

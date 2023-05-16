@@ -31,7 +31,7 @@ public class AmmoPage implements Listener {
     private Double shellPrice = 65.0;
     private final Inventory inv;
     private final Component title = Component.text("Ammo Page", NamedTextColor.GOLD, TextDecoration.ITALIC);
-    private final Component star = Component.text('★',NamedTextColor.YELLOW, TextDecoration.BOLD);
+    private final Component star = Component.text('★', NamedTextColor.YELLOW, TextDecoration.BOLD);
     private HashMap<Ammo, Double> ammos = new HashMap<Ammo, Double>();
 
     public AmmoPage() {
@@ -77,7 +77,10 @@ public class AmmoPage implements Listener {
                                 + ammos.get(ammo), NamedTextColor.GREEN, TextDecoration.ITALIC));
                     } else {
                         whoClicked.sendMessage(Component.text("You do not have enough money to buy this ammo!",
-                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(Component.text("You need $",NamedTextColor.RED, TextDecoration.ITALIC).append(Component.text(ammos.get(ammo),NamedTextColor.RED, TextDecoration.ITALIC))));
+                                NamedTextColor.RED, TextDecoration.ITALIC)
+                                .hoverEvent(Component.text("You need $", NamedTextColor.RED, TextDecoration.ITALIC)
+                                        .append(Component.text(ammos.get(ammo), NamedTextColor.RED,
+                                                TextDecoration.ITALIC))));
                     }
                 }
             }

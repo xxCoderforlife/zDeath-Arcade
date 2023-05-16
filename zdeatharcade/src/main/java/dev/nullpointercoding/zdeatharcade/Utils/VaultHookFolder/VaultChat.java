@@ -1,14 +1,13 @@
 package dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder;
 
-
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 
-public class VaultChat extends Chat{
+public class VaultChat extends Chat {
 
     public VaultChat(Permission perms) {
         super(perms);
-        //TODO Auto-generated constructor stub
+        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -165,5 +164,5 @@ public class VaultChat extends Chat{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setPlayerSuffix'");
     }
-    
+
 }

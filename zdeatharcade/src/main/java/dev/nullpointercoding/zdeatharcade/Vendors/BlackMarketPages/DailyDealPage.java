@@ -79,9 +79,10 @@ public class DailyDealPage implements Listener {
         player.closeInventory();
         player.sendTitlePart(TitlePart.TITLE, Component.text("Loading Daily Deal...", NamedTextColor.LIGHT_PURPLE));
         player.sendTitlePart(TitlePart.SUBTITLE, Component.text("Please wait", NamedTextColor.DARK_PURPLE));
-        player.sendTitlePart(TitlePart.TIMES, Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)));
+        player.sendTitlePart(TitlePart.TIMES,
+                Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)));
         player.sendActionBar(Component.text("This might take a while....", NamedTextColor.LIGHT_PURPLE));
-        new BukkitRunnable(){
+        new BukkitRunnable() {
 
             @Override
             public void run() {
@@ -114,7 +115,8 @@ public class DailyDealPage implements Listener {
                         }
                     }
                 }
-                if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+                if (clicked.getItemMeta().displayName()
+                        .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
                     whoClicked.closeInventory(Reason.PLUGIN);
                     new BlackMarketVendor().openInventory(whoClicked);
                 }

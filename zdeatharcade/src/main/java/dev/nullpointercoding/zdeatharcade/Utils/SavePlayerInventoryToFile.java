@@ -66,29 +66,29 @@ public class SavePlayerInventoryToFile {
         }
     }
 
-    public void playersThatQuit(){
+    public void playersThatQuit() {
         playersThatQuit = new File(plugin.getPlayerInventoryDataFolder() + File.separator + "playersThatQuit.yml");
-        if(!playersThatQuit.exists()){
+        if (!playersThatQuit.exists()) {
             playersThatQuit.getParentFile().mkdirs();
-            try{
+            try {
                 playersThatQuit.createNewFile();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         playersThatQuitConfig = new YamlConfiguration();
-        try{
+        try {
             playersThatQuitConfig.load(playersThatQuit);
-        }catch(IOException | InvalidConfigurationException e){
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
 
-    public YamlConfiguration getPlayersThatQuitConfig(){
+    public YamlConfiguration getPlayersThatQuitConfig() {
         return (YamlConfiguration) playersThatQuitConfig;
     }
 
-    public File getPlayersThatQuit(){
+    public File getPlayersThatQuit() {
         return playersThatQuit;
     }
 

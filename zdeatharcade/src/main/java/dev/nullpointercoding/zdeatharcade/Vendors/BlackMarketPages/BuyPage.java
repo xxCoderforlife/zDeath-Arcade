@@ -48,7 +48,6 @@ public class BuyPage implements Listener {
     private HashMap<Gun, Double> guns = new HashMap<Gun, Double>();
     private Gun gunV;
 
-
     public BuyPage() {
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
                 .anyMatch(handler -> handler.getListener() instanceof BuyPage);
@@ -81,18 +80,19 @@ public class BuyPage implements Listener {
     public void openInventory(Player player) {
         player.sendTitlePart(TitlePart.TITLE, Component.text("Loading Black Market....", NamedTextColor.LIGHT_PURPLE));
         player.sendTitlePart(TitlePart.SUBTITLE, Component.text("Please wait", NamedTextColor.DARK_PURPLE));
-        player.sendTitlePart(TitlePart.TIMES, Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)));
-        new BukkitRunnable(){
+        player.sendTitlePart(TitlePart.TIMES,
+                Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)));
+        new BukkitRunnable() {
 
             @Override
             public void run() {
-                    customGuns = new ArrayList<ItemStack>();
-                    customGuns.add(createGunItem(gunV, gunConfig.getDouble("price")));
-                    guns.put(gunV, gunConfig.getDouble("price"));
-                new Pages(player,customGuns, title);
+                customGuns = new ArrayList<ItemStack>();
+                customGuns.add(createGunItem(gunV, gunConfig.getDouble("price")));
+                guns.put(gunV, gunConfig.getDouble("price"));
+                new Pages(player, customGuns, title);
             }
         }.runTaskLater(plugin, 20 * 4);
-            
+
     }
 
     @EventHandler
@@ -113,21 +113,23 @@ public class BuyPage implements Listener {
                         pcm.setTokens(pcm.getTokens() - guns.get(gun));
                         whoClicked.getInventory().addItem(gun.getItemStack());
                         whoClicked.sendMessage(
-                                Component.text("You have bought a " + gun.getDisplayName() + " for " + guns.get(gun) + "tokens"));
+                                Component.text("You have bought a " + gun.getDisplayName() + " for " + guns.get(gun)
+                                        + "tokens"));
                     } else {
                         whoClicked.sendMessage(Component.text("You do not have enough Tokens to buy this gun",
-                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(Component.text("Buy Tokens at the Black Market Dealer",NamedTextColor.GRAY)));
+                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(
+                                        Component.text("Buy Tokens at the Black Market Dealer", NamedTextColor.GRAY)));
                     }
                 }
             }
         }
-        if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+        if (clicked.getItemMeta().displayName()
+                .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
             Player whoClicked = (Player) e.getWhoClicked();
             whoClicked.closeInventory(Reason.PLUGIN);
             new BlackMarketVendor().openInventory(whoClicked);
         }
     }
-
 
     private Gun convertCustomGuntoQAGun() {
         QualityArmory.createAndLoadNewGun(gunConfig.getString("name"), gunConfig.getString("displayname"),

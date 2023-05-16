@@ -9,7 +9,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class ZombieLevel3 {
-        private final Component level = Component.text("LVL 3", TextColor.color(255, 255, 255))
+    private final Component level = Component.text("LVL 3", TextColor.color(255, 255, 255))
             .decorate(TextDecoration.BOLD);
     private final Component name = Component.text("Zombie").color(TextColor.color(10, 214, 68)).appendSpace()
             .append(level);
@@ -23,7 +23,7 @@ public class ZombieLevel3 {
         z3.setCanPickupItems(false);
         z3.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(18.0);
         z3.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.28);
-        z3.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(0.5);
+        z3.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue((double) 0.6);
         z3.setCustomNameVisible(true);
         z3.setShouldBurnInDay(false);
         return z;

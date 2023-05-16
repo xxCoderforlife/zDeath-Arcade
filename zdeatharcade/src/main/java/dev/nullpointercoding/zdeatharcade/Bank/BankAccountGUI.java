@@ -263,7 +263,7 @@ public class BankAccountGUI implements Listener {
             whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully requested §a§l$"
                     + amountToMoveToBank + " §7from " + target.getName() + "!"));
             whoClicked.closeInventory(Reason.PLUGIN);
-                whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
         if (clicked.getItemMeta().displayName().equals(confirmBouty().getItemMeta().displayName())) {
             if (amountToMoveToBank > 0) {
@@ -396,7 +396,7 @@ public class BankAccountGUI implements Listener {
         meta.displayName(Component.text("§a§lCONFIRM DEPOSIT"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Click to confirm deposit",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to confirm deposit", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
         confirm.setItemMeta(meta);
         return confirm;
@@ -408,7 +408,7 @@ public class BankAccountGUI implements Listener {
         meta.displayName(Component.text("§a§lCONFIRM WITHDRAWAL"));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Click to confirm withdrawal",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to confirm withdrawal", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
         confirm.setItemMeta(meta);
         return confirm;
@@ -421,7 +421,8 @@ public class BankAccountGUI implements Listener {
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Click to withdraw all your money from the bank",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to withdraw all your money from the bank", NamedTextColor.GRAY,
+                TextDecoration.ITALIC));
         meta.lore(lore);
         all.setItemMeta(meta);
         return all;
@@ -434,7 +435,8 @@ public class BankAccountGUI implements Listener {
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Click to deposit all your money into the bank",NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to deposit all your money into the bank", NamedTextColor.GRAY,
+                TextDecoration.ITALIC));
         meta.lore(lore);
         all.setItemMeta(meta);
         return all;

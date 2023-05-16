@@ -17,50 +17,48 @@ public class ZombieSpawnLocationManager {
     private File configFile;
     private FileConfiguration config;
 
-
-    public ZombieSpawnLocationManager(String configName){
+    public ZombieSpawnLocationManager(String configName) {
         this.configName = configName;
         configHandler();
     }
 
-    public String getConfigName(){
+    public String getConfigName() {
         return configName;
     }
 
-    public FileConfiguration getConfig(){
+    public FileConfiguration getConfig() {
         return (YamlConfiguration) config;
     }
 
-    public File getZombieSpawnLocationFolder(){
+    public File getZombieSpawnLocationFolder() {
         return plugin.getZombieSpawnLocationFolder();
     }
 
-    public void saveConfig(){
-        try{
+    public void saveConfig() {
+        try {
             config.save(configFile);
-        }catch(IOException e){
+        } catch (IOException e) {
             plugin.saveResource(configName, false);
         }
     }
 
-
-    private void configHandler(){
+    private void configHandler() {
         configFile = new File(plugin.getZombieSpawnLocationFolder() + File.separator + configName);
-        if(!configFile.exists()){
+        if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
-            try{
+            try {
                 configFile.createNewFile();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
         config = new YamlConfiguration();
-        try{
+        try {
             config.load(configFile);
-        }catch(IOException  | InvalidConfigurationException e){
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
-    
+
 }

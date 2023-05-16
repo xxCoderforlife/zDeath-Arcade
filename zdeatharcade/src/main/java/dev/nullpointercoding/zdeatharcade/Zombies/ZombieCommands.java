@@ -67,7 +67,7 @@ public class ZombieCommands implements CommandExecutor {
                         p.sendMessage("There are now " + ZSLM.getZombieSpawnLocationFolder().listFiles().length
                                 + " zombie spawners.");
                     }
-                    if(args[0].equalsIgnoreCase("killall")){
+                    if (args[0].equalsIgnoreCase("killall")) {
                         if (!(p.hasPermission("zdeatharcade.admin"))) {
                             p.sendMessage("§cYou do not have permission to use this command.");
                             return true;

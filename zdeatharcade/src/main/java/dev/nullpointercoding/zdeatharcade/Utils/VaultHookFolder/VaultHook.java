@@ -16,16 +16,14 @@ import io.papermc.paper.annotation.DoNotUse;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-public class VaultHook implements Economy{
-
-
+public class VaultHook implements Economy {
 
     @Override
     public EconomyResponse bankBalance(String arg0) {
         BankConfigManager bankConfigManager = new BankConfigManager(arg0 + ".yml");
         YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
-        return new EconomyResponse(0,bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
-        EconomyResponse.ResponseType.SUCCESS, "Successfully retrieved " + arg0 + "'s bank account balance!");
+        return new EconomyResponse(0, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
+                EconomyResponse.ResponseType.SUCCESS, "Successfully retrieved " + arg0 + "'s bank account balance!");
     }
 
     @Override
@@ -34,8 +32,9 @@ public class VaultHook implements Economy{
         YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
         bankConfig.set(arg0 + ".Bank_Account.Balance", bankConfig.getDouble(arg0 + ".Bank_Account.Balance") + arg1);
         bankConfigManager.saveConfig();
-        return new EconomyResponse(arg1, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"), 
-        EconomyResponse.ResponseType.SUCCESS, "Successfully deposited " + arg1 + " into " + arg0 + "'s bank account!");
+        return new EconomyResponse(arg1, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
+                EconomyResponse.ResponseType.SUCCESS,
+                "Successfully deposited " + arg1 + " into " + arg0 + "'s bank account!");
     }
 
     @Override
@@ -50,8 +49,9 @@ public class VaultHook implements Economy{
         YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
         bankConfig.set(arg0 + ".Bank_Account.Balance", bankConfig.getDouble(arg0 + ".Bank_Account.Balance") - arg1);
         bankConfigManager.saveConfig();
-        return new EconomyResponse(arg1, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"), 
-        EconomyResponse.ResponseType.SUCCESS, "Successfully withdrew " + arg1 + " from " + arg0 + "'s bank account!");
+        return new EconomyResponse(arg1, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
+                EconomyResponse.ResponseType.SUCCESS,
+                "Successfully withdrew " + arg1 + " from " + arg0 + "'s bank account!");
     }
 
     @Deprecated
@@ -81,9 +81,9 @@ public class VaultHook implements Economy{
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer arg0) {
-        if(!(hasAccount(arg0))){
+        if (!(hasAccount(arg0))) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -126,7 +126,8 @@ public class VaultHook implements Economy{
     public EconomyResponse depositPlayer(OfflinePlayer arg0, double arg1) {
         PlayerConfigManager pcm = new PlayerConfigManager(arg0.getUniqueId().toString());
         pcm.addBalance(pcm.getBalance() + arg1);
-        return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS, "Successfully deposited " + arg1 + " into " + arg0.getName() + "'s account!");
+        return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS,
+                "Successfully deposited " + arg1 + " into " + arg0.getName() + "'s account!");
     }
 
     @Override
@@ -221,12 +222,12 @@ public class VaultHook implements Economy{
     @Override
     public boolean hasAccount(OfflinePlayer arg0) {
         boolean exists = false;
-        for(File f : Main.getInstance().getPlayerDataFolder().listFiles()){
-            if(f.getName().equals(arg0.getUniqueId().toString())){
+        for (File f : Main.getInstance().getPlayerDataFolder().listFiles()) {
+            if (f.getName().equals(arg0.getUniqueId().toString())) {
                 exists = true;
                 return true;
             }
-            if(!(f.getName().equalsIgnoreCase(arg0.getUniqueId().toString()))){
+            if (!(f.getName().equalsIgnoreCase(arg0.getUniqueId().toString()))) {
                 exists = false;
                 return true;
             }
@@ -279,7 +280,7 @@ public class VaultHook implements Economy{
     public boolean isEnabled() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -294,7 +295,8 @@ public class VaultHook implements Economy{
     public EconomyResponse withdrawPlayer(OfflinePlayer arg0, double arg1) {
         PlayerConfigManager pcm = new PlayerConfigManager(arg0.getUniqueId().toString());
         pcm.setBalance(pcm.getBalance() - arg1);
-        return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS, "Withdrawn successfully!");
+        return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS,
+                "Withdrawn successfully!");
     }
 
     @Override
@@ -308,12 +310,14 @@ public class VaultHook implements Economy{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withdrawPlayer'");
     }
-    public static double round(double value, int places) {
-    if (places < 0) throw new IllegalArgumentException();
 
-    BigDecimal bd = BigDecimal.valueOf(value);
-    bd = bd.setScale(places, RoundingMode.HALF_UP);
-    return bd.doubleValue();
-}
-    
+    public static double round(double value, int places) {
+        if (places < 0)
+            throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
 }

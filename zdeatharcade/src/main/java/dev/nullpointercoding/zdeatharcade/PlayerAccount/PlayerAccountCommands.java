@@ -13,7 +13,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
-
 public class PlayerAccountCommands implements CommandExecutor {
 
     @Override
@@ -26,7 +25,7 @@ public class PlayerAccountCommands implements CommandExecutor {
                     p.sendMessage("§cYou do not have permission to use this command!");
                     return true;
                 }
-                if(!(isPlayerinSpawn(p))){
+                if (!(isPlayerinSpawn(p))) {
                     p.sendMessage("§cYou must be in spawn to use this command!");
                     return true;
                 }
@@ -37,7 +36,8 @@ public class PlayerAccountCommands implements CommandExecutor {
         }
         return true;
     }
-        private boolean isPlayerinSpawn(Player p) {
+
+    private boolean isPlayerinSpawn(Player p) {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(p.getLocation()));

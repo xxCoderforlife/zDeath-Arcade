@@ -25,7 +25,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class EquipmentPage implements Listener{
+public class EquipmentPage implements Listener {
     private Main plugin = Main.getInstance();
     private Double grenadePrice = 45.0;
     private Double smokePrice = 60.0;
@@ -33,7 +33,7 @@ public class EquipmentPage implements Listener{
     private Double molotovPrice = 60.0;
     private Double proxMinePrice = 60.0;
     private Double inciGPrice = 60.0;
-    private final Component star = Component.text('★',NamedTextColor.YELLOW, TextDecoration.BOLD);
+    private final Component star = Component.text('★', NamedTextColor.YELLOW, TextDecoration.BOLD);
     private final Inventory inv;
     private final Component title = Component.text("Equipment Page", NamedTextColor.GOLD, TextDecoration.ITALIC);
     private HashMap<CustomBaseObject, Double> equipment = new HashMap<CustomBaseObject, Double>();
@@ -83,7 +83,10 @@ public class EquipmentPage implements Listener{
                                 + equipment.get(gre), NamedTextColor.GREEN, TextDecoration.ITALIC));
                     } else {
                         whoClicked.sendMessage(Component.text("You do not have enough money to buy this ammo!",
-                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(Component.text("You need $",NamedTextColor.RED, TextDecoration.ITALIC).append(Component.text(equipment.get(gre),NamedTextColor.RED, TextDecoration.ITALIC))));
+                                NamedTextColor.RED, TextDecoration.ITALIC)
+                                .hoverEvent(Component.text("You need $", NamedTextColor.RED, TextDecoration.ITALIC)
+                                        .append(Component.text(equipment.get(gre), NamedTextColor.RED,
+                                                TextDecoration.ITALIC))));
                     }
                 }
             }

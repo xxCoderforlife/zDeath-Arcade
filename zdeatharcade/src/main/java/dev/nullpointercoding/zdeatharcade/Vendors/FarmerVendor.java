@@ -44,7 +44,8 @@ public class FarmerVendor implements Listener {
     private Double grassBlockPrice = 0.20;
     private Double seedsPrice = 0.40;
     private static Villager farmerVendor;
-    private static final Component name = Component.text(" Farmer ", NamedTextColor.AQUA, TextDecoration.ITALIC).toBuilder().build();
+    private static final Component name = Component.text(" Farmer ", NamedTextColor.AQUA, TextDecoration.ITALIC)
+            .toBuilder().build();
     private static final Component farmerSyb = Component.text('☼', NamedTextColor.DARK_AQUA, TextDecoration.BOLD);
     private static final Component fullName = farmerSyb.append(name).append(farmerSyb);
     private ZombieDrops zDrops = new ZombieDrops();
@@ -100,7 +101,8 @@ public class FarmerVendor implements Listener {
         if (e.getEntity().getType() == EntityType.VILLAGER) {
             e.setCancelled(true);
             Player player = (Player) e.getDamager();
-            player.sendMessage(Component.text("Please don't punch me ",NamedTextColor.DARK_RED,TextDecoration.ITALIC).append(player.displayName()));
+            player.sendMessage(Component.text("Please don't punch me ", NamedTextColor.DARK_RED, TextDecoration.ITALIC)
+                    .append(player.displayName()));
             player.sendHurtAnimation(1.0f);
         }
     }
@@ -108,7 +110,6 @@ public class FarmerVendor implements Listener {
     public Inventory getInventory() {
         return inv;
     }
-
 
     public void openInventory(Player player) {
         addItem();
@@ -154,10 +155,10 @@ public class FarmerVendor implements Listener {
 
             }
         }
-        for(LivingEntity le : p.getWorld().getLivingEntities()){
+        for (LivingEntity le : p.getWorld().getLivingEntities()) {
             Component name = le.customName();
-            if(name != null){
-                if(name.equals(fullName)){
+            if (name != null) {
+                if (name.equals(fullName)) {
                     le.remove();
                 }
             }
@@ -256,7 +257,8 @@ public class FarmerVendor implements Listener {
             if (s == null || s.getItemMeta() == null || !s.getItemMeta().hasDisplayName()) {
                 continue;
             }
-            if (s.getItemMeta().displayName() != null && s.getItemMeta().displayName().equals(itemToCheckFor.getItemMeta().displayName())) {
+            if (s.getItemMeta().displayName() != null
+                    && s.getItemMeta().displayName().equals(itemToCheckFor.getItemMeta().displayName())) {
                 doesPlayerHaveItem = true;
                 break;
             }

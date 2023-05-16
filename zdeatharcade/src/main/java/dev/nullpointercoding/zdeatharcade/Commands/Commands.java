@@ -123,17 +123,17 @@ public class Commands implements CommandExecutor {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("set")){
+                        if (args[2].equalsIgnoreCase("set")) {
                             p.sendMessage(Component.text("Usage: /zdeatharcade range gunsmith set <Vendor ID>"));
                         }
                     }
                 }
             } else if (args.length == 4) {
-                if(args[1].equalsIgnoreCase("gunsmith")){
-                    if(args[2].equalsIgnoreCase("set")){
+                if (args[1].equalsIgnoreCase("gunsmith")) {
+                    if (args[2].equalsIgnoreCase("set")) {
                         try {
                             Integer id = Integer.parseInt(args[3]);
-                            RangeGunSmith.spawnGunsmithNPC(p,id);
+                            RangeGunSmith.spawnGunsmithNPC(p, id);
                         } catch (NumberFormatException e) {
                             p.sendMessage("§cVendor ID must be a number.");
                         }

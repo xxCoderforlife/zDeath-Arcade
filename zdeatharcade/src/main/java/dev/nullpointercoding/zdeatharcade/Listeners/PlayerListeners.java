@@ -210,7 +210,8 @@ public class PlayerListeners implements Listener {
     }
 
     // Get a player profile with a skin from a URL
-    private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); 
+    private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4");
+
     private static PlayerProfile getProfile(String url) {
         PlayerProfile profile = (PlayerProfile) Bukkit.createProfile(RANDOM_UUID); // Get a new player profile
         PlayerTextures textures = profile.getTextures();

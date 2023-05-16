@@ -39,7 +39,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class GunVendor implements Listener{
+public class GunVendor implements Listener {
     private Inventory inv;
     private Double coalOrePrice = 1.0;
     private Double ironOrePrice = 1.5;
@@ -47,8 +47,8 @@ public class GunVendor implements Listener{
     private Double emerabldPrice = 2.0;
     private static Villager gunVendor;
     ZombieDrops zDrops = new ZombieDrops();
-    private static final Component name = Component.text(" Gun Shop ",NamedTextColor.BLUE,TextDecoration.ITALIC);
-    private static final Component gunVendorSyb = Component.text('☤',NamedTextColor.DARK_BLUE,TextDecoration.BOLD);
+    private static final Component name = Component.text(" Gun Shop ", NamedTextColor.BLUE, TextDecoration.ITALIC);
+    private static final Component gunVendorSyb = Component.text('☤', NamedTextColor.DARK_BLUE, TextDecoration.BOLD);
     private static final Component fullName = gunVendorSyb.append(name).append(gunVendorSyb);
 
     public GunVendor() {
@@ -99,7 +99,6 @@ public class GunVendor implements Listener{
         return inv;
     }
 
-
     public void openInventory(Player player) {
         addItem();
         BlankSpaceFiller.fillinBlankInv(inv, List.of(0));
@@ -137,15 +136,15 @@ public class GunVendor implements Listener{
     }
 
     public static void removeGunVendor(Player p) {
-        for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
-            if(f.getName().equalsIgnoreCase("gunvendor.yml")){
+        for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
+            if (f.getName().equalsIgnoreCase("gunvendor.yml")) {
                 f.delete();
             }
         }
-        for(LivingEntity le : p.getWorld().getLivingEntities()){
+        for (LivingEntity le : p.getWorld().getLivingEntities()) {
             Component name = le.customName();
-            if(name != null){
-                if(name.equals(fullName)){
+            if (name != null) {
+                if (name.equals(fullName)) {
                     le.remove();
                 }
             }
@@ -163,7 +162,7 @@ public class GunVendor implements Listener{
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Click to open Gun Page", NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to open Gun Page", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
         rpg.setItemMeta(meta);
         return rpg;
@@ -176,7 +175,7 @@ public class GunVendor implements Listener{
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(gunVendorSyb.append(Component.text(" Ammo", NamedTextColor.GOLD, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Click to open Ammo Page", NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to open Ammo Page", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
         ammo.setItemMeta(meta);
         return ammo;
@@ -187,9 +186,10 @@ public class GunVendor implements Listener{
         ItemMeta meta = grenade.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(gunVendorSyb.append(Component.text(" Equipment", NamedTextColor.GREEN, TextDecoration.ITALIC)));
+        meta.displayName(
+                gunVendorSyb.append(Component.text(" Equipment", NamedTextColor.GREEN, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Click to open Equipment Page", NamedTextColor.GRAY,TextDecoration.ITALIC));
+        lore.add(Component.text("Click to open Equipment Page", NamedTextColor.GRAY, TextDecoration.ITALIC));
         meta.lore(lore);
         grenade.setItemMeta(meta);
         return grenade;

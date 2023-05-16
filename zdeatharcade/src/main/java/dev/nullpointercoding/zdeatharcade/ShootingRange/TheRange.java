@@ -123,49 +123,55 @@ public class TheRange implements Listener {
 
     @EventHandler
     public void onPlayerDropinRange(PlayerDropItemEvent e) {
-        if (playersInRange.containsKey(e.getPlayer())) e.setCancelled(true);
+        if (playersInRange.containsKey(e.getPlayer()))
+            e.setCancelled(true);
     }
 
     @EventHandler
-    public void onTargetHitEvent(QAWeaponDamageBlockEvent e){
+    public void onTargetHitEvent(QAWeaponDamageBlockEvent e) {
         Player p = e.getPlayer();
         Block b = e.getBlock();
-        if(!(playersInRange.containsKey(p))) return;
+        if (!(playersInRange.containsKey(p)))
+            return;
 
-        if(b.getType() == Material.TARGET){
+        if (b.getType() == Material.TARGET) {
             Location blockLoc = b.getLocation();
             double radius = 0.4;
-            for (double t = 0; t <= 2*Math.PI*radius; t += 0.05) {
-                 double x = (radius * Math.cos(t)) + blockLoc.getX();
-                 double z = (blockLoc.getZ() + radius * Math.sin(t));
-                 Location particleLoc = new Location(blockLoc.getWorld(), x, blockLoc.getY() + 1, z);
-                 Particle particle = Particle.REDSTONE;
-                 DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 1);
-                 blockLoc.getWorld().spawnParticle(particle, particleLoc,50,dustOptions);
-                 p.getWorld().playSound(p, Sound.BLOCK_ANVIL_HIT, (float) 1.0, (float) 1.0);
-               }
+            for (double t = 0; t <= 2 * Math.PI * radius; t += 0.05) {
+                double x = (radius * Math.cos(t)) + blockLoc.getX();
+                double z = (blockLoc.getZ() + radius * Math.sin(t));
+                Location particleLoc = new Location(blockLoc.getWorld(), x, blockLoc.getY() + 1, z);
+                Particle particle = Particle.REDSTONE;
+                DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 1);
+                blockLoc.getWorld().spawnParticle(particle, particleLoc, 50, dustOptions);
+                p.getWorld().playSound(p, Sound.BLOCK_ANVIL_HIT, (float) 1.0, (float) 1.0);
+            }
             blockLoc.getBlock().setType(Material.AIR);
             p.sendActionBar(Component.text("§a§lHIT!"));
-            new BukkitRunnable(){
+            new BukkitRunnable() {
                 @Override
                 public void run() {
                     blockLoc.getBlock().setType(Material.TARGET);
-                    blockLoc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY,blockLoc.add(blockLoc, 0.4, 1.2, 0.8),10);
-                    blockLoc.getWorld().playSound(blockLoc, Sound.ITEM_ARMOR_EQUIP_CHAIN, (float) 4.0,(float) 0.0);
+                    blockLoc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, blockLoc.add(blockLoc, 0.4, 1.2, 0.8),
+                            10);
+                    blockLoc.getWorld().playSound(blockLoc, Sound.ITEM_ARMOR_EQUIP_CHAIN, (float) 4.0, (float) 0.0);
                 }
-            }.runTaskLater(plugin, 20*3);
+            }.runTaskLater(plugin, 20 * 3);
         }
     }
+
     /**
-     * This method is used to check if the Block that was shot is a indeed a {@link Material#TARGET}
+     * This method is used to check if the Block that was shot is a indeed a
+     * {@link Material#TARGET}
+     * 
      * @param e
      */
 
     @EventHandler
-    public void onTargetHit(ProjectileLaunchEvent e){
+    public void onTargetHit(ProjectileLaunchEvent e) {
         if (e.getEntity().getShooter() instanceof Player) {
             Player p = (Player) e.getEntity().getShooter();
-            if (playersInRange.containsKey(p)) {                
+            if (playersInRange.containsKey(p)) {
                 RealtimeCalculationProjectile pro = (RealtimeCalculationProjectile) e.getEntity();
                 Bukkit.getConsoleSender().sendMessage("§aProjectile: " + pro.getName().toString() + p.getName());
 

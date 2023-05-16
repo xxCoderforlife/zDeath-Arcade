@@ -62,22 +62,26 @@ public class OtherPlayerAccounts implements Listener {
             meta.setOwningPlayer(p);
             skull.setItemMeta(meta);
             inv.addItem(skull);
-        playerHeads = new ArrayList<>();
-        playerHeads.add(skull);
+            playerHeads = new ArrayList<>();
+            playerHeads.add(skull);
         }
     }
 
     public void openGUI(Player p) {
         addItems();
-        new Pages(p,playerHeads,title);
+        new Pages(p, playerHeads, title);
     }
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent e) {
-        if (!(e.getView().title().equals(title))) {return;}
+        if (!(e.getView().title().equals(title))) {
+            return;
+        }
         e.setCancelled(true);
         Player p = (Player) e.getWhoClicked();
-        if(!(Pages.users.containsKey(p.getUniqueId()))){return;}
+        if (!(Pages.users.containsKey(p.getUniqueId()))) {
+            return;
+        }
         Pages inv = Pages.users.get(p.getUniqueId());
         ItemStack clicked = e.getCurrentItem();
         if (clicked == null || clicked.getItemMeta().displayName() == null) {
@@ -91,32 +95,30 @@ public class OtherPlayerAccounts implements Listener {
             p.playSound(p, Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
             playerProfile.openGUI(p);
         }
-        if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+        if (clicked.getItemMeta().displayName()
+                .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
             p.closeInventory(Reason.PLUGIN);
             PlayerAccountGUI gui = new PlayerAccountGUI(p);
             gui.openGUI(p);
             p.playSound(p, Sound.ITEM_ARMOR_EQUIP_LEATHER, 1.0f, 1.0f);
         }
-        if(clicked.getItemMeta().displayName().equals(Pages.nextPageName)){
-            if(inv.currpage >= inv.pages.size()-1){
+        if (clicked.getItemMeta().displayName().equals(Pages.nextPageName)) {
+            if (inv.currpage >= inv.pages.size() - 1) {
                 return;
-            }else{
-                //Next page exists, flip the page
+            } else {
+                // Next page exists, flip the page
                 inv.currpage += 1;
                 p.openInventory(inv.pages.get(inv.currpage));
             }
         }
-        if(clicked.getItemMeta().displayName().equals(Pages.previousPageName)){
-             if(inv.currpage > 0){
-             //Flip to previous page
-                 inv.currpage -= 1;
-                 p.openInventory(inv.pages.get(inv.currpage));
-             }
+        if (clicked.getItemMeta().displayName().equals(Pages.previousPageName)) {
+            if (inv.currpage > 0) {
+                // Flip to previous page
+                inv.currpage -= 1;
+                p.openInventory(inv.pages.get(inv.currpage));
+            }
         }
 
     }
-
-
-
 
 }

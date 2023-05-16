@@ -37,7 +37,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class MinerVendor implements Listener{
+public class MinerVendor implements Listener {
     private Inventory inv;
     private Double coalOrePrice = 1.0;
     private Double ironOrePrice = 1.5;
@@ -45,8 +45,9 @@ public class MinerVendor implements Listener{
     private Double emerabldPrice = 2.0;
     private static Villager minerVendor;
     ZombieDrops zDrops = new ZombieDrops();
-    private static final Component minerSyb = Component.text('⛏',NamedTextColor.DARK_GREEN,TextDecoration.BOLD);
-    private static final Component name = Component.text(" Miner ", NamedTextColor.GREEN, TextDecoration.ITALIC).toBuilder().build();
+    private static final Component minerSyb = Component.text('⛏', NamedTextColor.DARK_GREEN, TextDecoration.BOLD);
+    private static final Component name = Component.text(" Miner ", NamedTextColor.GREEN, TextDecoration.ITALIC)
+            .toBuilder().build();
     private static final Component fullName = minerSyb.append(name).append(minerSyb);
 
     public MinerVendor() {
@@ -99,7 +100,6 @@ public class MinerVendor implements Listener{
         return inv;
     }
 
-
     public void openInventory(Player player) {
         addItem();
         BlankSpaceFiller.fillinBlankInv(inv, List.of(0));
@@ -137,16 +137,16 @@ public class MinerVendor implements Listener{
         return minerVendor;
     }
 
-    public static void removeMinerVendor(Player p){
-        for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
-            if(f.getName().equalsIgnoreCase("minervendor.yml")){
+    public static void removeMinerVendor(Player p) {
+        for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
+            if (f.getName().equalsIgnoreCase("minervendor.yml")) {
                 f.delete();
             }
         }
-        for(LivingEntity le : p.getWorld().getLivingEntities()){
+        for (LivingEntity le : p.getWorld().getLivingEntities()) {
             Component name = le.customName();
-            if(name != null){
-                if(name.equals(fullName)){
+            if (name != null) {
+                if (name.equals(fullName)) {
                     le.remove();
                 }
             }
@@ -192,7 +192,8 @@ public class MinerVendor implements Listener{
         ItemMeta meta = redstoneOre.getItemMeta();
         meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.displayName(minerSyb.append(Component.text(" Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(minerSyb));
+        meta.displayName(minerSyb.append(Component.text(" Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC))
+                .append(minerSyb));
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
                 .append(Component.text("$", NamedTextColor.GREEN))
@@ -253,7 +254,8 @@ public class MinerVendor implements Listener{
             if (s == null || s.getItemMeta() == null || !s.getItemMeta().hasDisplayName()) {
                 continue;
             }
-            if (s.getItemMeta().displayName() != null && s.getItemMeta().displayName().equals(itemToCheckFor.getItemMeta().displayName())) {
+            if (s.getItemMeta().displayName() != null
+                    && s.getItemMeta().displayName().equals(itemToCheckFor.getItemMeta().displayName())) {
                 doesPlayerHaveItem = true;
                 break;
             }

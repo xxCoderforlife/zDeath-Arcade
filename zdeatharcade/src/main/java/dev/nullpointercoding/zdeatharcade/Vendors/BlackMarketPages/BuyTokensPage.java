@@ -26,7 +26,6 @@ public class BuyTokensPage implements Listener {
     private final Inventory buyTokensInv;
     private final Component title = Component.text("Buy Tokens", NamedTextColor.GOLD, TextDecoration.BOLD);
     private Main plugin = Main.getInstance();
-    
 
     public enum Tokens {
         ONE_HUNDRED("100", 0.99),
@@ -136,6 +135,5 @@ public class BuyTokensPage implements Listener {
         tokenItem.setItemMeta(tokenMeta);
         return tokenItem;
     }
-
 
 }

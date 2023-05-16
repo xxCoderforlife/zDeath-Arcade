@@ -19,7 +19,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.NPCConfigManager;
 import me.zombie_striker.qg.api.QualityArmory;
@@ -33,8 +32,9 @@ public class RangeGunSmith implements Listener {
     private static Main plugin = Main.getInstance();
     private Inventory gunsmithInv;
     private static Villager gunsmithNPC;
-    private static final Component name = Component.text(" Gunsmith ",NamedTextColor.RED,TextDecoration.ITALIC).toBuilder().build();
-    private static final Component gunSmithSyb = Component.text('⚒',NamedTextColor.DARK_RED,TextDecoration.BOLD);
+    private static final Component name = Component.text(" Gunsmith ", NamedTextColor.RED, TextDecoration.ITALIC)
+            .toBuilder().build();
+    private static final Component gunSmithSyb = Component.text('⚒', NamedTextColor.DARK_RED, TextDecoration.BOLD);
     private static final Component fullName = gunSmithSyb.append(name).append(gunSmithSyb);
     private Gun fn_GUN;
     private Gun aa12_GUN;
@@ -52,8 +52,6 @@ public class RangeGunSmith implements Listener {
         gunsmithInventory();
     }
 
-
-
     private Inventory gunsmithInventory() {
 
         gunsmithInv.setItem(0, fn_GUN.getItemStack());
@@ -66,12 +64,14 @@ public class RangeGunSmith implements Listener {
     }
 
     @EventHandler
-    public void onGunSmithClick(PlayerInteractEntityEvent e){
-        if(e.getRightClicked().getType() == EntityType.VILLAGER){
+    public void onGunSmithClick(PlayerInteractEntityEvent e) {
+        if (e.getRightClicked().getType() == EntityType.VILLAGER) {
             e.setCancelled(true);
             LivingEntity entity = (LivingEntity) e.getRightClicked();
-            if(entity.customName() == null){return;}
-            if(entity.customName().equals(fullName)){
+            if (entity.customName() == null) {
+                return;
+            }
+            if (entity.customName().equals(fullName)) {
                 e.getPlayer().openInventory(gunsmithInv);
             }
         }
@@ -92,28 +92,29 @@ public class RangeGunSmith implements Listener {
         Player p = (Player) e.getWhoClicked();
         if (e.getView().title().equals(fullName)) {
             e.setCancelled(true);
-            if(e.getCurrentItem() != null){
-            if (QualityArmory.isGun(e.getCurrentItem())) {
-                Gun gun = QualityArmory.getGun(e.getCurrentItem());
-                for (ItemStack g : p.getInventory().getContents()) {
-                    if (QualityArmory.isGun(g)) {
-                        if (gun == QualityArmory.getGun(g)) {
-                            p.sendMessage("You already have this gun!");
-                            return;
+            if (e.getCurrentItem() != null) {
+                if (QualityArmory.isGun(e.getCurrentItem())) {
+                    Gun gun = QualityArmory.getGun(e.getCurrentItem());
+                    for (ItemStack g : p.getInventory().getContents()) {
+                        if (QualityArmory.isGun(g)) {
+                            if (gun == QualityArmory.getGun(g)) {
+                                p.sendMessage("You already have this gun!");
+                                return;
+                            }
                         }
                     }
+                    p.getInventory().addItem(gun.getItemStack());
+                    p.playSound(p, Sound.ITEM_ARMOR_EQUIP_TURTLE, (float) 1, (float) 0.80);
+                    p.closeInventory();
                 }
-                p.getInventory().addItem(gun.getItemStack());
-                p.playSound(p, Sound.ITEM_ARMOR_EQUIP_TURTLE, (float) 1, (float) 0.80);
-                p.closeInventory();
-            }
             }
         }
 
     }
-    public static Villager spawnGunsmithNPC(Player p,Integer npcID){
-        for(File f : Main.getInstance().getNPCDataFolder().listFiles()){
-            if(f.getName().equalsIgnoreCase("gunsmith.yml")){
+
+    public static Villager spawnGunsmithNPC(Player p, Integer npcID) {
+        for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
+            if (f.getName().equalsIgnoreCase("gunsmith.yml")) {
                 p.sendMessage(Component.text("Gunsmith already spawned!"));
                 return gunsmithNPC;
             }
@@ -128,30 +129,29 @@ public class RangeGunSmith implements Listener {
         gunsmithNPC.setAI(false);
         gunsmithNPC.customName(gunSmithSyb.append(name).append(gunSmithSyb));
         gunsmithNPC.setCustomNameVisible(true);
-        new NPCConfigManager("gunsmith",p.getWorld(),npcID,spawnLoc.getX(),spawnLoc.getY(),spawnLoc.getZ());
+        new NPCConfigManager("gunsmith", p.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(), spawnLoc.getZ());
         return gunsmithNPC;
     }
 
-    public static Villager getGunSmithNPC(){
+    public static Villager getGunSmithNPC() {
         return gunsmithNPC;
     }
 
-    public static void removeGunSmithNPC(Player p){
-        for(File f : plugin.getNPCDataFolder().listFiles()){
-            if(f.getName().equalsIgnoreCase("gunsmith.yml")){
+    public static void removeGunSmithNPC(Player p) {
+        for (File f : plugin.getNPCDataFolder().listFiles()) {
+            if (f.getName().equalsIgnoreCase("gunsmith.yml")) {
                 f.delete();
             }
 
         }
-        for(LivingEntity le : p.getWorld().getLivingEntities()){
+        for (LivingEntity le : p.getWorld().getLivingEntities()) {
             Component name = le.customName();
-            if(name != null){
-                if(name.equals(fullName)){
+            if (name != null) {
+                if (name.equals(fullName)) {
                     le.remove();
                 }
             }
         }
     }
-
 
 }

@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import dev.nullpointercoding.zdeatharcade.Main;
 
 public class MainConfigManager {
-    
+
     private Main plugin = Main.getInstance();
 
     private String configName;
@@ -20,51 +20,54 @@ public class MainConfigManager {
     private FileConfiguration config;
     private Integer VENDOR_ID;
 
-    public MainConfigManager(){
+    public MainConfigManager() {
         this.configName = "config.yml";
         configHandler();
     }
-    
-    public String getConfigName(){
+
+    public String getConfigName() {
         return configName;
     }
-    public void setVedorID(Integer vendorid){
+
+    public void setVedorID(Integer vendorid) {
         VENDOR_ID = vendorid;
     }
-    public Integer getVendorID(){
+
+    public Integer getVendorID() {
         return VENDOR_ID;
     }
-    public FileConfiguration getConfig(){
+
+    public FileConfiguration getConfig() {
         return (YamlConfiguration) config;
     }
 
-    public void saveConfig(){
-        try{
+    public void saveConfig() {
+        try {
             config.save(configFile);
-        }catch(IOException e){
+        } catch (IOException e) {
             plugin.saveResource(configName, false);
         }
     }
 
-    private void configHandler(){
+    private void configHandler() {
         configFile = new File(plugin.getDataFolder() + File.separator + configName);
-        if(!configFile.exists()){
+        if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
-            try{
+            try {
                 configFile.createNewFile();
                 Reader r = new InputStreamReader(this.getClass().getResourceAsStream("/config.yml"));
                 config = YamlConfiguration.loadConfiguration(r);
                 config.save(configFile);
                 r.close();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
         config = new YamlConfiguration();
-        try{
+        try {
             config.load(configFile);
-        }catch(IOException  | InvalidConfigurationException e){
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }

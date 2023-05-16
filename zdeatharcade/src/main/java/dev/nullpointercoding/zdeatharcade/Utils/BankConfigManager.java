@@ -17,49 +17,51 @@ public class BankConfigManager {
     private String configName;
     private Boolean isConfigCreated;
 
-    public BankConfigManager(String configName){
+    public BankConfigManager(String configName) {
         this.configName = configName;
         configHandler();
     }
-    
-    public String getConfigName(){
+
+    public String getConfigName() {
         return configName;
     }
-    public FileConfiguration getConfig(){
+
+    public FileConfiguration getConfig() {
         return (YamlConfiguration) config;
     }
-    public File getFile(){
+
+    public File getFile() {
         return configFile;
     }
 
-    public void saveConfig(){
-        try{
+    public void saveConfig() {
+        try {
             config.save(configFile);
-        }catch(IOException e){
+        } catch (IOException e) {
             plugin.saveResource(configName, false);
         }
     }
 
-    private void configHandler(){
+    private void configHandler() {
         configFile = new File(plugin.getBankDataFolder() + File.separator + configName);
-        if(!configFile.exists()){
-            try{
+        if (!configFile.exists()) {
+            try {
                 configFile.createNewFile();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
         config = new YamlConfiguration();
-        try{
+        try {
             config.load(configFile);
             isConfigCreated = true;
-        }catch(IOException  | InvalidConfigurationException e){
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
 
-    public Boolean isConfigCreated(){
+    public Boolean isConfigCreated() {
         return isConfigCreated;
     }
 }

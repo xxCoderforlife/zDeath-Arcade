@@ -14,6 +14,7 @@ public class EcoCommands implements CommandExecutor {
 
     private Main plugin = Main.getInstance();
     Economy econ = new VaultHook();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String arg2,
             @NotNull String[] args) {
@@ -67,25 +68,25 @@ public class EcoCommands implements CommandExecutor {
                 }
             }
         }
-        if(cmd.getName().equalsIgnoreCase("token")){
-            if(sender instanceof Player){
+        if (cmd.getName().equalsIgnoreCase("token")) {
+            if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if(args.length == 0){
+                if (args.length == 0) {
                     player.sendMessage("§cUsage: /token <add|remove|set> <player> <amount>");
                     return true;
                 }
-                if(args.length == 1){
+                if (args.length == 1) {
                     player.sendMessage("§cUsage: /token <add|remove|set> <player> <amount>");
                     return true;
                 }
-                if(args.length == 2){
+                if (args.length == 2) {
                     player.sendMessage("§cUsage: /token <add|remove|set> <player> <amount>");
                     return true;
                 }
-                if(args.length == 3){
-                    if(args[0].equalsIgnoreCase("add")){
+                if (args.length == 3) {
+                    if (args[0].equalsIgnoreCase("add")) {
                         Player target = plugin.getServer().getPlayer(args[1]);
-                        if(target == null){
+                        if (target == null) {
                             player.sendMessage("§cPlayer not found!");
                             return true;
                         }
@@ -95,9 +96,9 @@ public class EcoCommands implements CommandExecutor {
                         player.sendMessage("§aAdded " + amount + " to " + target.getName() + "'s tokens!");
                         return true;
                     }
-                    if(args[0].equalsIgnoreCase("remove")){
+                    if (args[0].equalsIgnoreCase("remove")) {
                         Player target = plugin.getServer().getPlayer(args[1]);
-                        if(target == null){
+                        if (target == null) {
                             player.sendMessage("§cPlayer not found!");
                             return true;
                         }
@@ -107,9 +108,9 @@ public class EcoCommands implements CommandExecutor {
                         player.sendMessage("§aRemoved " + amount + " from " + target.getName() + "'s tokens!");
                         return true;
                     }
-                    if(args[0].equalsIgnoreCase("set")){
+                    if (args[0].equalsIgnoreCase("set")) {
                         Player target = plugin.getServer().getPlayer(args[1]);
-                        if(target == null){
+                        if (target == null) {
                             player.sendMessage("§cPlayer not found!");
                             return true;
                         }

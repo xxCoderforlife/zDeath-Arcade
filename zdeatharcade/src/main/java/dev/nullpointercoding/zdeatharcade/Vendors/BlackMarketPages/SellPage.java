@@ -61,7 +61,7 @@ public class SellPage implements Listener {
     public void openInventory(Player player) {
         customItems = new ArrayList<ItemStack>();
         customItems.add(createItemStackFromFile(dropItemConfig.getString("displayname"),
-        dropItemConfig.getString("material"), dropItemConfig.getDouble("worth")));
+                dropItemConfig.getString("material"), dropItemConfig.getDouble("worth")));
         new Pages(player, customItems, title);
     }
 
@@ -77,7 +77,8 @@ public class SellPage implements Listener {
         if (clicked.getItemMeta().displayName().equals(comName)) {
             checkForItems((Player) e.getWhoClicked(), clicked, dropItemConfig.getDouble("worth"));
         }
-        if(clicked.getItemMeta().displayName().equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())){
+        if (clicked.getItemMeta().displayName()
+                .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
             e.getWhoClicked().closeInventory(Reason.PLUGIN);
             new BlackMarketVendor().openInventory((Player) e.getWhoClicked());
         }
