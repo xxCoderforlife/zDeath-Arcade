@@ -80,7 +80,7 @@ public class ZombieDrops {
     public final ItemStack seedsDrop() {
         ItemStack seeds = new ItemStack(Material.WHEAT_SEEDS);
         ItemMeta seedsMeta = seeds.getItemMeta();
-        seedsMeta.displayName(Component.text("Coal Block", NamedTextColor.AQUA, TextDecoration.ITALIC));
+        seedsMeta.displayName(Component.text("Wheat Seeds", NamedTextColor.AQUA, TextDecoration.ITALIC));
         seedsMeta.addEnchant(Enchantment.DURABILITY, 1, false);
         seedsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();

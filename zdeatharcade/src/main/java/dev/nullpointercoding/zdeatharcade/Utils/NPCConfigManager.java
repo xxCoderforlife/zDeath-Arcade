@@ -70,7 +70,7 @@ public class NPCConfigManager {
     }
 
     private void configHandler() {
-        configFile = new File(plugin.getNPCDataFolder() + File.separator + configName + ".yml");
+        configFile = new File(plugin.getNPCDataFolder() + File.separator + configName.toLowerCase() + ".yml");
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
             try {

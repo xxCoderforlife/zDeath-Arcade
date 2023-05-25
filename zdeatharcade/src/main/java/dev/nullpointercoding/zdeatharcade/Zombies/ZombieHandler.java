@@ -35,7 +35,11 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.comphenix.protocol.ProtocolManager;
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
@@ -54,6 +58,8 @@ public class ZombieHandler implements Listener {
     private static Random r = Main.getRandom();
     private ZombieDrops zDrops = new ZombieDrops();
     private static Random spawnChance = Main.getSpawnChance();
+    private static Integer spawnCount = 0;
+    private ProtocolManager protocolManager = Main.getInstance().getProtocolManager();
 
     // Zombies
     private ZombieLevel1 zl1 = new ZombieLevel1();
@@ -70,6 +76,7 @@ public class ZombieHandler implements Listener {
         if (!(e.getEntity() instanceof Zombie)) {
             return;
         }
+        spawnCount--;
         Zombie z = (Zombie) e.getEntity();
         e.getDrops().clear();
         if (z.name().equals(zl1.name())) {
@@ -158,6 +165,11 @@ public class ZombieHandler implements Listener {
     public void disableAllOtherMobSpawns(CreatureSpawnEvent e) {
         LivingEntity c = e.getEntity();
         if (c.getType() == EntityType.ZOMBIE) {
+            spawnCount = e.getEntity().getWorld().getEntitiesByClass(Zombie.class).size();
+            if (spawnCount >= MainConfigManager.getZombieSpawnLimit()) {
+                e.setCancelled(true);
+                return;
+            }
             Zombie z = (Zombie) c;
             if (!(z.getChunk().isLoaded())) {
                 e.setCancelled(true);
@@ -265,6 +277,12 @@ public class ZombieHandler implements Listener {
             }
         }
     }
+    @EventHandler
+    public void onZombieRemove(EntityRemoveFromWorldEvent e){
+        if(e.getEntity() instanceof Zombie){
+            spawnCount--;
+        }
+    }
 
     @EventHandler
     public void onDropSpawnUtil(ItemSpawnEvent e) {
@@ -281,4 +299,17 @@ public class ZombieHandler implements Listener {
             }
         }
     }
+
+    public static Integer getSpawnCount() {
+        return spawnCount;
+    }
+
+    public static void resetSpawnCount() {
+        spawnCount = 0;
+    }
+
+    public void setSpawnCount(Integer spawnCount) {
+        ZombieHandler.spawnCount = spawnCount;
+    }
+
 }

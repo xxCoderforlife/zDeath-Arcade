@@ -28,16 +28,22 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerTextures;
+import org.bukkit.scheduler.BukkitScheduler;
+
 import com.destroystokyo.paper.profile.PlayerProfile;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
+import dev.nullpointercoding.zdeatharcade.Utils.AutoBroadcast;
 import dev.nullpointercoding.zdeatharcade.Utils.ParticleEffects;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.TitlePart;
 import net.milkbowl.vault.economy.Economy;
 
@@ -46,6 +52,8 @@ public class PlayerListeners implements Listener {
     private HashMap<Player, UUID> playersInRange = TheRange.playersInRange;
     private HashMap<Player, Inventory> playerInv = new HashMap<Player, Inventory>();
     private Economy econ = new VaultHook();
+    private AutoBroadcast AB;
+    private Main plugin = Main.getInstance();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
@@ -75,18 +83,28 @@ public class PlayerListeners implements Listener {
         }
         // Check if Player config exists
         Economy econ = Main.getEconomy();
+        PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
+
         if (econ != null) { // add null check here
             if (econ.createPlayerAccount(p)) {
-                Bukkit.getConsoleSender().sendMessage("Account created for: " + p.getName());
-                PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
+                Bukkit.getConsoleSender().sendMessage(Component.text("Account created for: " + p.getName()).color(NamedTextColor.GREEN));
                 PCM.updatePlayerDataFile(p);
             } else {
-                Bukkit.getConsoleSender().sendMessage("Account already exists for: " + p.getName());
+                Bukkit.getConsoleSender().sendMessage(Component.text("Account already exists for: " + p.getName()).color(NamedTextColor.GREEN));
             }
         } else {
             Bukkit.getConsoleSender().sendMessage("Economy is null.");
         }
+        //Check if the Player who joined has a bounty
+        final TextComponent joinMessage = Component.text().content("{").color(TextColor.color(0x00FF00))
+                .append(Component.text('✔').color(TextColor.color(0xFF0000)))
+                .append(Component.text().content("} ").color(TextColor.color(0x00FF00))).append(p.displayName().color(NamedTextColor.GREEN)).build();
+        e.joinMessage(joinMessage.hoverEvent(Component.text("Cash: " + PCM.getBalance(),NamedTextColor.GREEN)));
         joinedWithBounty(p);
+        AB = new AutoBroadcast();
+        AB.startBroadcast();
+        // ✘
+
     }
 
     @EventHandler
@@ -103,17 +121,30 @@ public class PlayerListeners implements Listener {
                 e1.printStackTrace();
             }
         }
+        final TextComponent leaveMessage = Component.text().content("{").color(TextColor.color(0x00FF00))
+                .append(Component.text('✘').color(TextColor.color(0xFF0000)))
+                .append(Component.text().content("} ").color(TextColor.color(0x00FF00))).append(p.displayName().color(NamedTextColor.RED)).build();
+        e.quitMessage(leaveMessage);
         leftWithBounty(p);
         setLastLoginPlayer(p);
-    }
+		final BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+                if(Bukkit.getOnlinePlayers().isEmpty()){
+                    AB.stopBroadcast();
+                }
+            }
+        }, 60L);
+}
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player p = (Player) e.getPlayer();
         if (p.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent playerKiller = (EntityDamageByEntityEvent) p.getLastDamageCause();
+            PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
             if (playerKiller.getDamager() instanceof Zombie) {
-                PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
                 PCM.setDeaths(PCM.getDeaths() + 1);
                 PCM.saveConfig();
                 final Component deathMessage = Component
@@ -122,11 +153,7 @@ public class PlayerListeners implements Listener {
                 playerInv.put(p, p.getInventory());
                 e.deathMessage(deathMessage);
             }
-        }
-        if (p.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-            EntityDamageByEntityEvent playerKiller = (EntityDamageByEntityEvent) p.getLastDamageCause();
             if (playerKiller.getDamager() instanceof Player) {
-                PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
                 PCM.setDeaths(PCM.getDeaths() + 1);
                 PCM.saveConfig();
                 final Component deathMessage = Component
@@ -152,6 +179,7 @@ public class PlayerListeners implements Listener {
             p.sendTitlePart(TitlePart.SUBTITLE, Component.text("You lost §e§o" + toTake.toString() + "§4§l$"));
             p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
             p.getInventory().clear();
+            //TODO: Remove all loot and ammo but keep guns
             p.getInventory().setContents(playerInv.get(p).getContents());
             playerInv.remove(p);
         }

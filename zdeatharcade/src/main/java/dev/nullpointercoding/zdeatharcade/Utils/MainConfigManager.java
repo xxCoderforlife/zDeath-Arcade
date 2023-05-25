@@ -18,24 +18,34 @@ public class MainConfigManager {
     private String configName;
     private File configFile;
     private FileConfiguration config;
-    private Integer VENDOR_ID;
+    private static Integer zombieSpawnLimit;
+    private final String configStart = "zDeathArcade.";
 
     public MainConfigManager() {
         this.configName = "config.yml";
         configHandler();
+        zombieSpawnLimit = getConfig().getInt(configStart + "world-zombie-spawnLimit");
     }
 
     public String getConfigName() {
         return configName;
     }
 
-    public void setVedorID(Integer vendorid) {
-        VENDOR_ID = vendorid;
+    public File getConfigFile() {
+        return configFile;
     }
 
-    public Integer getVendorID() {
-        return VENDOR_ID;
+    public static Integer getZombieSpawnLimit(){
+        return zombieSpawnLimit;
     }
+
+    public void setZombieSpawnLimit(Integer zombieSpawnLimit){
+        MainConfigManager.zombieSpawnLimit = zombieSpawnLimit;
+        getConfig().set(configStart + "world-zombie-spawnLimit", zombieSpawnLimit);
+        saveConfig();
+    }
+
+
 
     public FileConfiguration getConfig() {
         return (YamlConfiguration) config;
@@ -50,7 +60,7 @@ public class MainConfigManager {
     }
 
     private void configHandler() {
-        configFile = new File(plugin.getDataFolder() + File.separator + configName);
+        configFile = new File(plugin.getMainDataFolder() + File.separator + configName);
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
             try {

@@ -23,7 +23,7 @@ public class ZombieLevel3 {
         z3.setCanPickupItems(false);
         z3.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(18.0);
         z3.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.28);
-        z3.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue((double) 0.6);
+        z3.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue((double) 1.2);
         z3.setCustomNameVisible(true);
         z3.setShouldBurnInDay(false);
         return z;

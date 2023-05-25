@@ -1,18 +1,21 @@
 package dev.nullpointercoding.zdeatharcade.Commands;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
@@ -29,7 +32,7 @@ import dev.nullpointercoding.zdeatharcade.Utils.ShootingRangeConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
 
-public class Commands implements CommandExecutor {
+public class Commands implements TabExecutor {
 
     private Main plugin = Main.getInstance();
     private Boolean isRangeSpawnSet = plugin.getIsRangeSpawnSet();
@@ -156,6 +159,44 @@ public class Commands implements CommandExecutor {
             }.runTaskLater(plugin, 20 * 3);
         }
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd,
+            @NotNull String arg2, @NotNull String[] args) {
+        List<String> tab = new ArrayList<String>();
+        if (cmd.getName().equalsIgnoreCase("zdeatharcade")) {
+            if (args.length == 0) {
+
+            }
+            if (args.length == 1) {
+                tab.add("zombie");
+                tab.add("range");
+            }
+            if (args.length == 2) {
+                if (args[0].equalsIgnoreCase("range")) {
+                    tab.add("setspawn");
+                    tab.add("gunsmith");
+                }
+
+            }
+            if (args.length == 3) {
+                if (args[0].equalsIgnoreCase("range")) {
+                    if (args[1].equalsIgnoreCase("gunsmith")) {
+                        tab.add("remove");
+                        tab.add("set");
+                    }
+                }
+            }
+            if (args.length == 4) {
+                if (args[1].equalsIgnoreCase("gunsmith")) {
+                    if (args[2].equalsIgnoreCase("set")) {
+                        tab.add("Enter Vendor ID");
+                    }
+                }
+            }
+        }
+        return tab;
     }
 
     private boolean isPlayerinSpawn(Player p, String region) {

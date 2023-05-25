@@ -21,9 +21,39 @@ public class PlayerConfigManager {
     private File configFile;
     private FileConfiguration config;
     private String configName;
+    private final String configPath;
+
+    
+    public enum configPaths{
+        PLAYER("Player"),
+        UUID("UUID"),
+        CLIENTBRAND("Player-Client-Brand"),
+        LASTLOGIN("LastLogin"),
+        ZOMBIEKILLS("Zombie-Kills"),
+        DEATHS("Deaths"),
+        CASH("Cash"),
+        TOKENS("Tokens"),
+        BOUNTY("Bounty"),
+        BOUNTYHASBOUNTY("Bounty.Has-Bounty"),
+        BOUNTYAMOUNT("Bounty.Bounty-Amount"),
+        SETTINGS("Settings"),
+        SETTINGS_PLAYER_VISABLE(".Player-Visable"),
+        SETTINGS_ZOMBIE_VISABLE(".Zombie-Visable");
+
+        private String path;
+
+        configPaths(String path){
+            this.path = path;
+        }
+
+        public String getPath(){
+            return path;
+        }
+    }
 
     public PlayerConfigManager(String configName) {
         this.configName = configName;
+        this.configPath = configName + '.';
         configHandler();
     }
 
@@ -69,88 +99,109 @@ public class PlayerConfigManager {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate = now.format(myFormatObj);
 
-        String configPath = new String(configName + '.');
-        playerConfig.set(configPath + "Player", p.getName());
-        playerConfig.set(configPath + "UUID", p.getUniqueId().toString());
-        playerConfig.set(configPath + "Player-Client-Brand", p.getClientBrandName());
-        playerConfig.set(configPath + "LastLogin", formattedDate);
-        playerConfig.set(configPath + "Zombie-Kills", 0);
-        playerConfig.set(configPath + "Deaths", 0);
-        playerConfig.set(configPath + "Cash", 1500);
-        playerConfig.set(configPath + "Tokens", 0);
-        playerConfig.set(configPath + "Bounty.Has-Bounty", false);
-        playerConfig.set(configPath + "Bounty.Bounty-Amount", 0);
+        playerConfig.set(configPath + configPaths.PLAYER.getPath(), p.getName());
+        playerConfig.set(configPath + configPaths.UUID.getPath(), p.getUniqueId().toString());
+        playerConfig.set(configPath + configPaths.CLIENTBRAND.getPath(), p.getClientBrandName());
+        playerConfig.set(configPath + configPaths.LASTLOGIN.getPath(), formattedDate);
+        playerConfig.set(configPath + configPaths.ZOMBIEKILLS.getPath(), 0);
+        playerConfig.set(configPath + configPaths.DEATHS.getPath(), 0);
+        playerConfig.set(configPath + configPaths.CASH.getPath(), 1500);
+        playerConfig.set(configPath + configPaths.TOKENS.getPath(), 0);
+        playerConfig.set(configPath + configPaths.BOUNTYHASBOUNTY.getPath(), false);
+        playerConfig.set(configPath + configPaths.BOUNTYAMOUNT.getPath(), 0);
+        playerConfig.set(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_PLAYER_VISABLE.getPath(), true);
+        playerConfig.set(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_ZOMBIE_VISABLE.getPath(), true);
 
         saveConfig();
 
     }
 
     public Double getBalance() {
-        Double cleanBal = getConfig().getDouble(configName + ".Balance");
-        return VaultHook.round(cleanBal, 2);
+        return VaultHook.round(getConfig().getDouble(configPath + configPaths.CASH.getPath()), 2);
     }
 
     public void setBalance(Double balance) {
         VaultHook.round(balance, 2);
-        getConfig().set(configName + ".Balance", balance.doubleValue());
+        getConfig().set(configPath + configPaths.CASH.getPath(), balance.doubleValue());
         saveConfig();
     }
 
     public void addBalance(Double balance) {
         VaultHook.round(balance, 2);
-        getConfig().set(configName + ".Balance", getBalance() + balance.doubleValue());
+        getConfig().set(configPath + configPaths.CASH.getPath(), getBalance() + balance.doubleValue());
         saveConfig();
     }
 
     public void setLastLogin(String dateandtime) {
-        getConfig().set(configName + ".LastLogin", dateandtime);
+        getConfig().set(configPath + configPaths.LASTLOGIN.getPath(), dateandtime);
         saveConfig();
     }
 
     public void setClientBrand(String clientBrand) {
-        getConfig().set(configName + ".Player-Client-Brand", clientBrand);
+        getConfig().set(configPath + configPaths.CLIENTBRAND.getPath(), clientBrand);
         saveConfig();
     }
 
     public Double getTokens() {
-        return getConfig().getDouble(configName + ".Tokens");
+        return VaultHook.round(getConfig().getDouble(configPath + configPaths.TOKENS.getPath()), 2);
+    }
+
+    public void addTokens(Double tokenToAdd){
+        VaultHook.round(tokenToAdd, 2);
+        getConfig().set(configPath + configPaths.TOKENS.getPath(), getTokens() + tokenToAdd);
+        saveConfig();
     }
 
     public void setTokens(Double tokens) {
-        getConfig().set(configName + ".Tokens", tokens);
+        getConfig().set(configPath + configPaths.TOKENS.getPath(), tokens);
         saveConfig();
     }
 
     public Double getKills() {
-        return getConfig().getDouble(configName + ".Zombie-Kills");
+        return getConfig().getDouble(configPath + configPaths.ZOMBIEKILLS.getPath());
     }
 
     public void setKills(Player p) {
-        getConfig().set(configName + ".Zombie-Kills", p.getStatistic(Statistic.KILL_ENTITY, EntityType.ZOMBIE));
+        getConfig().set(configPath + configPaths.ZOMBIEKILLS.getPath(), p.getStatistic(Statistic.KILL_ENTITY, EntityType.ZOMBIE));
         saveConfig();
     }
 
     public Double getDeaths() {
-        return getConfig().getDouble(configName + ".Deaths");
+        return getConfig().getDouble(configPath + configPaths.DEATHS.getPath());
     }
 
     public void setDeaths(Double deaths) {
-        getConfig().set(configName + ".Deaths", deaths);
+        getConfig().set(configPath + configPaths.DEATHS.getPath(), deaths);
         saveConfig();
     }
 
     public Boolean hasBounty() {
-        return getConfig().getBoolean(configName + ".Bounty.Has-Bounty");
+        return getConfig().getBoolean(configPath + configPaths.BOUNTYHASBOUNTY.getPath());
     }
 
     public void setHasBounty(Boolean hasBounty, Double bountyAmount) {
-        getConfig().set(configName + ".Bounty.Has-Bounty", hasBounty);
-        getConfig().set(configName + ".Bounty.Bounty-Amount", bountyAmount);
+        VaultHook.round(bountyAmount, 2);
+        getConfig().set(configPath + configPaths.BOUNTYHASBOUNTY.getPath(), hasBounty);
+        getConfig().set(configPath + configPaths.BOUNTYAMOUNT.getPath(), bountyAmount);
         saveConfig();
     }
 
     public Double getBounty() {
-        return getConfig().getDouble(configName + ".Bounty.Bounty-Amount");
+        return VaultHook.round(getConfig().getDouble(configPath + configPaths.CASH.getPath()), 2);
+    }
+    public Boolean isPlayerVisable() {
+        return getConfig().getBoolean(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_PLAYER_VISABLE.getPath());
+    }
+    public Boolean isZombieVisable() {
+        return getConfig().getBoolean(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_ZOMBIE_VISABLE.getPath());
+    }
+    public void setPlayerVisable(Boolean visable) {
+        getConfig().set(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_PLAYER_VISABLE.getPath(), visable);
+        saveConfig();
+    }
+    public void setZombieVisable(Boolean visable) {
+        getConfig().set(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_ZOMBIE_VISABLE.getPath(), visable);
+        saveConfig();
     }
 
 }

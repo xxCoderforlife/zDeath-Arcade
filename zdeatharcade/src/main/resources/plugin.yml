@@ -41,6 +41,16 @@ commands:
     description: Token Command For zDeath-Arcade
     usage: /token
     aliases: [ t ]
+  settings:
+    permission: 
+    description: Settings Command For zDeath-Arcade
+    usage: /settings
+    aliases: [ set ]
+  stats:
+    permission: 
+    description: Stats Command For zDeath-Arcade
+    usage: /stats
+    aliases: [ stat ]
 permissions:
   zdeatharcade.admin:
     description: Allows access to all zDeath-Arcade commands
@@ -57,3 +67,9 @@ permissions:
   zdeatharcade.vendor:
     description: Allows you to access the vendor command
     default: op
+  zdeatharcade.token:
+    description: Allows you to access the token command
+    default: op
+  zdeatharcade.settings:
+    description: Allows you to access the settings command
+    default: true

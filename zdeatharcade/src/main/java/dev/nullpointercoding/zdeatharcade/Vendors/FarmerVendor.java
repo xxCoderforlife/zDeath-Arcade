@@ -100,10 +100,13 @@ public class FarmerVendor implements Listener {
     public void onVillagerHit(EntityDamageByEntityEvent e) {
         if (e.getEntity().getType() == EntityType.VILLAGER) {
             e.setCancelled(true);
-            Player player = (Player) e.getDamager();
-            player.sendMessage(Component.text("Please don't punch me ", NamedTextColor.DARK_RED, TextDecoration.ITALIC)
-                    .append(player.displayName()));
-            player.sendHurtAnimation(1.0f);
+            if (e.getDamager() instanceof Player) {
+                Player player = (Player) e.getDamager();
+                player.sendMessage(
+                        Component.text("Please don't punch me ", NamedTextColor.DARK_RED, TextDecoration.ITALIC)
+                                .append(player.displayName()));
+                player.sendHurtAnimation(90.0f);
+            }
         }
     }
 

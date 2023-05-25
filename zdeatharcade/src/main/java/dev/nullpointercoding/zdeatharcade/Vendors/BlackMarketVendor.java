@@ -48,7 +48,9 @@ public class BlackMarketVendor implements Listener {
 
     private static final Component name = Component.text(" Black Market Dealer ", NamedTextColor.LIGHT_PURPLE,
             TextDecoration.ITALIC).toBuilder().build();
-    private final static Component fullName = key.append(name).append(key);
+    private final static Component fullName = Component.text('♛', NamedTextColor.YELLOW, TextDecoration.BOLD)
+            .append(Component.text(" Black Market Dealer ", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC))
+            .append(Component.text('♛', NamedTextColor.YELLOW, TextDecoration.BOLD));
 
     public BlackMarketVendor() {
         inv = Bukkit.createInventory(null, 27, fullName);
@@ -134,7 +136,7 @@ public class BlackMarketVendor implements Listener {
         blackMarketVendor.setCollidable(false);
         blackMarketVendor.setSilent(true);
         blackMarketVendor.setAI(false);
-        blackMarketVendor.customName(key.append(name).append(key));
+        blackMarketVendor.customName(fullName);
         blackMarketVendor.setCustomNameVisible(true);
         new NPCConfigManager("blackmarketvendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());

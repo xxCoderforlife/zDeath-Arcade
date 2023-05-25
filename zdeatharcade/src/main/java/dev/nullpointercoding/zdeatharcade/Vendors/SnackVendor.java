@@ -25,18 +25,20 @@ import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Vendors.Snacks.Snack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.milkbowl.vault.economy.Economy;
 
 public class SnackVendor implements Listener {
 
     private final Inventory inv;
-    private final Component title = Component.text("Snack Vendor");
-    private static final Component name = Component.text("Snack Vendor");
+    private final Component title = Component.text("Snack Shop", NamedTextColor.GOLD, TextDecoration.ITALIC);
+    private static final Component npcName = Component.text("Snack Shop", NamedTextColor.GOLD, TextDecoration.ITALIC);
     private static Villager snackVen;
     private Economy econ = Main.getEconomy();
 
     public SnackVendor() {
         inv = Bukkit.createInventory(null, 36, title);
+        addSnacks();
     }
 
     @EventHandler
@@ -62,7 +64,6 @@ public class SnackVendor implements Listener {
 
     public void openInventory(Player whoOpened) {
         BlankSpaceFiller.fillinBlankInv(inv, List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25));
-        addItems();
         whoOpened.openInventory(inv);
     }
 
@@ -74,7 +75,7 @@ public class SnackVendor implements Listener {
             if (entity.customName() == null) {
                 return;
             }
-            if (entity.customName().equals(name)) {
+            if (entity.customName().equals(npcName)) {
                 openInventory(e.getPlayer());
             }
         }
@@ -82,7 +83,7 @@ public class SnackVendor implements Listener {
 
     public static Villager spawnsnackVen(Player player, Integer npcID) {
         for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
-            if (f.getName().equalsIgnoreCase("snackVendor.yml")) {
+            if (f.getName().equalsIgnoreCase("snackvendor.yml")) {
                 player.sendMessage(Component.text("snackVen Spawned already spawned!"));
                 return snackVen;
             }
@@ -95,39 +96,38 @@ public class SnackVendor implements Listener {
         snackVen.setCollidable(false);
         snackVen.setSilent(true);
         snackVen.setAI(false);
-        snackVen.customName(name);
+        snackVen.customName(npcName);
         snackVen.setCustomNameVisible(true);
-        new NPCConfigManager("snackVendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
+        new NPCConfigManager("snackvendor", player.getWorld(), npcID, spawnLoc.getX(), spawnLoc.getY(),
                 spawnLoc.getZ());
         return snackVen;
     }
 
     public static void removesnackVendor(Player p) {
         for (File f : Main.getInstance().getNPCDataFolder().listFiles()) {
-            if (f.getName().equalsIgnoreCase("snackVendor.yml")) {
+            if (f.getName().equalsIgnoreCase("snackvendor.yml")) {
                 f.delete();
             }
         }
         for (LivingEntity le : p.getWorld().getLivingEntities()) {
             Component name = le.customName();
             if (name != null) {
-                if (name.equals(name)) {
+                if (name.equals(npcName)) {
                     le.remove();
                 }
             }
         }
     }
 
-    private void addItems() {
+    private void addSnacks() {
         Snack cookie = new Snack("cookie", Material.COOKIE, Component.text("Cookie", NamedTextColor.BLUE),
-                PotionEffectType.ABSORPTION, 5 * 20, 1,
-                0.02, 10.0);
+                PotionEffectType.ABSORPTION, 5, 1,
+                1.0, 0.5, 0.2f, 10.0);
         Snack cake = new Snack("cake", Material.CAKE, Component.text("Cake", NamedTextColor.BLUE),
-                PotionEffectType.DAMAGE_RESISTANCE, 20 * 5, 1, 0.5,
-                100.00);
+                PotionEffectType.DAMAGE_RESISTANCE, 5, 1, 1.5, 1.5, 1.2f, 120.00);
         Snack apple = new Snack("apple", Material.APPLE, Component.text("Apple", NamedTextColor.BLUE),
-                PotionEffectType.SLOW_FALLING, 20 * 5, 1,
-                0.05, 20.00);
+                PotionEffectType.SLOW_FALLING, 5, 1,
+                1.2, 1.2, 1.6f, 50.00);
         inv.setItem(10, cookie.getSnack());
         inv.setItem(11, cake.getSnack());
         inv.setItem(12, apple.getSnack());

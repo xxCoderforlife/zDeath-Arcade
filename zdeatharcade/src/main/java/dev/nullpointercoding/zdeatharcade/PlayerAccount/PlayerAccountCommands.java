@@ -29,9 +29,33 @@ public class PlayerAccountCommands implements CommandExecutor {
                     p.sendMessage("§cYou must be in spawn to use this command!");
                     return true;
                 }
-                PlayerAccountGUI gui = new PlayerAccountGUI(p);
-                gui.openGUI(p);
-
+                new PlayerAccountGUI(p).openGUI(p);
+            }
+        }
+        if (cmd.getName().equalsIgnoreCase("settings")) {
+            if (sender instanceof Player) {
+                Player p = (Player) sender;
+                if (!(p.hasPermission("zdeatharcade.settings"))) {
+                    p.sendMessage("§cYou do not have permission to use this command!");
+                    return true;
+                }
+                if (!(isPlayerinSpawn(p))) {
+                    p.sendMessage("§cYou must be in spawn to use this command!");
+                    return true;
+                }
+                new PlayerSettingsGUI(p).onInventoryOpen(p);
+            }
+        }
+        if(cmd.getName().equalsIgnoreCase("stats")){
+            if(sender instanceof Player) {
+                Player player = (Player) sender;
+                if (!(player.hasPermission("zdeatharcade.stats"))) {
+                    player.sendMessage("§cYou do not have permission to use this command!");
+                    return true;
+                }
+                player.sendMessage("Health: " + player.getHealth());
+                player.sendMessage("Food: " + player.getFoodLevel());
+                player.sendMessage("Saturation: " + player.getSaturation());
             }
         }
         return true;

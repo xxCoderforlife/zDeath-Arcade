@@ -81,6 +81,10 @@ public class ParticleEffects {
                     DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 1);
                     npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
                 }
+                if(npcName.equalsIgnoreCase("snackvendor")){
+                    DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 255, 0), 1);
+                    npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
+                }
             }
         }.runTaskTimer(Main.getInstance(), 10, 10);
 

@@ -1,6 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Vendors.Snacks;
 
-import org.bukkit.attribute.Attribute;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,7 +9,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 
 public class SnackEatEvent implements Listener {
 
@@ -29,19 +32,16 @@ public class SnackEatEvent implements Listener {
         ItemStack mainHand = p.getInventory().getItemInMainHand();
         if (Snack.isSnack(mainHand)) {
             e.setCancelled(true);
-            if (p.getHealth() == p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()) {
-                p.sendMessage("You are at Full Health");
+            Bukkit.getConsoleSender().sendMessage(Double.toString(p.getHealth()));
+            Bukkit.getConsoleSender().sendMessage(Double.toString(p.getFoodLevel()));
+            if (p.getGameMode() == GameMode.CREATIVE) {
+                p.sendMessage(Component.text("Change to Adventure Mode to use Snacks")
+                        .clickEvent(ClickEvent.runCommand("gamemode adventure " + p.getName()))
+                        .hoverEvent(HoverEvent.showText(Component.text("Click to Change to Adventure Mode"))));
                 return;
             }
-            Snack s = Snack.ItemStackToSnack(mainHand);
-            Integer amount = mainHand.getAmount();
-            if (amount > 1) {
-                mainHand.setAmount(amount - 1);
-            } else {
-                p.getInventory().setItemInMainHand(null);
+            Snack.eatSnack(p);
+
             }
-            p.addPotionEffect(new PotionEffect(s.getEffect(), s.getDuration(), s.getAmplifier()));
-            p.setHealth(p.getHealth() + s.getHealAmount());
         }
     }
-}

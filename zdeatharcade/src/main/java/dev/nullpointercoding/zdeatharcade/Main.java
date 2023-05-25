@@ -8,12 +8,19 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+
 import dev.nullpointercoding.zdeatharcade.Commands.Commands;
-import dev.nullpointercoding.zdeatharcade.Commands.TabCommands;
 import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountCommands;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
+import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
+import dev.nullpointercoding.zdeatharcade.SpawnItems.SpawnParroits;
+import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.Packets.PacketHandler;
+import dev.nullpointercoding.zdeatharcade.Utils.PlaceHolders.Placeholders;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoTabCommands;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -35,6 +42,7 @@ public class Main extends JavaPlugin {
     private static Random r;
     private static Random spawmChance;
     private static Economy econ = null;
+    private ProtocolManager protocolManager;
     private Boolean isRangeSpawnSet;
     private File zombieSpawnLocations = new File(getDataFolder() + File.separator + "Zombie Spawn Locations");
     private File rangeConfigFolder = new File(getDataFolder() + File.separator + "Shooting Range");
@@ -45,11 +53,13 @@ public class Main extends JavaPlugin {
     private File customGuns = new File(getDataFolder() + File.separator + "Custom Guns");
     private File customZombieDrops = new File(getDataFolder() + File.separator + "Custom Zombie Drops");
     private File dailyDealFolder = new File(getDataFolder() + File.separator + "Daily Deals");
+    private File mainDataFolder = new File(getDataFolder() + File.separator + "Main Data");
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
+        new MainConfigManager();
         r = new Random();
         spawmChance = new Random();
         createConfigFolders();
@@ -93,9 +103,13 @@ public class Main extends JavaPlugin {
     }
 
     private void RegisterCommandsandEvents() {
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        new Placeholders(this).register();
+        new PacketHandler().registerAllPackets();
         getCommand("zdeatharcade").setExecutor(new Commands());
         getCommand("spawn").setExecutor(new Commands());
-        getCommand("zdeatharcade").setTabCompleter(new TabCommands());
+        getCommand("settings").setExecutor(new PlayerAccountCommands());
+        getCommand("zdeatharcade").setTabCompleter(new Commands());
         getCommand("economy").setExecutor(new EcoCommands());
         getCommand("economy").setTabCompleter(new EcoTabCommands());
         getCommand("account").setExecutor(new PlayerAccountCommands());
@@ -114,6 +128,8 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlackMarketVendor(), this);
         getServer().getPluginManager().registerEvents(new SnackVendor(), this);
         getServer().getPluginManager().registerEvents(new SnackEatEvent(), this);
+        getServer().getPluginManager().registerEvents(new SpawnParroits(), this);
+        getServer().getPluginManager().registerEvents(new AFKPool(), this);
     }
 
     private boolean setupEconomy() {
@@ -172,6 +188,10 @@ public class Main extends JavaPlugin {
             dailyDealFolder.mkdirs();
             Bukkit.getConsoleSender().sendMessage("§aDailyDeal folder has been created!");
         }
+        if (!mainDataFolder.exists()) {
+            mainDataFolder.mkdirs();
+            Bukkit.getConsoleSender().sendMessage("§aMainData folder has been created!");
+        }
 
         if (!rangeConfigFolder.exists()) {
             rangeConfigFolder.mkdirs();
@@ -222,6 +242,10 @@ public class Main extends JavaPlugin {
     public File getCustomGunsFolder() {
         return customGuns;
     }
+    
+    public File getMainDataFolder() {
+        return mainDataFolder;
+    }
 
     public File getCustomZombieDropsFolder() {
         return customZombieDrops;
@@ -233,6 +257,10 @@ public class Main extends JavaPlugin {
 
     public static Economy getEconomy() {
         return econ;
+    }
+
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 
 }
