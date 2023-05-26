@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -44,6 +45,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.TitlePart;
 import net.milkbowl.vault.economy.Economy;
 
@@ -87,19 +89,22 @@ public class PlayerListeners implements Listener {
 
         if (econ != null) { // add null check here
             if (econ.createPlayerAccount(p)) {
-                Bukkit.getConsoleSender().sendMessage(Component.text("Account created for: " + p.getName()).color(NamedTextColor.GREEN));
+                Bukkit.getConsoleSender()
+                        .sendMessage(Component.text("Account created for: " + p.getName()).color(NamedTextColor.GREEN));
                 PCM.updatePlayerDataFile(p);
             } else {
-                Bukkit.getConsoleSender().sendMessage(Component.text("Account already exists for: " + p.getName()).color(NamedTextColor.GREEN));
+                Bukkit.getConsoleSender().sendMessage(
+                        Component.text("Account already exists for: " + p.getName()).color(NamedTextColor.GREEN));
             }
         } else {
             Bukkit.getConsoleSender().sendMessage("Economy is null.");
         }
-        //Check if the Player who joined has a bounty
+        // Check if the Player who joined has a bounty
         final TextComponent joinMessage = Component.text().content("{").color(TextColor.color(0x00FF00))
                 .append(Component.text('✔').color(TextColor.color(0xFF0000)))
-                .append(Component.text().content("} ").color(TextColor.color(0x00FF00))).append(p.displayName().color(NamedTextColor.GREEN)).build();
-        e.joinMessage(joinMessage.hoverEvent(Component.text("Cash: " + PCM.getBalance(),NamedTextColor.GREEN)));
+                .append(Component.text().content("} ").color(TextColor.color(0x00FF00)))
+                .append(p.displayName().color(NamedTextColor.GREEN)).build();
+        e.joinMessage(joinMessage.hoverEvent(randomJoinMessageLore(p)));
         joinedWithBounty(p);
         AB = new AutoBroadcast();
         AB.startBroadcast();
@@ -123,20 +128,21 @@ public class PlayerListeners implements Listener {
         }
         final TextComponent leaveMessage = Component.text().content("{").color(TextColor.color(0x00FF00))
                 .append(Component.text('✘').color(TextColor.color(0xFF0000)))
-                .append(Component.text().content("} ").color(TextColor.color(0x00FF00))).append(p.displayName().color(NamedTextColor.RED)).build();
+                .append(Component.text().content("} ").color(TextColor.color(0x00FF00)))
+                .append(p.displayName().color(NamedTextColor.RED)).build();
         e.quitMessage(leaveMessage);
         leftWithBounty(p);
         setLastLoginPlayer(p);
-		final BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
-			@Override
-			public void run() {
-                if(Bukkit.getOnlinePlayers().isEmpty()){
+        final BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+        scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                if (Bukkit.getOnlinePlayers().isEmpty()) {
                     AB.stopBroadcast();
                 }
             }
         }, 60L);
-}
+    }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
@@ -179,7 +185,7 @@ public class PlayerListeners implements Listener {
             p.sendTitlePart(TitlePart.SUBTITLE, Component.text("You lost §e§o" + toTake.toString() + "§4§l$"));
             p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
             p.getInventory().clear();
-            //TODO: Remove all loot and ammo but keep guns
+            // TODO: Remove all loot and ammo but keep guns
             p.getInventory().setContents(playerInv.get(p).getContents());
             playerInv.remove(p);
         }
@@ -253,6 +259,35 @@ public class PlayerListeners implements Listener {
         textures.setSkin(urlObject); // Set the skin of the player profile to the URL
         profile.setTextures(textures); // Set the textures back to the profile
         return profile;
+    }
+
+    private Component randomJoinMessageLore(Player player) {
+        Component lore;
+        int random = (int) (Math.random() * 5) + 1;
+        switch (random) {
+            case 1:
+                lore = Component.text("Oh no, not this guy again...", NamedTextColor.RED, TextDecoration.BOLD);
+                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                return lore;
+            case 2:
+                lore = Component.text("Just one more login...", NamedTextColor.YELLOW, TextDecoration.BOLD);
+                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                return lore;
+            case 3:
+                lore = Component.text("The Choosen One has Returned!",NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC);
+                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                return lore;
+            case 4:
+                lore = Component.text("yo yo welcome back", NamedTextColor.GOLD, TextDecoration.BOLD);
+                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                return lore;
+            case 5:
+                lore = Component.text("THE ONE AND ONLY", NamedTextColor.DARK_RED,
+                        TextDecoration.BOLD);
+                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                return lore;
+        }
+        return null;
     }
 
 }

@@ -51,6 +51,11 @@ commands:
     description: Stats Command For zDeath-Arcade
     usage: /stats
     aliases: [ stat ]
+  afk:
+    permission: 
+    description: AFK Command For zDeath-Arcade
+    usage: /afk
+    aliases: [ afk ]
 permissions:
   zdeatharcade.admin:
     description: Allows access to all zDeath-Arcade commands
@@ -72,5 +77,11 @@ permissions:
     default: op
   zdeatharcade.settings:
     description: Allows you to access the settings command
+    default: true
+  zdeatharcade.stats:
+    description: Allows you to access the stats command
+    default: true
+  zdeatharcade.afk:
+    description: Allows you to access the afk command
     default: true
           

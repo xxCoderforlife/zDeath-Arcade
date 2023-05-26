@@ -1,10 +1,7 @@
-package dev.nullpointercoding.zdeatharcade.SpawnItems;
+package dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
 
-import java.time.Duration;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
-
+//import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,25 +24,22 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 import dev.nullpointercoding.zdeatharcade.Main;
-import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 
 public class AFKPool implements Listener {
 
-    private ArrayList<Player> playersInPool = new ArrayList<Player>();
+    // TODO: Find a faster way to check and get the PlayerRewards, I hate this
+    // method.
+    private static ArrayList<Player> playersInPool = new ArrayList<Player>();
     private ArrayList<Player> leavingPool = new ArrayList<Player>();
-    private HashMap<Player, Integer> playerAFKTime = new HashMap<Player, Integer>();
-    private Double cashEarned = 0.0;
-    private Double tokensEarned = 0.0;
+    //private HashMap<Player, Integer> playerAFKTime = new HashMap<Player, Integer>();
+    private AFKPlayerStorage afkPlayerStorage = new AFKPlayerStorage();
     private BukkitTask akfTask;
     private Main plugin = Main.getInstance();
-    private final Component afkPOOL = Component.text("AFK Pool", NamedTextColor.AQUA, TextDecoration.BOLD)
-            .hoverEvent(Component.text("Earn passive income and other rewards while AFK!", NamedTextColor.GREEN,
-                    TextDecoration.ITALIC));
+
 
     public AFKPool() {
 
@@ -64,23 +58,19 @@ public class AFKPool implements Listener {
              * If the player is in water, check if the player is in the AFK Pool
              */
             Location loc = player.getLocation().subtract(e.getTo(), 0, 1, 0);
-            if (loc.getBlock().getType() == Material.WATER) {
-                if (isPlayerinAFKPool(player)) {
-                    if (!(playersInPool.contains(player))) {
-                        playersInPool.add(player);
-                        playerAFKTime.put(player, LocalTime.now().getSecond());
-                        player.sendTitlePart(TitlePart.TITLE,
-                                Component.text("You are now AFK", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
-                        player.sendTitlePart(TitlePart.SUBTITLE,
-                                Component.text("Earn passive income and other rewards while AFK every minute!",
-                                        NamedTextColor.GREEN, TextDecoration.ITALIC));
-                        player.sendTitlePart(TitlePart.TIMES, Title.Times.times(Duration.ofSeconds(1),
-                                Duration.ofSeconds(5), Duration.ofSeconds(1)));
-                        Bukkit.broadcast(player.displayName().append(Component.text(" entered the ").append(afkPOOL)));
-                        checkForPlayersInPool();
-                    }
-                }
+            if (loc.getBlock().getType() == Material.WATER && isPlayerinAFKPool(player)) {
+                addPlayerToPool(player);
             }
+        }
+    }
+
+    private void addPlayerToPool(Player player){
+        if(!(playersInPool.contains(player))){
+            AFKPlayer afkPlayer = new AFKPlayer(player,0.0,0.0);
+            afkPlayerStorage.addAFKPlayer(afkPlayer);
+            playersInPool.add(afkPlayer.getPlayer());
+            checkForPlayersInPool(afkPlayer);
+            player.sendMessage("You are now AFK");
         }
     }
 
@@ -105,29 +95,20 @@ public class AFKPool implements Listener {
             Sign sign = (Sign) e.getClickedBlock().getState();
             if (sign.line(0).equals(Component.text("AFK POOL", NamedTextColor.AQUA, TextDecoration.BOLD))) {
                 if (!(leavingPool.contains(e.getPlayer()))) {
+                    AFKPlayer afkPlayer = afkPlayerStorage.getAFKPlayer(whoClicked.getName());
                     leavingPool.add(e.getPlayer());
                     whoClicked.sendActionBar(Component.text("Getting ready to leave..."));
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
+                            afkPlayerStorage.removeAFKPlayer(afkPlayer);
                             playersInPool.remove(e.getPlayer());
                             leavingPool.remove(e.getPlayer());
                             whoClicked.teleportAsync(whoClicked.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
                             whoClicked.sendTitlePart(TitlePart.TITLE, Component.text("You are no longer AFK",
                                     NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
-                            if (cashEarned + tokensEarned == 0) {
-                                whoClicked.sendMessage(Component
-                                        .text("You didn't earn anything while AFK!", NamedTextColor.RED,
-                                                TextDecoration.BOLD)
-                                        .hoverEvent(Component.text(
-                                                "You must be in the AFK Pool for at least 1 minute to earn rewards!")));
-                            } else {
-                                whoClicked.sendMessage(Component.text("You earned " + cashEarned + " cash and "
-                                        + tokensEarned + " tokens while AFK!"));
-                                cashEarned = 0.0;
-                                tokensEarned = 0.0;
-                            }
+                            whoClicked.sendMessage("You earned " + afkPlayer.getCash() + " cash and " + afkPlayer.getTokens() + " tokens for being AFK!");
                         }
 
                     }.runTaskLater(plugin, 20 * 5);
@@ -150,20 +131,21 @@ public class AFKPool implements Listener {
         }
     }
 
-    private void checkForPlayersInPool() {
+    private void checkForPlayersInPool(AFKPlayer afkplayer) {
         if (akfTask == null || akfTask.isCancelled()) {
+
             akfTask = new BukkitRunnable() {
 
                 @Override
                 public void run() {
+
                     if (playersInPool.isEmpty()) {
                         this.cancel();
                         Bukkit.getConsoleSender().sendMessage("No players in pool, stopping task.");
                     }
                     for (Player p : playersInPool) {
-                        PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
-                        pcm.addBalance(0.25);
-                        pcm.addTokens(0.02);
+                        afkplayer.setCash(afkplayer.getCash() + 0.25);
+                        afkplayer.setTokens(afkplayer.getTokens() + 0.02);
                         p.sendMessage(Component.text("+ $0.25", NamedTextColor.GREEN,
                                 TextDecoration.ITALIC)
                                 .hoverEvent(Component.text("Cash can be used to buy most items.", NamedTextColor.GREEN,
@@ -172,8 +154,7 @@ public class AFKPool implements Listener {
                                 TextDecoration.ITALIC).hoverEvent(
                                         Component.text("Tokens can be used to buy items at the Black Martket Vendor.",
                                                 NamedTextColor.GREEN, TextDecoration.ITALIC)));
-                        cashEarned = cashEarned + 0.25;
-                        tokensEarned = tokensEarned + 0.02;
+
                     }
                 }
 
@@ -181,7 +162,9 @@ public class AFKPool implements Listener {
         }
     }
 
-    public ArrayList<Player> getPlayersInPool() {
+    public static ArrayList<Player> getPlayersInPool() {
         return playersInPool;
     }
+
+
 }

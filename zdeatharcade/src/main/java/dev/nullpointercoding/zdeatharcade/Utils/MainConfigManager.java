@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,17 +36,15 @@ public class MainConfigManager {
         return configFile;
     }
 
-    public static Integer getZombieSpawnLimit(){
+    public static Integer getZombieSpawnLimit() {
         return zombieSpawnLimit;
     }
 
-    public void setZombieSpawnLimit(Integer zombieSpawnLimit){
+    public void setZombieSpawnLimit(Integer zombieSpawnLimit) {
         MainConfigManager.zombieSpawnLimit = zombieSpawnLimit;
         getConfig().set(configStart + "world-zombie-spawnLimit", zombieSpawnLimit);
         saveConfig();
     }
-
-
 
     public FileConfiguration getConfig() {
         return (YamlConfiguration) config;
@@ -80,5 +79,9 @@ public class MainConfigManager {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
+    }
+
+    public Location getAFKPoolSpawn() {
+        return getConfig().getLocation(configStart + "AFKPool.Location");
     }
 }

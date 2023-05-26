@@ -16,8 +16,8 @@ import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountCommands;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
-import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
 import dev.nullpointercoding.zdeatharcade.SpawnItems.SpawnParroits;
+import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool.AFKPool;
 import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.Packets.PacketHandler;
 import dev.nullpointercoding.zdeatharcade.Utils.PlaceHolders.Placeholders;
@@ -108,6 +108,7 @@ public class Main extends JavaPlugin {
         new PacketHandler().registerAllPackets();
         getCommand("zdeatharcade").setExecutor(new Commands());
         getCommand("spawn").setExecutor(new Commands());
+        getCommand("afk").setExecutor(new Commands());
         getCommand("settings").setExecutor(new PlayerAccountCommands());
         getCommand("zdeatharcade").setTabCompleter(new Commands());
         getCommand("economy").setExecutor(new EcoCommands());

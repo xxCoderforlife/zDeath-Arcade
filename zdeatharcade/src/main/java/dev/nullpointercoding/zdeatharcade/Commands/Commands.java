@@ -27,6 +27,8 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
 import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
+import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool.AFKPool;
+import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
 import dev.nullpointercoding.zdeatharcade.Utils.ShootingRangeConfigManager;
 import net.kyori.adventure.text.Component;
@@ -157,6 +159,44 @@ public class Commands implements TabExecutor {
                     p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
                 }
             }.runTaskLater(plugin, 20 * 3);
+        }
+        if (cmd.getName().equalsIgnoreCase("afk")) {
+            if (!p.hasPermission("zdeatharcade.afk")) {
+                p.sendMessage("§cYou do not have permission to use this command.");
+                return true;
+            }
+            if(AFKPool.getPlayersInPool().contains(p)){
+                p.sendMessage("§cYou are already AFK.");
+                return true;
+            }
+            if (args.length == 0) {
+                MainConfigManager MCM = new MainConfigManager();
+                p.teleportAsync(MCM.getAFKPoolSpawn(), TeleportCause.PLUGIN);
+            }
+            if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("setspawn")) {
+                    if (!p.hasPermission("zdeatharcade.afk.setspawn")) {
+                        p.sendMessage("§cYou do not have permission to use this command.");
+                        return true;
+                    }
+                    if (p.getLocation().subtract(p.getLocation(), 0, 1, 0).getBlock().getType() == Material.AIR) {
+                        p.sendMessage("§cYou must be standing on a block to set a spawner.");
+                        return true;
+                    }
+                    MainConfigManager MCM = new MainConfigManager();
+                    Location afkPoolLoc = p.getLocation().add(0, 1, 0);
+                    if(MCM.getConfig().contains("zDeathArcade.AFKPool")){
+                        p.sendMessage("§cThe AFK Pool spawn location has already been set.");
+                        p.sendMessage("§cPlease delete the config.yml file in the zDeathArcade folder to reset the spawn location.");
+                        p.sendMessage("§cUse the Command '/zdeatharcade afk resetspawn' to reset the spawn location.");
+                        return true;
+                    }
+                    MCM.getConfig().set("zDeathArcade.AFKPool.Location", afkPoolLoc);
+                    MCM.saveConfig();
+                    p.sendMessage("§aSuccessfully set AFK Pool spawn location.");
+                    return true;
+                }
+            }
         }
         return true;
     }

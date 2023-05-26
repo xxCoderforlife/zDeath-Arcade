@@ -4,7 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import dev.nullpointercoding.zdeatharcade.Main;
-import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
+import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool.AFKPool;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 public class Placeholders extends PlaceholderExpansion{
