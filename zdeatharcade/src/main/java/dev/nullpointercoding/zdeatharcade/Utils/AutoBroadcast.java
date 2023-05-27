@@ -117,7 +117,8 @@ public class AutoBroadcast {
 
     private void sendZombieUpdate() {
         zombieUpdate = 0;
-        Component zombiesAlive = Component.text(ZombieHandler.getSpawnCount().toString(), NamedTextColor.GOLD,TextDecoration.ITALIC);
+        Component zombiesAlive = Component.text(ZombieHandler.getSpawnCount().toString(), NamedTextColor.GOLD,
+                TextDecoration.ITALIC);
         Component newHeader = Component.text("           [", NamedTextColor.DARK_RED).append(Component
                 .text("Zombie Update", NamedTextColor.RED, TextDecoration.ITALIC)
                 .append(Component.text("]", NamedTextColor.DARK_RED))
@@ -129,8 +130,10 @@ public class AutoBroadcast {
             p.sendMessage(Component.newline());
             p.sendMessage(Component.text("           ").append(newHeader));
             p.sendMessage(Component.newline());
-            p.sendMessage(Component.text("   " + "There are currently ",NamedTextColor.RED,TextDecoration.ITALIC).append(zombiesAlive)
-                    .append(Component.text(" zombies alive!", NamedTextColor.RED, TextDecoration.ITALIC)));
+            p.sendMessage(Component.text("   " + "There are currently ", NamedTextColor.RED, TextDecoration.ITALIC)
+                    .append(zombiesAlive)
+                    .append(Component.text(" zombies alive!", NamedTextColor.RED, TextDecoration.ITALIC)
+                            .hoverEvent(Component.text("Go out there and get some kills!",NamedTextColor.DARK_RED,TextDecoration.ITALIC))));
             p.sendMessage(Component.newline());
 
         }

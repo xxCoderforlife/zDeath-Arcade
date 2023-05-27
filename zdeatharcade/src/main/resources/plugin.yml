@@ -56,6 +56,11 @@ commands:
     description: AFK Command For zDeath-Arcade
     usage: /afk
     aliases: [ afk ]
+  prizellama:
+    permission: 
+    description: PrizeLlama Command For zDeath-Arcade
+    usage: /prizellama
+    aliases: [ pll ]
 permissions:
   zdeatharcade.admin:
     description: Allows access to all zDeath-Arcade commands

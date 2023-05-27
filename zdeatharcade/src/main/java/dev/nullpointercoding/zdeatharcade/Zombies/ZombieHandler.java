@@ -1,3 +1,4 @@
+//TODO: Rewrite this so that you can actually read it and not have to pray to 6 of the 10 GODS that you know what in the world is going on.
 package dev.nullpointercoding.zdeatharcade.Zombies;
 
 import java.io.File;
@@ -14,15 +15,10 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Enderman;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Spider;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,8 +30,6 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.comphenix.protocol.ProtocolManager;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 
 import dev.nullpointercoding.zdeatharcade.Main;
@@ -59,8 +53,8 @@ public class ZombieHandler implements Listener {
     private ZombieDrops zDrops = new ZombieDrops();
     private static Random spawnChance = Main.getSpawnChance();
     private static Integer spawnCount = 0;
-    private ProtocolManager protocolManager = Main.getInstance().getProtocolManager();
-
+    private String[] mobList = { "SPIDER", "SKELETON", "CREEPER", "ENDERMAN", "SLIME", "WANDERING_TRADER", "PIG", "COW",
+            "SHEEP","CHICKEN" };
     // Zombies
     private ZombieLevel1 zl1 = new ZombieLevel1();
     private ZombieLevel2 zl2 = new ZombieLevel2();
@@ -232,36 +226,8 @@ public class ZombieHandler implements Listener {
             }
 
         }
-        if (c.getType() == EntityType.SPIDER) {
-            Spider s = (Spider) c;
-            Zombie z = (Zombie) s.getWorld().spawnEntity(s.getLocation(), EntityType.ZOMBIE);
-            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            e.setCancelled(true);
-
-        }
-        if (c.getType() == EntityType.SKELETON) {
-            Skeleton sk = (Skeleton) c;
-            Zombie z = (Zombie) sk.getWorld().spawnEntity(sk.getLocation(), EntityType.ZOMBIE);
-            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            e.setCancelled(true);
-        }
-        if (c.getType() == EntityType.CREEPER) {
-            Creeper cp = (Creeper) c;
-            Zombie z = (Zombie) cp.getWorld().spawnEntity(cp.getLocation(), EntityType.ZOMBIE);
-            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            e.setCancelled(true);
-        }
-        if (c.getType() == EntityType.SLIME) {
-            Slime sl = (Slime) c;
-            Zombie z = (Zombie) sl.getWorld().spawnEntity(sl.getLocation(), EntityType.ZOMBIE);
-            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            e.setCancelled(true);
-        }
-        if (c.getType() == EntityType.ENDERMAN) {
-            Enderman em = (Enderman) c;
-            Zombie z = (Zombie) em.getWorld().spawnEntity(em.getLocation(), EntityType.ZOMBIE);
-            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
-            e.setCancelled(true);
+        for (String type : mobList) {
+            hijackOtherMobSpawn(e, type);
         }
 
     }
@@ -277,9 +243,10 @@ public class ZombieHandler implements Listener {
             }
         }
     }
+
     @EventHandler
-    public void onZombieRemove(EntityRemoveFromWorldEvent e){
-        if(e.getEntity() instanceof Zombie){
+    public void onZombieRemove(EntityRemoveFromWorldEvent e) {
+        if (e.getEntity() instanceof Zombie) {
             spawnCount--;
         }
     }
@@ -310,6 +277,15 @@ public class ZombieHandler implements Listener {
 
     public void setSpawnCount(Integer spawnCount) {
         ZombieHandler.spawnCount = spawnCount;
+    }
+
+    private void hijackOtherMobSpawn(CreatureSpawnEvent e, String type) {
+        if (e.getEntity().getType() == EntityType.valueOf(type)) {
+            LivingEntity c = (LivingEntity) e.getEntity();
+            Zombie z = (Zombie) c.getWorld().spawnEntity(c.getLocation(), EntityType.ZOMBIE);
+            disableAllOtherMobSpawns(new CreatureSpawnEvent(z, SpawnReason.CUSTOM));
+            e.setCancelled(true);
+        }
     }
 
 }

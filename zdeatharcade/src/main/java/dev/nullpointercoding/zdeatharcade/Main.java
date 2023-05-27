@@ -34,6 +34,8 @@ import dev.nullpointercoding.zdeatharcade.Vendors.VendorTabCommands;
 import dev.nullpointercoding.zdeatharcade.Vendors.Snacks.SnackEatEvent;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieHandler;
+import dev.nullpointercoding.zdeatharcade.Zombies.PrizeLlama.PrizeLlamaCommands;
+import dev.nullpointercoding.zdeatharcade.Zombies.PrizeLlama.PrizeLlamaHandler;
 import net.milkbowl.vault.economy.Economy;
 
 public class Main extends JavaPlugin {
@@ -119,6 +121,7 @@ public class Main extends JavaPlugin {
         getCommand("vendor").setTabCompleter(new VendorTabCommands());
         getCommand("token").setExecutor(new EcoCommands());
         getCommand("token").setTabCompleter(new EcoTabCommands());
+        getCommand("prizellama").setExecutor(new PrizeLlamaCommands());
         getServer().getPluginManager().registerEvents(new ZombieHandler(), this);
         getServer().getPluginManager().registerEvents(new TheRange(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);
@@ -131,6 +134,7 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SnackEatEvent(), this);
         getServer().getPluginManager().registerEvents(new SpawnParroits(), this);
         getServer().getPluginManager().registerEvents(new AFKPool(), this);
+        getServer().getPluginManager().registerEvents(new PrizeLlamaHandler(), this);
     }
 
     private boolean setupEconomy() {

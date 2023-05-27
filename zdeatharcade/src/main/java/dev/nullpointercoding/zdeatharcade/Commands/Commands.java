@@ -179,10 +179,6 @@ public class Commands implements TabExecutor {
                         p.sendMessage("§cYou do not have permission to use this command.");
                         return true;
                     }
-                    if (p.getLocation().subtract(p.getLocation(), 0, 1, 0).getBlock().getType() == Material.AIR) {
-                        p.sendMessage("§cYou must be standing on a block to set a spawner.");
-                        return true;
-                    }
                     MainConfigManager MCM = new MainConfigManager();
                     Location afkPoolLoc = p.getLocation().add(0, 1, 0);
                     if(MCM.getConfig().contains("zDeathArcade.AFKPool")){

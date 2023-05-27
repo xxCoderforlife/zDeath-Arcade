@@ -128,9 +128,29 @@ public class SnackVendor implements Listener {
         Snack apple = new Snack("apple", Material.APPLE, Component.text("Apple", NamedTextColor.BLUE),
                 PotionEffectType.SLOW_FALLING, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
+        Snack carrot = new Snack("carrot", Material.CARROT, Component.text("Carrot", NamedTextColor.BLUE),
+                PotionEffectType.SPEED, 5, 1,
+                1.2, 1.2, 1.6f, 50.00);
+        Snack potato = new Snack("potato", Material.POTATO, Component.text("Potato", NamedTextColor.BLUE),
+                PotionEffectType.INCREASE_DAMAGE, 5, 1,
+                1.2, 1.2, 1.6f, 50.00);
+        Snack bread = new Snack("bread", Material.BREAD, Component.text("Bread", NamedTextColor.BLUE),
+                PotionEffectType.HEAL, 5, 1,
+                1.2, 1.2, 1.6f, 50.00);
+        Snack steak = new Snack("steak", Material.COOKED_BEEF, Component.text("Steak", NamedTextColor.BLUE),
+                PotionEffectType.HEAL, 5, 1,
+                1.2, 1.2, 1.6f, 50.00);
+        Snack porkchop = new Snack("porkchop", Material.COOKED_PORKCHOP, Component.text("Porkchop", NamedTextColor.BLUE),
+                PotionEffectType.HEAL, 5, 1,
+                1.2, 1.2, 1.6f, 50.00);
         inv.setItem(10, cookie.getSnack());
         inv.setItem(11, cake.getSnack());
         inv.setItem(12, apple.getSnack());
+        inv.setItem(13, carrot.getSnack());
+        inv.setItem(14, potato.getSnack());
+        inv.setItem(15, bread.getSnack());
+        inv.setItem(16, steak.getSnack());
+        inv.setItem(19, porkchop.getSnack());
 
     }
 

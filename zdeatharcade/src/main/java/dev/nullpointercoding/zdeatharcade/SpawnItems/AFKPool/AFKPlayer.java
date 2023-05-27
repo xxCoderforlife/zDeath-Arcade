@@ -1,8 +1,10 @@
 package dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
 
+import java.io.Serializable;
+
 import org.bukkit.entity.Player;
 
-public class AFKPlayer {
+public class AFKPlayer{
 
     private Double cash;
     private Double tokens;

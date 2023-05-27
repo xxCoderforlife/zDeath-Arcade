@@ -94,15 +94,16 @@ public class ZombieCommands implements TabExecutor {
                                 .append(Component.text(MainConfigManager.getZombieSpawnLimit().toString(),
                                         NamedTextColor.GOLD)));
                     }
-                    if(args[0].equalsIgnoreCase("spawned")){
+                    if (args[0].equalsIgnoreCase("spawned")) {
                         if (!(p.hasPermission("zdeatharcade.admin"))) {
                             p.sendMessage("§cYou do not have permission to use this command.");
                             return true;
                         }
-                        p.sendMessage(Component.text("The current number of spawned zombies is: ", NamedTextColor.YELLOW)
-                                .append(Component.text(p.getWorld().getEntitiesByClass(Zombie.class).size(),
-                                        NamedTextColor.GOLD)));
-                        }
+                        p.sendMessage(
+                                Component.text("The current number of spawned zombies is: ", NamedTextColor.YELLOW)
+                                        .append(Component.text(p.getWorld().getEntitiesByClass(Zombie.class).size(),
+                                                NamedTextColor.GOLD)));
+                    }
                 }
                 if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("spawnlimit")) {

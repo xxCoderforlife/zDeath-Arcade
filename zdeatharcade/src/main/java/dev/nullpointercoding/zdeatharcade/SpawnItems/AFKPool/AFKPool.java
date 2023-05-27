@@ -1,6 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
 
 import java.util.ArrayList;
+
 //import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,6 +25,8 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -35,11 +38,11 @@ public class AFKPool implements Listener {
     // method.
     private static ArrayList<Player> playersInPool = new ArrayList<Player>();
     private ArrayList<Player> leavingPool = new ArrayList<Player>();
-    //private HashMap<Player, Integer> playerAFKTime = new HashMap<Player, Integer>();
-    private AFKPlayerStorage afkPlayerStorage = new AFKPlayerStorage();
+    // private HashMap<Player, Integer> playerAFKTime = new HashMap<Player,
+    // Integer>();
+    private AFKPlayerDataHandler playerDataHandler = new AFKPlayerDataHandler();
     private BukkitTask akfTask;
     private Main plugin = Main.getInstance();
-
 
     public AFKPool() {
 
@@ -64,13 +67,16 @@ public class AFKPool implements Listener {
         }
     }
 
-    private void addPlayerToPool(Player player){
-        if(!(playersInPool.contains(player))){
-            AFKPlayer afkPlayer = new AFKPlayer(player,0.0,0.0);
-            afkPlayerStorage.addAFKPlayer(afkPlayer);
-            playersInPool.add(afkPlayer.getPlayer());
-            checkForPlayersInPool(afkPlayer);
-            player.sendMessage("You are now AFK");
+    private void addPlayerToPool(Player player) {
+        if (!(playersInPool.contains(player))) {
+            playerDataHandler.addPlayerData(player, 0.0, 0.0);
+            playersInPool.add(player);
+            checkForPlayersInPool(player);
+            player.sendTitlePart(TitlePart.TITLE,
+                    Component.text("You are now AFK", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
+            player.sendTitlePart(TitlePart.SUBTITLE, Component.text("You will earn cash and tokens for being AFK",
+                    NamedTextColor.GREEN, TextDecoration.ITALIC));
+
         }
     }
 
@@ -95,25 +101,50 @@ public class AFKPool implements Listener {
             Sign sign = (Sign) e.getClickedBlock().getState();
             if (sign.line(0).equals(Component.text("AFK POOL", NamedTextColor.AQUA, TextDecoration.BOLD))) {
                 if (!(leavingPool.contains(e.getPlayer()))) {
-                    AFKPlayer afkPlayer = afkPlayerStorage.getAFKPlayer(whoClicked.getName());
-                    leavingPool.add(e.getPlayer());
-                    whoClicked.sendActionBar(Component.text("Getting ready to leave..."));
+                    AFKPlayer afkPlayer = playerDataHandler.getAFKPlayer(whoClicked);
+                    leavingPool.add(whoClicked);
+                    whoClicked.sendActionBar(Component.text("Calculating earning....", NamedTextColor.GREEN));
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            afkPlayerStorage.removeAFKPlayer(afkPlayer);
+                            PlayerConfigManager PCM = new PlayerConfigManager(whoClicked.getUniqueId().toString());
+                            whoClicked.teleportAsync(whoClicked.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
                             playersInPool.remove(e.getPlayer());
                             leavingPool.remove(e.getPlayer());
-                            whoClicked.teleportAsync(whoClicked.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
                             whoClicked.sendTitlePart(TitlePart.TITLE, Component.text("You are no longer AFK",
                                     NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
-                            whoClicked.sendMessage("You earned " + afkPlayer.getCash() + " cash and " + afkPlayer.getTokens() + " tokens for being AFK!");
+                            if (afkPlayer.getCash() + afkPlayer.getTokens() == 0) {
+                                whoClicked.sendMessage(Component.text("You did not earn any rewards for being AFK",
+                                        NamedTextColor.DARK_RED, TextDecoration.ITALIC).hoverEvent(
+                                                Component.text("You need to stay in the pool longer to earn rewards",
+                                                        NamedTextColor.GRAY, TextDecoration.ITALIC)));
+                                playerDataHandler.removePlayerData(whoClicked);
+
+                            } else {
+                                whoClicked.sendMessage(Component.text("You earned ")
+                                        .append(Component.text(afkPlayer.getCash() + " Cash", NamedTextColor.GREEN,
+                                                TextDecoration.ITALIC)
+                                                .hoverEvent(Component.text("Cash is used at the Shop",
+                                                        NamedTextColor.GRAY, TextDecoration.ITALIC)))
+                                        .append(Component.text(" and "))
+                                        .append(Component.text(VaultHook.round(afkPlayer.getTokens(), 2) + " Tokens",
+                                                NamedTextColor.GOLD,
+                                                TextDecoration.ITALIC)
+                                                .hoverEvent(Component.text("Tokens are used at the BlackMarket Dealer",
+                                                        NamedTextColor.GRAY, TextDecoration.ITALIC))));
+                                PCM.addBalance(afkPlayer.getCash());
+                                PCM.addTokens(afkPlayer.getTokens());
+                                playerDataHandler.removePlayerData(whoClicked);
+                            }
                         }
 
                     }.runTaskLater(plugin, 20 * 5);
                 } else {
-                    whoClicked.sendMessage("You are already leaving the pool!");
+                    whoClicked.sendMessage(Component.text("You are already leaving the pool",
+                            NamedTextColor.DARK_RED, TextDecoration.ITALIC)
+                            .hoverEvent(Component.text("We are getting all the Money and Tokens ready!",
+                                    NamedTextColor.GRAY, TextDecoration.ITALIC)));
                 }
             }
         }
@@ -131,7 +162,7 @@ public class AFKPool implements Listener {
         }
     }
 
-    private void checkForPlayersInPool(AFKPlayer afkplayer) {
+    private void checkForPlayersInPool(Player afkplayer) {
         if (akfTask == null || akfTask.isCancelled()) {
 
             akfTask = new BukkitRunnable() {
@@ -144,8 +175,8 @@ public class AFKPool implements Listener {
                         Bukkit.getConsoleSender().sendMessage("No players in pool, stopping task.");
                     }
                     for (Player p : playersInPool) {
-                        afkplayer.setCash(afkplayer.getCash() + 0.25);
-                        afkplayer.setTokens(afkplayer.getTokens() + 0.02);
+                        playerDataHandler.updatePlayerCash(afkplayer, 0.25);
+                        playerDataHandler.updatePlayerTokens(afkplayer, 0.02);
                         p.sendMessage(Component.text("+ $0.25", NamedTextColor.GREEN,
                                 TextDecoration.ITALIC)
                                 .hoverEvent(Component.text("Cash can be used to buy most items.", NamedTextColor.GREEN,
@@ -165,6 +196,5 @@ public class AFKPool implements Listener {
     public static ArrayList<Player> getPlayersInPool() {
         return playersInPool;
     }
-
 
 }
