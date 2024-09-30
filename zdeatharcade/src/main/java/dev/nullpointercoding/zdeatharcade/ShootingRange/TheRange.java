@@ -1,5 +1,9 @@
 package dev.nullpointercoding.zdeatharcade.ShootingRange;
 
+/**
+ * TODO: RE WRITE TO WORK WITH BOWS AND CROSSBOWS ONLY
+ */
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;

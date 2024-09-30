@@ -124,7 +124,7 @@ public class SnackVendor implements Listener {
                 PotionEffectType.ABSORPTION, 5, 1,
                 1.0, 0.5, 0.2f, 10.0);
         Snack cake = new Snack("cake", Material.CAKE, Component.text("Cake", NamedTextColor.BLUE),
-                PotionEffectType.DAMAGE_RESISTANCE, 5, 1, 1.5, 1.5, 1.2f, 120.00);
+                PotionEffectType.RESISTANCE, 5, 1, 1.5, 1.5, 1.2f, 120.00);
         Snack apple = new Snack("apple", Material.APPLE, Component.text("Apple", NamedTextColor.BLUE),
                 PotionEffectType.SLOW_FALLING, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
@@ -132,16 +132,16 @@ public class SnackVendor implements Listener {
                 PotionEffectType.SPEED, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
         Snack potato = new Snack("potato", Material.POTATO, Component.text("Potato", NamedTextColor.BLUE),
-                PotionEffectType.INCREASE_DAMAGE, 5, 1,
+                PotionEffectType.STRENGTH, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
         Snack bread = new Snack("bread", Material.BREAD, Component.text("Bread", NamedTextColor.BLUE),
-                PotionEffectType.HEAL, 5, 1,
+                PotionEffectType.INSTANT_HEALTH, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
         Snack steak = new Snack("steak", Material.COOKED_BEEF, Component.text("Steak", NamedTextColor.BLUE),
-                PotionEffectType.HEAL, 5, 1,
+                PotionEffectType.ABSORPTION, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
         Snack porkchop = new Snack("porkchop", Material.COOKED_PORKCHOP, Component.text("Porkchop", NamedTextColor.BLUE),
-                PotionEffectType.HEAL, 5, 1,
+                PotionEffectType.ABSORPTION, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
         inv.setItem(10, cookie.getSnack());
         inv.setItem(11, cake.getSnack());

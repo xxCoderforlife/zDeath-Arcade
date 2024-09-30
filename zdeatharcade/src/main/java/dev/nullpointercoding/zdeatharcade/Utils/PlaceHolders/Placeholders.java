@@ -33,11 +33,10 @@ public class Placeholders extends PlaceholderExpansion{
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if(params.equalsIgnoreCase("playersinafkpool")){
-            AFKPool afkPool = new AFKPool();
-            if(afkPool.getPlayersInPool().size() == 0){
+            if(AFKPool.getPlayersInPool().size() == 0){
                 return new String("§c§oCurrently no one is AFK");
             }
-            return new String("§a§o" + afkPool.getPlayersInPool().size() + " players are AFK");
+            return new String("§a§o" + AFKPool.getPlayersInPool().size() + " players are AFK");
         }
         return params;
     }

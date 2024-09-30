@@ -161,7 +161,7 @@ public class MinerVendor implements Listener {
         ItemStack coalOre = new ItemStack(Material.COAL_ORE);
         ItemMeta meta = coalOre.getItemMeta();
         meta.displayName(minerSyb.append(Component.text(" Coal Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)));
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to Sell for: ", NamedTextColor.GRAY)
@@ -175,7 +175,7 @@ public class MinerVendor implements Listener {
     private ItemStack sellIronOre() {
         ItemStack ironOre = new ItemStack(Material.IRON_ORE);
         ItemMeta meta = ironOre.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(minerSyb.append(Component.text(" Iron Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
@@ -190,7 +190,7 @@ public class MinerVendor implements Listener {
     private ItemStack sellRedstoneOre() {
         ItemStack redstoneOre = new ItemStack(Material.REDSTONE_ORE);
         ItemMeta meta = redstoneOre.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(minerSyb.append(Component.text(" Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC))
                 .append(minerSyb));
@@ -206,7 +206,7 @@ public class MinerVendor implements Listener {
     private ItemStack sellEmeramldOre() {
         ItemStack emeraldOre = new ItemStack(Material.EMERALD_ORE);
         ItemMeta meta = emeraldOre.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(minerSyb.append(Component.text(" Emeramld Ore", NamedTextColor.GREEN, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();

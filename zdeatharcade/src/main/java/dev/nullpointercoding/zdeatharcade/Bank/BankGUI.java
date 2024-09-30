@@ -89,7 +89,7 @@ public class BankGUI implements Listener {
     private ItemStack depositToBank() {
         ItemStack is = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta im = (SkullMeta) is.getItemMeta();
-        im.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        im.addEnchant(Enchantment.PUNCH, 1, false);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         im.displayName(Component.text("§a§lDeposit to Bank"));
         PlayerProfile profile = CustomInvFunctions.getProfile(
@@ -103,7 +103,7 @@ public class BankGUI implements Listener {
     private ItemStack withdrawFromBank() {
         ItemStack is = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta im = (SkullMeta) is.getItemMeta();
-        im.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        im.addEnchant(Enchantment.PUNCH, 1, false);
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         im.displayName(Component.text("§c§lWithdraw from Bank"));
         PlayerProfile profile = CustomInvFunctions.getProfile(

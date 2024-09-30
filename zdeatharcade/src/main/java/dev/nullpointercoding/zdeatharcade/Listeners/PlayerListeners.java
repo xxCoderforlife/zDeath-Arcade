@@ -267,24 +267,24 @@ public class PlayerListeners implements Listener {
         switch (random) {
             case 1:
                 lore = Component.text("Oh no, not this guy again...", NamedTextColor.RED, TextDecoration.BOLD);
-                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
                 return lore;
             case 2:
                 lore = Component.text("Just one more login...", NamedTextColor.YELLOW, TextDecoration.BOLD);
-                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
                 return lore;
             case 3:
                 lore = Component.text("The Choosen One has Returned!",NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC);
-                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
                 return lore;
             case 4:
                 lore = Component.text("yo yo welcome back", NamedTextColor.GOLD, TextDecoration.BOLD);
-                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
                 return lore;
             case 5:
                 lore = Component.text("THE ONE AND ONLY", NamedTextColor.DARK_RED,
                         TextDecoration.BOLD);
-                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
+                player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getEyeLocation().add(0, 1, 0), 20, 2.0, 0.0, 2.0);
                 return lore;
         }
         return null;

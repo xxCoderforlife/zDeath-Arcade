@@ -42,7 +42,7 @@ public class ZombieDrops {
         ItemStack hay = new ItemStack(Material.HAY_BLOCK, 1);
         ItemMeta hayMeta = hay.getItemMeta();
         hayMeta.displayName(Component.text("Hay Block", NamedTextColor.AQUA, TextDecoration.ITALIC));
-        hayMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        hayMeta.addEnchant(Enchantment.PUNCH, 1, false);
         hayMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Farmer for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -55,7 +55,7 @@ public class ZombieDrops {
         ItemStack wheat = new ItemStack(Material.WHEAT);
         ItemMeta wheatMeta = wheat.getItemMeta();
         wheatMeta.displayName(Component.text("Wheat", NamedTextColor.AQUA, TextDecoration.ITALIC));
-        wheatMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        wheatMeta.addEnchant(Enchantment.PUNCH, 1, false);
         wheatMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Farmer for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -68,7 +68,7 @@ public class ZombieDrops {
         ItemStack grassBlock = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta grassBlockMeta = grassBlock.getItemMeta();
         grassBlockMeta.displayName(Component.text("Grass Block", NamedTextColor.AQUA, TextDecoration.ITALIC));
-        grassBlockMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        grassBlockMeta.addEnchant(Enchantment.PUNCH, 1, false);
         grassBlockMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Farmer for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -81,7 +81,7 @@ public class ZombieDrops {
         ItemStack seeds = new ItemStack(Material.WHEAT_SEEDS);
         ItemMeta seedsMeta = seeds.getItemMeta();
         seedsMeta.displayName(Component.text("Wheat Seeds", NamedTextColor.AQUA, TextDecoration.ITALIC));
-        seedsMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        seedsMeta.addEnchant(Enchantment.PUNCH, 1, false);
         seedsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Farmer for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -101,7 +101,7 @@ public class ZombieDrops {
         ItemStack coalOre = new ItemStack(Material.COAL_ORE);
         ItemMeta coalOreMeta = coalOre.getItemMeta();
         coalOreMeta.displayName(Component.text("Coal Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
-        coalOreMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        coalOreMeta.addEnchant(Enchantment.PUNCH, 1, false);
         coalOreMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Miner for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -114,7 +114,7 @@ public class ZombieDrops {
         ItemStack ironOre = new ItemStack(Material.IRON_ORE);
         ItemMeta ironOreMeta = ironOre.getItemMeta();
         ironOreMeta.displayName(Component.text("Iron Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
-        ironOreMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        ironOreMeta.addEnchant(Enchantment.PUNCH, 1, false);
         ironOreMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Miner for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -127,7 +127,7 @@ public class ZombieDrops {
         ItemStack redstone = new ItemStack(Material.REDSTONE_ORE);
         ItemMeta redstoneMeta = redstone.getItemMeta();
         redstoneMeta.displayName(Component.text("Redstone Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
-        redstoneMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        redstoneMeta.addEnchant(Enchantment.PUNCH, 1, false);
         redstoneMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Miner for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -140,7 +140,7 @@ public class ZombieDrops {
         ItemStack emerald = new ItemStack(Material.EMERALD_ORE);
         ItemMeta emeraldMeta = emerald.getItemMeta();
         emeraldMeta.displayName(Component.text("Emerald Ore", NamedTextColor.GREEN, TextDecoration.ITALIC));
-        emeraldMeta.addEnchant(Enchantment.DURABILITY, 1, false);
+        emeraldMeta.addEnchant(Enchantment.PUNCH, 1, false);
         emeraldMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Sell this at the Miner for money!", NamedTextColor.GRAY, TextDecoration.ITALIC));

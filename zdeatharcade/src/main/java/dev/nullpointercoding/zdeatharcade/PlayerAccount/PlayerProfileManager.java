@@ -1,6 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.PlayerAccount;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -304,7 +305,7 @@ public class PlayerProfileManager implements Listener {
         ItemStack item = new ItemStack(Material.SUNFLOWER);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("§c§lTokens"));
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
@@ -349,7 +350,7 @@ public class PlayerProfileManager implements Listener {
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {
-            urlObject = new URL(url); // The URL to the skin, for example:
+            urlObject = URI.create(url).toURL(); // The URL to the skin, for example:
                                       // https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
         } catch (MalformedURLException exception) {
             throw new RuntimeException("Invalid URL", exception);

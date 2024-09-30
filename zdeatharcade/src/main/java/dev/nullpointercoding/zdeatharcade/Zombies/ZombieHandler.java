@@ -36,7 +36,6 @@ import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
-import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
 import net.milkbowl.vault.economy.Economy;
 
 public class ZombieHandler implements Listener {
@@ -69,7 +68,9 @@ public class ZombieHandler implements Listener {
     public void onZombieDeath(EntityDeathEvent e) {
         if (!(e.getEntity() instanceof Zombie)) {
             return;
-        }
+        }/**
+        TODO: create a switch metgod to handle the different zombie levels
+        */
         spawnCount--;
         Zombie z = (Zombie) e.getEntity();
         e.getDrops().clear();

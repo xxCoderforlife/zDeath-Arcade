@@ -31,7 +31,7 @@ public class ParticleEffects {
                     double red = 174 / 255D;
                     double green = 33 / 255D;
                     double blue = 218 / 255D;
-                    npcConfig.getWorld().spawnParticle(Particle.SPELL_MOB, particleLoc, 0, red, green, blue, 1);
+                    npcConfig.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, particleLoc, 0, red, green, blue, 1);
                 }
 
             }.runTaskTimer(Main.getInstance(), 10, 10);
@@ -67,23 +67,23 @@ public class ParticleEffects {
                 }
                 if (npcName.equalsIgnoreCase("farmervendor")) {
                     DustOptions dustOptions = new DustOptions(Color.fromRGB(0, 255, 205), 1);
-                    npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
+                    npcConfig.getWorld().spawnParticle(Particle.DUST, particleLoc, 50, dustOptions);
                 }
                 if (npcName.equalsIgnoreCase("gunvendor")) {
                     DustOptions dustOptions = new DustOptions(Color.fromRGB(0, 51, 255), 1);
-                    npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
+                    npcConfig.getWorld().spawnParticle(Particle.DUST, particleLoc, 50, dustOptions);
                 }
                 if (npcName.equalsIgnoreCase("minervendor")) {
                     DustOptions dustOptions = new DustOptions(Color.fromRGB(0, 255, 0), 1);
-                    npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
+                    npcConfig.getWorld().spawnParticle(Particle.DUST, particleLoc, 50, dustOptions);
                 }
                 if (npcName.equalsIgnoreCase("gunsmithvendor")) {
                     DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 1);
-                    npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
+                    npcConfig.getWorld().spawnParticle(Particle.DUST, particleLoc, 50, dustOptions);
                 }
                 if(npcName.equalsIgnoreCase("snackvendor")){
                     DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 255, 0), 1);
-                    npcConfig.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 50, dustOptions);
+                    npcConfig.getWorld().spawnParticle(Particle.DUST, particleLoc, 50, dustOptions);
                 }
             }
         }.runTaskTimer(Main.getInstance(), 10, 10);

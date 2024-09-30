@@ -418,7 +418,7 @@ public class BankAccountGUI implements Listener {
         ItemStack all = new ItemStack(Material.MAGENTA_WOOL);
         ItemMeta meta = all.getItemMeta();
         meta.displayName(Component.text("§d§lWITHDRAW ALL"));
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Click to withdraw all your money from the bank", NamedTextColor.GRAY,
@@ -432,7 +432,7 @@ public class BankAccountGUI implements Listener {
         ItemStack all = new ItemStack(Material.MAGENTA_WOOL);
         ItemMeta meta = all.getItemMeta();
         meta.displayName(Component.text("§d§lDEPOSIT ALL"));
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.PUNCH, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Click to deposit all your money into the bank", NamedTextColor.GRAY,
