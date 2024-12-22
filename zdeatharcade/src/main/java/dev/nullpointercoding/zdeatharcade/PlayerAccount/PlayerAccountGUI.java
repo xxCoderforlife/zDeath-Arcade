@@ -2,6 +2,8 @@ package dev.nullpointercoding.zdeatharcade.PlayerAccount;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,11 +185,11 @@ public class PlayerAccountGUI implements Listener {
     private static PlayerProfile getProfile(String url) {
         PlayerProfile profile = (PlayerProfile) Bukkit.createProfile(RANDOM_UUID); // Get a new player profile
         PlayerTextures textures = profile.getTextures();
-        URL urlObject;
+        URL urlObject = null;
         try {
-            urlObject = new URL(url); // The URL to the skin, for example:
+            urlObject = new URI(url).toURL(); // The URL to the skin, for example:
                                       // https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
-        } catch (MalformedURLException exception) {
+        } catch (MalformedURLException | URISyntaxException exception) {
             throw new RuntimeException("Invalid URL", exception);
         }
         textures.setSkin(urlObject); // Set the skin of the player profile to the URL

@@ -168,7 +168,7 @@ public class BlackMarketVendor implements Listener {
         SkullMeta meta = (SkullMeta) buyHead.getItemMeta();
         meta.displayName(
                 key.append(Component.text("Buy Items", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(key));
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Buy Exctoic Items", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC));
@@ -183,7 +183,7 @@ public class BlackMarketVendor implements Listener {
     private ItemStack sellGUI() {
         ItemStack sellHead = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) sellHead.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(
                 key.append(Component.text("Sell Items", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(key));
@@ -200,7 +200,7 @@ public class BlackMarketVendor implements Listener {
     private ItemStack dailyDeal() {
         ItemStack beacon = new ItemStack(Material.BEACON);
         ItemMeta meta = beacon.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(
                 key.append(Component.text("Daily Deal", NamedTextColor.GREEN, TextDecoration.ITALIC)).append(key));

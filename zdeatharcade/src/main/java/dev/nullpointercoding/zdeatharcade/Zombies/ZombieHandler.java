@@ -36,6 +36,7 @@ import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
+import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
 import net.milkbowl.vault.economy.Economy;
 
 public class ZombieHandler implements Listener {

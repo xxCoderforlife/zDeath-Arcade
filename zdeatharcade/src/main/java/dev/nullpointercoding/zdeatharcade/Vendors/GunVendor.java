@@ -159,7 +159,7 @@ public class GunVendor implements Listener {
         ItemStack rpg = QualityArmory.getGunByName("rpg").getItemStack();
         ItemMeta meta = rpg.getItemMeta();
         meta.displayName(gunVendorSyb.append(Component.text(" Gun Page", NamedTextColor.RED, TextDecoration.ITALIC)));
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.text("Click to open Gun Page", NamedTextColor.GRAY, TextDecoration.ITALIC));
@@ -171,7 +171,7 @@ public class GunVendor implements Listener {
     private ItemStack ammoPage() {
         ItemStack ammo = QualityArmory.getAmmoByName("mininuke").getItemStack();
         ItemMeta meta = ammo.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(gunVendorSyb.append(Component.text(" Ammo", NamedTextColor.GOLD, TextDecoration.ITALIC)));
         List<Component> lore = new ArrayList<Component>();
@@ -184,7 +184,7 @@ public class GunVendor implements Listener {
     private ItemStack eqiupmentPage() {
         ItemStack grenade = QualityArmory.getCustomItemAsItemStack("grenade");
         ItemMeta meta = grenade.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(
                 gunVendorSyb.append(Component.text(" Equipment", NamedTextColor.GREEN, TextDecoration.ITALIC)));

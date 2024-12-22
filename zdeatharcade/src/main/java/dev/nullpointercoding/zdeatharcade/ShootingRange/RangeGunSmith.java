@@ -1,5 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.ShootingRange;
-
+/**
+ * TODO: RE WRITE TO WORK WITH BOWS AND CROSSBOWS ONLY
+ */
 import java.io.File;
 
 import org.bukkit.Bukkit;

@@ -1,7 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.ShootingRange;
 
 /**
- * TODO: RE WRITE TO WORK WITH BOWS AND CROSSBOWS ONLY
+ * TODO: RE WRITE TO WORK WITH BOWS AND CROSSBOWS ONLY -- SIKE
  */
 
 import java.io.IOException;
@@ -17,6 +17,7 @@ import org.bukkit.Sound;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,7 +72,8 @@ public class TheRange implements Listener {
         if (e.getClickedBlock().getType().toString().contains("SIGN")) {
             if (isBlockinRegion(e.getClickedBlock().getLocation(), "shootingrange")) {
                 Sign sign = (Sign) e.getClickedBlock().getState();
-                if (sign.line(0).equals(Component.text("§6[§eAmmo§6]"))) {
+                SignSide sSide = (SignSide) sign;
+                if (sSide.line(0).equals(Component.text("§6[§eAmmo§6]"))) {
                     for (ItemStack is : p.getInventory().getContents()) {
                         if (is == null) {
                             continue;
@@ -83,7 +85,7 @@ public class TheRange implements Listener {
                         }
                     }
                 }
-                if (sign.line(0).equals(Component.text("§6[§cExit§6]"))) {
+                if (sSide.line(0).equals(Component.text("§6[§cExit§6]"))) {
                     if (playersInRange.containsKey(p)) {
                         SavePlayerInventoryToFile SPI = new SavePlayerInventoryToFile(p.getUniqueId().toString());
                         try {
@@ -145,7 +147,7 @@ public class TheRange implements Listener {
                 double x = (radius * Math.cos(t)) + blockLoc.getX();
                 double z = (blockLoc.getZ() + radius * Math.sin(t));
                 Location particleLoc = new Location(blockLoc.getWorld(), x, blockLoc.getY() + 1, z);
-                Particle particle = Particle.REDSTONE;
+                Particle particle = Particle.DUST_PLUME;
                 DustOptions dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 1);
                 blockLoc.getWorld().spawnParticle(particle, particleLoc, 50, dustOptions);
                 p.getWorld().playSound(p, Sound.BLOCK_ANVIL_HIT, (float) 1.0, (float) 1.0);
@@ -156,7 +158,7 @@ public class TheRange implements Listener {
                 @Override
                 public void run() {
                     blockLoc.getBlock().setType(Material.TARGET);
-                    blockLoc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, blockLoc.add(blockLoc, 0.4, 1.2, 0.8),
+                    blockLoc.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, blockLoc.add(blockLoc, 0.4, 1.2, 0.8),
                             10);
                     blockLoc.getWorld().playSound(blockLoc, Sound.ITEM_ARMOR_EQUIP_CHAIN, (float) 4.0, (float) 0.0);
                 }
