@@ -1,5 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder;
 
+import java.math.BigDecimal;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -8,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class EcoCommands implements CommandExecutor {
 
@@ -38,8 +40,8 @@ public class EcoCommands implements CommandExecutor {
                         sender.sendMessage("§cPlayer not found!");
                         return true;
                     }
-                    double amount = Double.parseDouble(args[2]);
-                    econ.depositPlayer(target, amount);
+                    BigDecimal amount = new BigDecimal(args[2]);
+                    econ.deposit("zDeathArcade", target.getUniqueId(), amount);
                     sender.sendMessage("§aAdded " + amount + " to " + target.getName() + "'s balance!");
                     return true;
                 }
@@ -49,8 +51,8 @@ public class EcoCommands implements CommandExecutor {
                         sender.sendMessage("§cPlayer not found!");
                         return true;
                     }
-                    double amount = Double.parseDouble(args[2]);
-                    econ.withdrawPlayer(target, amount);
+                    BigDecimal amount = new BigDecimal(args[2]);
+                    econ.withdraw("zDeathArcade", target.getUniqueId(), amount);
                     sender.sendMessage("§aRemoved " + amount + " from " + target.getName() + "'s balance!");
                     return true;
                 }
@@ -60,9 +62,9 @@ public class EcoCommands implements CommandExecutor {
                         sender.sendMessage("§cPlayer not found!");
                         return true;
                     }
-                    double amount = Double.parseDouble(args[2]);
-                    econ.withdrawPlayer(target, econ.getBalance(target));
-                    econ.depositPlayer(target, amount);
+                    BigDecimal amount = new BigDecimal(args[2]);
+                    econ.withdraw("zDeathArcade", target.getUniqueId(), econ.getBalance("zDeathArcade", target.getUniqueId()));
+                    econ.deposit("zDeathArcade", target.getUniqueId(), amount);
                     sender.sendMessage("§aSet " + target.getName() + "'s balance to " + amount + "!");
                     return true;
                 }
@@ -90,9 +92,9 @@ public class EcoCommands implements CommandExecutor {
                             player.sendMessage("§cPlayer not found!");
                             return true;
                         }
-                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
-                        int amount = Integer.parseInt(args[2]);
-                        pcm.setTokens((double) amount + pcm.getTokens());
+                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId());
+                        BigDecimal amount = new BigDecimal(args[2]);
+                        pcm.setTokens(amount.add(new BigDecimal(pcm.getTokens())));
                         player.sendMessage("§aAdded " + amount + " to " + target.getName() + "'s tokens!");
                         return true;
                     }
@@ -102,9 +104,9 @@ public class EcoCommands implements CommandExecutor {
                             player.sendMessage("§cPlayer not found!");
                             return true;
                         }
-                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
-                        int amount = Integer.parseInt(args[2]);
-                        pcm.setTokens(pcm.getTokens() - (double) amount);
+                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId());
+                        BigDecimal amount = new BigDecimal(args[2]);
+                        pcm.setTokens(new BigDecimal(pcm.getTokens()).subtract(amount));
                         player.sendMessage("§aRemoved " + amount + " from " + target.getName() + "'s tokens!");
                         return true;
                     }
@@ -114,9 +116,9 @@ public class EcoCommands implements CommandExecutor {
                             player.sendMessage("§cPlayer not found!");
                             return true;
                         }
-                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
-                        int amount = Integer.parseInt(args[2]);
-                        pcm.setTokens((double) amount);
+                        PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId());
+                        BigDecimal amount = new BigDecimal(args[2]);
+                        pcm.setTokens(amount);
                         player.sendMessage("§aSet " + target.getName() + "'s tokens to " + amount + "!");
                         return true;
                     }

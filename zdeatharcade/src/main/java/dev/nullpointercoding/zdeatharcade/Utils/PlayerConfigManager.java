@@ -2,8 +2,12 @@ package dev.nullpointercoding.zdeatharcade.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Statistic;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -21,7 +25,9 @@ public class PlayerConfigManager {
     private File configFile;
     private FileConfiguration config;
     private String configName;
-    private final String configPath;
+    private String configPath;
+    private final ConcurrentHashMap<UUID, Boolean> knownPlayersMap = new ConcurrentHashMap<>();
+    private final Set<UUID> knownPlayers = knownPlayersMap.keySet(true);
 
     
     public enum configPaths{
@@ -51,11 +57,13 @@ public class PlayerConfigManager {
         }
     }
 
-    public PlayerConfigManager(String configName) {
-        this.configName = configName;
+    public PlayerConfigManager(UUID playerUUID) {
+        this.configName = playerUUID.toString();
         this.configPath = configName + '.';
         configHandler();
     }
+
+    public PlayerConfigManager(){}
 
     public String getConfigName() {
         return configName;
@@ -73,6 +81,10 @@ public class PlayerConfigManager {
         }
 
     }
+
+    public boolean exists() {
+    return configFile.exists() && configFile.isFile();
+}
 
     private void configHandler() {
         configFile = new File(plugin.getPlayerDataFolder() + File.separator + configName + ".yml");
@@ -116,19 +128,22 @@ public class PlayerConfigManager {
 
     }
 
-    public Double getBalance() {
-        return VaultHook.round(getConfig().getDouble(configPath + configPaths.CASH.getPath()), 2);
+    public String getBalance() {
+        Double balance = getConfig().getDouble(configPath + configPaths.CASH.getPath());
+        BigDecimal balanceBD = BigDecimal.valueOf(balance);
+        return new VaultHook().format(balanceBD);
     }
 
-    public void setBalance(Double balance) {
-        VaultHook.round(balance, 2);
+    public void setBalance(BigDecimal balance) {
+        new VaultHook().format(balance);
         getConfig().set(configPath + configPaths.CASH.getPath(), balance.doubleValue());
         saveConfig();
     }
 
-    public void addBalance(Double balance) {
-        VaultHook.round(balance, 2);
-        getConfig().set(configPath + configPaths.CASH.getPath(), getBalance() + balance.doubleValue());
+    public void addBalance(BigDecimal balance) {
+        new VaultHook().format(balance);
+        BigDecimal currentBalance = BigDecimal.valueOf(getConfig().getDouble(configPath + configPaths.CASH.getPath()));
+        getConfig().set(configPath + configPaths.CASH.getPath(), currentBalance.add(balance).doubleValue());
         saveConfig();
     }
 
@@ -142,18 +157,19 @@ public class PlayerConfigManager {
         saveConfig();
     }
 
-    public Double getTokens() {
-        return VaultHook.round(getConfig().getDouble(configPath + configPaths.TOKENS.getPath()), 2);
+    public String getTokens() {
+        return new VaultHook().format(BigDecimal.valueOf(getConfig().getDouble(configPath + configPaths.TOKENS.getPath())));
     }
 
-    public void addTokens(Double tokenToAdd){
-        VaultHook.round(tokenToAdd, 2);
-        getConfig().set(configPath + configPaths.TOKENS.getPath(), getTokens() + tokenToAdd);
+    public void addTokens(BigDecimal tokenToAdd){
+        new VaultHook().format(tokenToAdd);
+        BigDecimal currentTokens = BigDecimal.valueOf(getConfig().getDouble(configPath + configPaths.TOKENS.getPath()));
+        getConfig().set(configPath + configPaths.TOKENS.getPath(), currentTokens.add(tokenToAdd).doubleValue());
         saveConfig();
     }
 
-    public void setTokens(Double tokens) {
-        getConfig().set(configPath + configPaths.TOKENS.getPath(), tokens);
+    public void setTokens(BigDecimal tokens) {
+        getConfig().set(configPath + configPaths.TOKENS.getPath(), tokens.doubleValue());
         saveConfig();
     }
 
@@ -180,14 +196,14 @@ public class PlayerConfigManager {
     }
 
     public void setHasBounty(Boolean hasBounty, Double bountyAmount) {
-        VaultHook.round(bountyAmount, 2);
+        new VaultHook().format(BigDecimal.valueOf(bountyAmount));
         getConfig().set(configPath + configPaths.BOUNTYHASBOUNTY.getPath(), hasBounty);
         getConfig().set(configPath + configPaths.BOUNTYAMOUNT.getPath(), bountyAmount);
         saveConfig();
     }
 
-    public Double getBounty() {
-        return VaultHook.round(getConfig().getDouble(configPath + configPaths.CASH.getPath()), 2);
+    public String getBounty() {
+        return new VaultHook().format(BigDecimal.valueOf(getConfig().getDouble(configPath + configPaths.CASH.getPath())));
     }
     public Boolean isPlayerVisable() {
         return getConfig().getBoolean(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_PLAYER_VISABLE.getPath());
@@ -204,4 +220,11 @@ public class PlayerConfigManager {
         saveConfig();
     }
 
+    public Set<UUID> getKnownPlayers() {
+        return knownPlayers;
+    }
+
+    public void addKnownPlayer(UUID uuid) {
+        knownPlayers.add(uuid);
+    }
 }

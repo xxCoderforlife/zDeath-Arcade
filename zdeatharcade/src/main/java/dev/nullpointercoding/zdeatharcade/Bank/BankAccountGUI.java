@@ -1,5 +1,6 @@
 package dev.nullpointercoding.zdeatharcade.Bank;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.TitlePart;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class BankAccountGUI implements Listener {
     private Main plugin = Main.getInstance();
@@ -133,7 +134,6 @@ public class BankAccountGUI implements Listener {
         if (clicked == null) {
             return;
         }
-        VaultHook.round(amountToMoveToBank, 2);
         Player whoClicked = (Player) e.getWhoClicked();
         if (clicked.getItemMeta().displayName().equals(addOne().getItemMeta().displayName())) {
             amountToMoveToBank = amountToMoveToBank + 1;
@@ -187,9 +187,9 @@ public class BankAccountGUI implements Listener {
         }
         if (clicked.getItemMeta().displayName().equals(confirmDeposit().getItemMeta().displayName())) {
             if (amountToMoveToBank > 0) {
-                if (econ.getBalance(whoClicked) >= amountToMoveToBank) {
-                    econ.withdrawPlayer(whoClicked, amountToMoveToBank);
-                    econ.bankDeposit(whoClicked.getUniqueId().toString(), amountToMoveToBank);
+                if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
+                    econ.withdraw("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
+                    econ.bankDeposit("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
                     whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
                             + amountToMoveToBank + " §7to your bank account!"));
                     whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
@@ -203,9 +203,9 @@ public class BankAccountGUI implements Listener {
         }
         if (clicked.getItemMeta().displayName().equals(confirmWithdraw().getItemMeta().displayName())) {
             if (amountToMoveToBank > 0) {
-                if (econ.bankBalance(whoClicked.getUniqueId().toString()).balance >= amountToMoveToBank) {
-                    econ.depositPlayer(whoClicked, amountToMoveToBank);
-                    econ.bankWithdraw(whoClicked.getUniqueId().toString(), amountToMoveToBank);
+                if (econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
+                    econ.deposit("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
+                    econ.bankWithdraw("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
                     whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
                             + amountToMoveToBank + " §7to your player account!"));
                     whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
@@ -218,11 +218,11 @@ public class BankAccountGUI implements Listener {
             }
         }
         if (clicked.getItemMeta().displayName().equals(depoistAll().getItemMeta().displayName())) {
-            if (econ.getBalance(whoClicked) > 0) {
-                econ.bankDeposit(whoClicked.getUniqueId().toString(), econ.getBalance(whoClicked));
-                econ.withdrawPlayer(whoClicked, econ.getBalance(whoClicked));
+            if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
+                econ.bankDeposit("zdeatharcade", whoClicked.getUniqueId(), econ.getBalance("zdeatharcade", whoClicked.getUniqueId()));
+                econ.withdraw("zdeatharcade", whoClicked.getUniqueId(), econ.getBalance("zdeatharcade", whoClicked.getUniqueId()));
                 whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
-                        + econ.bankBalance(whoClicked.getUniqueId().toString()).balance + " §7to your bank account!"));
+                        + econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() + " §7to your bank account!"));
                 whoClicked.closeInventory(Reason.PLUGIN);
                 whoClicked.playSound(whoClicked, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
             } else {
@@ -230,12 +230,12 @@ public class BankAccountGUI implements Listener {
             }
         }
         if (clicked.getItemMeta().displayName().equals(withdrawlAll().getItemMeta().displayName())) {
-            if (econ.bankBalance(whoClicked.getUniqueId().toString()).balance > 0) {
-                econ.depositPlayer(whoClicked, econ.bankBalance(whoClicked.getUniqueId().toString()).balance);
-                econ.bankWithdraw(whoClicked.getUniqueId().toString(),
-                        econ.bankBalance(whoClicked.getUniqueId().toString()).balance);
+            if (econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
+                econ.deposit("zdeatharcade", whoClicked.getUniqueId(), econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()));
+                econ.bankWithdraw("zdeatharcade", whoClicked.getUniqueId(),
+                        econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()));
                 whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
-                        + econ.getBalance(whoClicked) + " §7to your player account!"));
+                        + econ.getBalance("zdeatharcade", whoClicked.getUniqueId()) + " §7to your player account!"));
                 whoClicked.closeInventory(Reason.PLUGIN);
                 whoClicked.playSound(whoClicked, Sound.ENTITY_CHICKEN_DEATH, 1.0f, 1.0f);
             } else {
@@ -243,9 +243,9 @@ public class BankAccountGUI implements Listener {
             }
         }
         if (clicked.getItemMeta().displayName().equals(payPlayer().getItemMeta().displayName())) {
-            if (econ.getBalance(whoClicked) > 0) {
-                econ.withdrawPlayer(whoClicked, amountToMoveToBank);
-                econ.depositPlayer(target, amountToMoveToBank);
+            if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
+                econ.withdraw("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
+                econ.deposit("zdeatharcade", target.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
                 whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully paid §a§l$"
                         + amountToMoveToBank + " §7to " + target.getName() + "!"));
                 whoClicked.closeInventory(Reason.PLUGIN);
@@ -267,14 +267,14 @@ public class BankAccountGUI implements Listener {
         }
         if (clicked.getItemMeta().displayName().equals(confirmBouty().getItemMeta().displayName())) {
             if (amountToMoveToBank > 0) {
-                PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId().toString());
+                PlayerConfigManager pcm = new PlayerConfigManager(target.getUniqueId());
                 if (pcm.hasBounty()) {
                     whoClicked.sendMessage(Component.text("§c§lERROR: " + target.getName() + " already has a bounty!"));
                     whoClicked.playSound(whoClicked, Sound.ENTITY_SKELETON_HURT, 1.0f, 1.0f);
                     whoClicked.closeInventory(Reason.PLUGIN);
                     return;
                 }
-                if (econ.getBalance(whoClicked) >= amountToMoveToBank) {
+                if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
                     whoClicked.sendMessage("§a§lSUCCESS: §7You have successfully put a Bounty on " + target.getName());
                     Bukkit.broadcast(Component.text(whoClicked.getName() + " set a bounty of $" + amountToMoveToBank
                             + " on " + target.getName()));

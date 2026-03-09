@@ -2,6 +2,7 @@ package dev.nullpointercoding.zdeatharcade;
 
 import java.io.File;
 import java.util.Random;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -14,11 +15,10 @@ import com.comphenix.protocol.ProtocolManager;
 import dev.nullpointercoding.zdeatharcade.Commands.Commands;
 import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountCommands;
-import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
-import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
 import dev.nullpointercoding.zdeatharcade.SpawnItems.SpawnParroits;
 import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool.AFKPool;
 import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
+import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.Packets.PacketHandler;
 import dev.nullpointercoding.zdeatharcade.Utils.PlaceHolders.Placeholders;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.EcoCommands;
@@ -36,7 +36,7 @@ import dev.nullpointercoding.zdeatharcade.Zombies.ZombieCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieHandler;
 import dev.nullpointercoding.zdeatharcade.Zombies.PrizeLlama.PrizeLlamaCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.PrizeLlama.PrizeLlamaHandler;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class Main extends JavaPlugin {
 
@@ -72,6 +72,7 @@ public class Main extends JavaPlugin {
             return;
         }
         RegisterCommandsandEvents();
+        loadKnownPlayers(); //Plan to nest somewhere but wanna test
         System.out.println("ZDeathArcade has been enabled!");
 
     }
@@ -123,9 +124,7 @@ public class Main extends JavaPlugin {
         getCommand("token").setTabCompleter(new EcoTabCommands());
         getCommand("prizellama").setExecutor(new PrizeLlamaCommands());
         getServer().getPluginManager().registerEvents(new ZombieHandler(), this);
-        getServer().getPluginManager().registerEvents(new TheRange(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);
-        getServer().getPluginManager().registerEvents(new RangeGunSmith(), this);
         getServer().getPluginManager().registerEvents(new FarmerVendor(), this);
         getServer().getPluginManager().registerEvents(new MinerVendor(), this);
         getServer().getPluginManager().registerEvents(new GunVendor(), this);
@@ -267,5 +266,20 @@ public class Main extends JavaPlugin {
     public ProtocolManager getProtocolManager() {
         return protocolManager;
     }
+
+    public void loadKnownPlayers() {
+    File folder = getPlayerDataFolder();
+    if (folder == null) return;
+    
+    File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml") && name.length() == 40); // rough UUID check
+    if (files == null) return;
+    
+    for (File f : files) {
+        try {
+            UUID uuid = UUID.fromString(f.getName().substring(0, f.getName().length() - 4));
+            new PlayerConfigManager().addKnownPlayer(uuid);
+        } catch (IllegalArgumentException ignored) { }
+    }
+}
 
 }

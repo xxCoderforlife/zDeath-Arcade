@@ -34,7 +34,6 @@ import dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.AmmoPage;
 import dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.EquipmentPage;
 import dev.nullpointercoding.zdeatharcade.Vendors.GunShopPages.GunPage;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieDrops;
-import me.zombie_striker.qg.api.QualityArmory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -156,7 +155,7 @@ public class GunVendor implements Listener {
     }
 
     private ItemStack gunPage() {
-        ItemStack rpg = QualityArmory.getGunByName("rpg").getItemStack();
+        ItemStack rpg = new ItemStack(Material.CROSSBOW);
         ItemMeta meta = rpg.getItemMeta();
         meta.displayName(gunVendorSyb.append(Component.text(" Gun Page", NamedTextColor.RED, TextDecoration.ITALIC)));
         meta.addEnchant(Enchantment.POWER, 1, false);
@@ -169,7 +168,7 @@ public class GunVendor implements Listener {
     }
 
     private ItemStack ammoPage() {
-        ItemStack ammo = QualityArmory.getAmmoByName("mininuke").getItemStack();
+        ItemStack ammo = new ItemStack(Material.TNT);
         ItemMeta meta = ammo.getItemMeta();
         meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
@@ -182,7 +181,7 @@ public class GunVendor implements Listener {
     }
 
     private ItemStack eqiupmentPage() {
-        ItemStack grenade = QualityArmory.getCustomItemAsItemStack("grenade");
+        ItemStack grenade = new ItemStack(Material.RED_CONCRETE);
         ItemMeta meta = grenade.getItemMeta();
         meta.addEnchant(Enchantment.POWER, 1, false);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);

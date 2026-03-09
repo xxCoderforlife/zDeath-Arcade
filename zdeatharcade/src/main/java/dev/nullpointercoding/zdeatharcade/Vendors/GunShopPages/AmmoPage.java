@@ -17,22 +17,15 @@ import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Vendors.GunVendor;
-import me.zombie_striker.qg.ammo.Ammo;
-import me.zombie_striker.qg.api.QualityArmory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class AmmoPage implements Listener {
     private Main plugin = Main.getInstance();
-    private Double ninemmPrice = 45.0;
-    private Double fivefivesixPrice = 60.0;
-    private Double sevenSixTwoPrice = 70.0;
-    private Double shellPrice = 65.0;
     private final Inventory inv;
     private final Component title = Component.text("Ammo Page", NamedTextColor.GOLD, TextDecoration.ITALIC);
     private final Component star = Component.text('★', NamedTextColor.YELLOW, TextDecoration.BOLD);
-    private HashMap<Ammo, Double> ammos = new HashMap<Ammo, Double>();
 
     public AmmoPage() {
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -50,10 +43,6 @@ public class AmmoPage implements Listener {
     }
 
     private void addItems() {
-        inv.setItem(10, createAmmoItem(QualityArmory.getAmmoByName("9mm"), ninemmPrice));
-        inv.setItem(11, createAmmoItem(QualityArmory.getAmmoByName("556"), fivefivesixPrice));
-        inv.setItem(12, createAmmoItem(QualityArmory.getAmmoByName("762"), sevenSixTwoPrice));
-        inv.setItem(13, createAmmoItem(QualityArmory.getAmmoByName("shell"), shellPrice));
         inv.setItem(16, CustomInvFunctions.getBackButton());
 
     }
@@ -67,42 +56,11 @@ public class AmmoPage implements Listener {
                 return;
             }
             Player whoClicked = (Player) e.getWhoClicked();
-            if (QualityArmory.isAmmo(clicked)) {
-                Ammo ammo = QualityArmory.getAmmo(clicked);
-                if (ammos.containsKey(ammo)) {
-                    if (Main.getEconomy().getBalance(whoClicked) >= ammos.get(ammo)) {
-                        Main.getEconomy().withdrawPlayer(whoClicked, ammos.get(ammo));
-                        QualityArmory.addAmmoToInventory(whoClicked, ammo, 50);
-                        whoClicked.sendMessage(Component.text("You have bought 50 " + ammo.getDisplayName() + " for $"
-                                + ammos.get(ammo), NamedTextColor.GREEN, TextDecoration.ITALIC));
-                    } else {
-                        whoClicked.sendMessage(Component.text("You do not have enough money to buy this ammo!",
-                                NamedTextColor.RED, TextDecoration.ITALIC)
-                                .hoverEvent(Component.text("You need $", NamedTextColor.RED, TextDecoration.ITALIC)
-                                        .append(Component.text(ammos.get(ammo), NamedTextColor.RED,
-                                                TextDecoration.ITALIC))));
-                    }
-                }
-            }
             if (clicked.getItemMeta().displayName()
                     .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
                 whoClicked.closeInventory();
                 new GunVendor().openInventory(whoClicked);
             }
         }
-    }
-
-    private ItemStack createAmmoItem(Ammo ammo, Double price) {
-        ItemStack gunItem = ammo.getItemStack();
-        ItemMeta meta = gunItem.getItemMeta();
-        meta.displayName(star.append(Component.text(" " + ammo.getDisplayName() + " ").append(star)));
-        List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Price: ", NamedTextColor.GREEN, TextDecoration.ITALIC)
-                .append(Component.text("$" + price + " for 50", NamedTextColor.WHITE, TextDecoration.ITALIC)));
-        meta.lore(lore);
-        gunItem.setItemMeta(meta);
-        ammos.put(ammo, price);
-        return gunItem;
-
     }
 }

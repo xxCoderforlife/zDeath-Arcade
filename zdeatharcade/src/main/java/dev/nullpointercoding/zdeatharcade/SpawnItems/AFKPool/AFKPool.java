@@ -1,5 +1,6 @@
 package dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 //import java.util.HashMap;
@@ -26,7 +27,6 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
-import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -108,7 +108,7 @@ public class AFKPool implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            PlayerConfigManager PCM = new PlayerConfigManager(whoClicked.getUniqueId().toString());
+                            PlayerConfigManager PCM = new PlayerConfigManager(whoClicked.getUniqueId());
                             whoClicked.teleportAsync(whoClicked.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
                             playersInPool.remove(e.getPlayer());
                             leavingPool.remove(e.getPlayer());
@@ -128,13 +128,13 @@ public class AFKPool implements Listener {
                                                 .hoverEvent(Component.text("Cash is used at the Shop",
                                                         NamedTextColor.GRAY, TextDecoration.ITALIC)))
                                         .append(Component.text(" and "))
-                                        .append(Component.text(VaultHook.round(afkPlayer.getTokens(), 2) + " Tokens",
+                                        .append(Component.text(afkPlayer.getTokens() + " Tokens",
                                                 NamedTextColor.GOLD,
                                                 TextDecoration.ITALIC)
                                                 .hoverEvent(Component.text("Tokens are used at the BlackMarket Dealer",
                                                         NamedTextColor.GRAY, TextDecoration.ITALIC))));
-                                PCM.addBalance(afkPlayer.getCash());
-                                PCM.addTokens(afkPlayer.getTokens());
+                                PCM.addBalance(BigDecimal.valueOf(afkPlayer.getCash()));
+                                PCM.addTokens(BigDecimal.valueOf(afkPlayer.getTokens()));
                                 playerDataHandler.removePlayerData(whoClicked);
                             }
                         }

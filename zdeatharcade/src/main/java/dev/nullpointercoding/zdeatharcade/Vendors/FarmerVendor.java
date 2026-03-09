@@ -1,6 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Vendors;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,8 +274,8 @@ public class FarmerVendor implements Listener {
                     .append(Component.text("$", NamedTextColor.GREEN))
                     .append(Component.text(price.doubleValue(), NamedTextColor.GREEN)));
             whoToCheck.playSound(whoToCheck.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-            PlayerConfigManager config = new PlayerConfigManager(whoToCheck.getUniqueId().toString());
-            config.addBalance(price);
+            PlayerConfigManager config = new PlayerConfigManager(whoToCheck.getUniqueId());
+            config.addBalance(BigDecimal.valueOf(price));
         } else {
             whoToCheck.sendMessage(Component.text("You do not have any ", NamedTextColor.RED, TextDecoration.ITALIC)
                     .append(itemToCheckFor.getItemMeta().displayName()

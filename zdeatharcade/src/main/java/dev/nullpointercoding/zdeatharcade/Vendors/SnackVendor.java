@@ -1,6 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Vendors;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -26,7 +27,7 @@ import dev.nullpointercoding.zdeatharcade.Vendors.Snacks.Snack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class SnackVendor implements Listener {
 
@@ -51,9 +52,9 @@ public class SnackVendor implements Listener {
         if (Snack.isSnack(e.getCurrentItem())) {
             Snack s = Snack.ItemStackToSnack(e.getCurrentItem());
             // Check if the Player has enough money to buy a Snack
-            if (econ.getBalance(p) >= s.getWorth()) {
+            if (econ.getBalance("zdeatharcade",p.getUniqueId()).doubleValue() >= s.getWorth()) {
                 // Remove the money from the Player
-                econ.withdrawPlayer(p, s.getWorth());
+                econ.withdraw("zdeatharcade", p.getUniqueId(), BigDecimal.valueOf(s.getWorth()));
                 // Add the Snack to the Player's Inventory
                 p.getInventory().addItem(s.getSnackItem());
             } else {

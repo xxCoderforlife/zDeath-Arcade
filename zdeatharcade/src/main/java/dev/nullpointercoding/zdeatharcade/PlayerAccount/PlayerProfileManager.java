@@ -237,7 +237,7 @@ public class PlayerProfileManager implements Listener {
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
         lore.add(Component.text(target.getName() + " has " + target.getHealth() + "/"
-                + target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() + " health"));
+                + target.getAttribute(Attribute.MAX_HEALTH).getBaseValue() + " health"));
         meta.lore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         PlayerProfile profile = getProfile(
@@ -254,8 +254,8 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Cash: " + econ.getBalance(target)));
-        lore.add(Component.text("Your Cash: " + econ.getBalance((Player) whoClicked)));
+        lore.add(Component.text("Cash: " + econ.getBalance("zdeatharcade", target.getUniqueId())));
+        lore.add(Component.text("Your Cash: " + econ.getBalance("zdeatharcade", whoClicked.getUniqueId())));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/99e77fae5313bac19bf14577d50093e4738ebd70fd54a4de1a27475d0ec9538f");
@@ -272,8 +272,8 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Banked Cash: " + econ.bankBalance(target.getUniqueId().toString()).balance));
-        lore.add(Component.text("Your Banked Cash: " + econ.bankBalance(whoClicked.getUniqueId().toString()).balance));
+        lore.add(Component.text("Banked Cash: " + econ.bankBalance("zdeatharcade", target.getUniqueId())));
+        lore.add(Component.text("Your Banked Cash: " + econ.bankBalance("zdeatharcade", whoClicked.getUniqueId())));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/b25b27ce62ca88743840a95d1c39868f43ca60696a84f564fbd7dda259be00fe");
@@ -300,8 +300,8 @@ public class PlayerProfileManager implements Listener {
     }
 
     private ItemStack token(Player whoClicked) {
-        PlayerConfigManager tarConfig = new PlayerConfigManager(target.getUniqueId().toString());
-        PlayerConfigManager pConfig = new PlayerConfigManager(whoClicked.getUniqueId().toString());
+        PlayerConfigManager tarConfig = new PlayerConfigManager(target.getUniqueId());
+        PlayerConfigManager pConfig = new PlayerConfigManager(whoClicked.getUniqueId());
         ItemStack item = new ItemStack(Material.SUNFLOWER);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("§c§lTokens"));

@@ -15,6 +15,8 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 public class PlayerAccountCommands implements CommandExecutor {
 
+    //TODO: Add cache checking for Bank Account and Player Account to prevent loading from disk every time.
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String arg2,
             @NotNull String[] args) {

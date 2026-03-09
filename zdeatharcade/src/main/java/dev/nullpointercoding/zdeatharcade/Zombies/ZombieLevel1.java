@@ -22,9 +22,9 @@ public class ZombieLevel1 {
         z1.setSilent(true);
         z1.setCanPickupItems(false);
         z1.getEquipment().clear();
-        z1.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4.0);
-        z1.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.18);
-        z1.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue((double) 0.5);
+        z1.getAttribute(Attribute.MAX_HEALTH).setBaseValue(4.0);
+        z1.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.18);
+        z1.getAttribute(Attribute.ATTACK_DAMAGE).setBaseValue((double) 0.5);
         z1.setCustomNameVisible(true);
         z1.setShouldBurnInDay(false);
         return z;

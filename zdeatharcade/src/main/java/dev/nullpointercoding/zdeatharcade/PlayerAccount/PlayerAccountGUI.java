@@ -32,7 +32,7 @@ import dev.nullpointercoding.zdeatharcade.Bank.BankGUI;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class PlayerAccountGUI implements Listener {
 
@@ -85,7 +85,7 @@ public class PlayerAccountGUI implements Listener {
             whoClicked.sendTitlePart(TitlePart.TITLE, Component.text("§a§oCreating your account now..."));
             whoClicked.sendTitlePart(TitlePart.SUBTITLE,
                     Component.text("§2§oHave a nice Day User: " + whoClicked.getUniqueId().toString()));
-            econ.createBank(whoClicked.getUniqueId().toString(), whoClicked);
+            econ.createBank("zdeatharcade" , whoClicked.getName() + "'s Bank", whoClicked.getUniqueId());
             whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
         if (clicked.getItemMeta().displayName().equals(exit().getItemMeta().displayName())) {
@@ -117,7 +117,7 @@ public class PlayerAccountGUI implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.space());
-        lore.add(Component.text("§7Your current balance is: " + econ.getBalance(target)));
+        lore.add(Component.text("§7Your current balance is: " + econ.getBalance("zdeatharcade",target.getUniqueId())));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/8b5d160bbdaa308350325ee7a96f6059004a31338615d43564a4c722e28f7cec");
@@ -134,7 +134,7 @@ public class PlayerAccountGUI implements Listener {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.space());
         lore.add(Component
-                .text("§7Your current balance is: " + econ.bankBalance(target.getUniqueId().toString()).balance));
+                .text("§7Your current balance is: " + econ.bankBalance("zdeatharcade", target.getUniqueId()).doubleValue()));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/3b1309dac556911e55398038c4367f892d96cd5e8034fc232db920736879944c");

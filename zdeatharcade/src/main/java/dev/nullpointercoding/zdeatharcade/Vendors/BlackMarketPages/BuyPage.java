@@ -25,11 +25,6 @@ import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.Pages;
 import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
-import me.zombie_striker.customitemmanager.CustomBaseObject;
-import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.guns.Gun;
-import me.zombie_striker.qg.guns.utils.WeaponSounds;
-import me.zombie_striker.qg.guns.utils.WeaponType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -45,8 +40,6 @@ public class BuyPage implements Listener {
     private String itemName;
     private ArrayList<ItemStack> customGuns;
     private ArrayList<File> customGunFiles = new ArrayList<File>();
-    private HashMap<Gun, Double> guns = new HashMap<Gun, Double>();
-    private Gun gunV;
 
     public BuyPage() {
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -67,12 +60,6 @@ public class BuyPage implements Listener {
             }
             itemName = gunConfig.getString("name");
             customGunFiles.add(f);
-            if (QualityArmory.getGuns().next().getName().equals(itemName)) {
-                gunV = QualityArmory.getGunByName(itemName);
-                return;
-            } else {
-                gunV = convertCustomGuntoQAGun();
-            }
 
         }
     }
@@ -86,10 +73,6 @@ public class BuyPage implements Listener {
 
             @Override
             public void run() {
-                customGuns = new ArrayList<ItemStack>();
-                customGuns.add(createGunItem(gunV, gunConfig.getDouble("price")));
-                guns.put(gunV, gunConfig.getDouble("price"));
-                new Pages(player, customGuns, title);
             }
         }.runTaskLater(plugin, 20 * 4);
 
@@ -102,27 +85,6 @@ public class BuyPage implements Listener {
         }
         e.setCancelled(true);
         ItemStack clicked = e.getCurrentItem();
-        if (QualityArmory.isCustomItem(clicked)) {
-            Player whoClicked = (Player) e.getWhoClicked();
-            PlayerConfigManager pcm = new PlayerConfigManager(whoClicked.getUniqueId().toString());
-            CustomBaseObject cbo = QualityArmory.getCustomItem(clicked);
-            if (cbo instanceof Gun) {
-                Gun gun = (Gun) cbo;
-                if (guns.containsKey(gun)) {
-                    if (pcm.getTokens() >= guns.get(gun)) {
-                        pcm.setTokens(pcm.getTokens() - guns.get(gun));
-                        whoClicked.getInventory().addItem(gun.getItemStack());
-                        whoClicked.sendMessage(
-                                Component.text("You have bought a " + gun.getDisplayName() + " for " + guns.get(gun)
-                                        + "tokens"));
-                    } else {
-                        whoClicked.sendMessage(Component.text("You do not have enough Tokens to buy this gun",
-                                NamedTextColor.RED, TextDecoration.ITALIC).hoverEvent(
-                                        Component.text("Buy Tokens at the Black Market Dealer", NamedTextColor.GRAY)));
-                    }
-                }
-            }
-        }
         if (clicked.getItemMeta().displayName()
                 .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
             Player whoClicked = (Player) e.getWhoClicked();
@@ -131,40 +93,4 @@ public class BuyPage implements Listener {
         }
     }
 
-    private Gun convertCustomGuntoQAGun() {
-        QualityArmory.createAndLoadNewGun(gunConfig.getString("name"), gunConfig.getString("displayname"),
-                Material.valueOf(gunConfig.getString("material")), gunConfig.getInt("id"),
-                WeaponType.valueOf(gunConfig.getString("weapontype")), WeaponSounds.GUN_BIG,
-                gunConfig.getBoolean("enableIronSights"), gunConfig.getString("ammotype"), gunConfig.getInt("damage"),
-                gunConfig.getInt("60"), gunConfig.getInt("price")).done();
-        return QualityArmory.getGunByName(itemName);
-    }
-
-    private ItemStack createGunItem(Gun gun, Double price) {
-        ItemStack gunItem = gun.getItemStack();
-        ItemMeta meta = gunItem.getItemMeta();
-        meta.displayName(Component.text("       " + gun.getDisplayName()));
-        List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Price: ", NamedTextColor.GREEN)
-                .append(Component.text(price.intValue() + " Tokens", NamedTextColor.GOLD)));
-        lore.add(Component.text("Ammo Type: ", NamedTextColor.YELLOW)
-                .append(Component.text(gun.getAmmoType().getName(), NamedTextColor.WHITE)));
-        lore.add(Component.text("Damage: ", NamedTextColor.RED)
-                .append(Component.text(gun.getDamage(), NamedTextColor.WHITE)));
-        lore.add(Component.text("Fire Rate: ", NamedTextColor.GREEN)
-                .append(Component.text(gun.getFireRate(), NamedTextColor.WHITE)));
-        lore.add(Component.text("Recoil: ", NamedTextColor.DARK_RED)
-                .append(Component.text(gun.getRecoil(), NamedTextColor.WHITE)));
-        lore.add(Component.text("Reload Time: ", NamedTextColor.AQUA)
-                .append(Component.text(gun.getReloadTime(), NamedTextColor.WHITE)));
-        lore.add(Component.text("Magazine Size: ", NamedTextColor.GOLD)
-                .append(Component.text(gun.getMaxBullets(), NamedTextColor.WHITE)));
-        lore.add(Component.text("Max Range: ", NamedTextColor.GRAY)
-                .append(Component.text(gun.getMaxDistance() + " Blocks", NamedTextColor.WHITE)));
-        meta.lore(lore);
-        gunItem.setItemMeta(meta);
-        guns.put(gun, price);
-        return gunItem;
-
-    }
 }

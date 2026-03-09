@@ -2,6 +2,7 @@
 package dev.nullpointercoding.zdeatharcade.Zombies;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
@@ -36,8 +38,7 @@ import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
-import me.zombie_striker.qg.api.QAWeaponDamageEntityEvent;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class ZombieHandler implements Listener {
 
@@ -129,27 +130,27 @@ public class ZombieHandler implements Listener {
     }
 
     @EventHandler
-    public void onZombieKill(QAWeaponDamageEntityEvent e) {
-        Player p = (Player) e.getPlayer();
-        if (!(e.getDamaged() instanceof Zombie)) {
+    public void onZombieKill(EntityDamageByEntityEvent e) {
+        Player p = (Player) e.getDamager();
+        if (!(e.getEntity() instanceof Zombie)) {
             return;
         }
-        Zombie z = (Zombie) e.getDamaged();
-        PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId().toString());
+        Zombie z = (Zombie) e.getEntity();
+        PlayerConfigManager pcm = new PlayerConfigManager(p.getUniqueId());
         if (z.name().equals(zl1.name())) {
-            pcm.addBalance(0.2d);
+            pcm.addBalance(BigDecimal.valueOf(0.2d));
             pcm.setKills(p);
             p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
             return;
         }
         if (z.name().equals(zl2.name())) {
-            pcm.addBalance(0.4d);
+            pcm.addBalance(BigDecimal.valueOf(0.4d));
             pcm.setKills(p);
             p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
             return;
         }
         if (z.name().equals(zl3.name())) {
-            pcm.addBalance(0.6d);
+            pcm.addBalance(BigDecimal.valueOf(0.6d));
             pcm.setKills(p);
             p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 1, 1);
             return;

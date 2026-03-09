@@ -16,7 +16,7 @@ public class PrizeLlama {
     public final LivingEntity convertToPrizeLlama(final Llama e) {
         Llama l1 = (Llama) e;
         l1.customName(name);
-        l1.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(1.2);
+        l1.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(1.2);
         l1.setCustomNameVisible(true);
         return e;
     }

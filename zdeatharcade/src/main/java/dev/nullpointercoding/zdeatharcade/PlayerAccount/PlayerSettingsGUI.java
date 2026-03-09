@@ -40,7 +40,7 @@ public class PlayerSettingsGUI implements Listener {
         if (!isEventRegistered) {
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
-        pcm = new PlayerConfigManager(p.getUniqueId().toString());
+        pcm = new PlayerConfigManager(p.getUniqueId());
         inv = Bukkit.createInventory(null, 36, title);
     }
 

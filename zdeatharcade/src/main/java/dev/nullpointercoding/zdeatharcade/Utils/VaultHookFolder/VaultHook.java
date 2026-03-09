@@ -1,323 +1,326 @@
 package dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.BankConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
-import io.papermc.paper.annotation.DoNotUse;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault2.economy.AccountPermission;
+import net.milkbowl.vault2.economy.Economy;
+import net.milkbowl.vault2.economy.EconomyResponse;
+import net.milkbowl.vault2.economy.EconomyResponse.ResponseType;
 
 public class VaultHook implements Economy {
 
     @Override
-    public EconomyResponse bankBalance(String arg0) {
-        BankConfigManager bankConfigManager = new BankConfigManager(arg0 + ".yml");
-        YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
-        return new EconomyResponse(0, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
-                EconomyResponse.ResponseType.SUCCESS, "Successfully retrieved " + arg0 + "'s bank account balance!");
-    }
-
-    @Override
-    public EconomyResponse bankDeposit(String arg0, double arg1) {
-        BankConfigManager bankConfigManager = new BankConfigManager(arg0 + ".yml");
-        YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
-        bankConfig.set(arg0 + ".Bank_Account.Balance", bankConfig.getDouble(arg0 + ".Bank_Account.Balance") + arg1);
-        bankConfigManager.saveConfig();
-        return new EconomyResponse(arg1, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
-                EconomyResponse.ResponseType.SUCCESS,
-                "Successfully deposited " + arg1 + " into " + arg0 + "'s bank account!");
-    }
-
-    @Override
-    public EconomyResponse bankHas(String arg0, double arg1) {
+    public boolean accountSupportsCurrency(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'bankHas'");
+        throw new UnsupportedOperationException("Unimplemented method 'accountSupportsCurrency'");
     }
 
     @Override
-    public EconomyResponse bankWithdraw(String arg0, double arg1) {
-        BankConfigManager bankConfigManager = new BankConfigManager(arg0 + ".yml");
-        YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
-        bankConfig.set(arg0 + ".Bank_Account.Balance", bankConfig.getDouble(arg0 + ".Bank_Account.Balance") - arg1);
-        bankConfigManager.saveConfig();
-        return new EconomyResponse(arg1, bankConfig.getDouble(arg0 + ".Bank_Account.Balance"),
-                EconomyResponse.ResponseType.SUCCESS,
-                "Successfully withdrew " + arg1 + " from " + arg0 + "'s bank account!");
-    }
-
-    @Deprecated
-    @Override
-    public EconomyResponse createBank(String arg0, String arg1) {
+    public boolean accountSupportsCurrency(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull String arg3) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createBank'");
+        throw new UnsupportedOperationException("Unimplemented method 'accountSupportsCurrency'");
     }
 
     @Override
-    public EconomyResponse createBank(String arg0, OfflinePlayer op) {
-        BankConfigManager bankConfigManager = new BankConfigManager(op.getUniqueId().toString() + ".yml");
-        YamlConfiguration bankConfig = (YamlConfiguration) bankConfigManager.getConfig();
-        bankConfig.set(op.getUniqueId().toString() + ".Bank_Account.Balance", (double) 0.0);
-        bankConfig.set(op.getUniqueId().toString() + ".Bank_Account.Interest", (float) 0.82);
-        bankConfigManager.saveConfig();
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.SUCCESS, "Bank created successfully!");
-
-    }
-
-    @Override
-    @DoNotUse
-    public boolean createPlayerAccount(String arg0) {
+    public boolean addAccountMember(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createPlayerAccount'");
+        throw new UnsupportedOperationException("Unimplemented method 'addAccountMember'");
     }
 
     @Override
-    public boolean createPlayerAccount(OfflinePlayer arg0) {
-        if (!(hasAccount(arg0))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean createPlayerAccount(String arg0, String arg1) {
+    public boolean addAccountMember(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2,
+            @NotNull AccountPermission... arg3) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createPlayerAccount'");
+        throw new UnsupportedOperationException("Unimplemented method 'addAccountMember'");
     }
 
     @Override
-    public boolean createPlayerAccount(OfflinePlayer arg0, String arg1) {
+    public boolean createAccount(@NotNull UUID arg0, @NotNull String arg1) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createPlayerAccount'");
+        throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
     }
 
     @Override
-    public String currencyNamePlural() {
-        return new String("dollars");
-    }
-
-    @Override
-    public String currencyNameSingular() {
-        return new String("dollar");
-    }
-
-    @Override
-    public EconomyResponse deleteBank(String arg0) {
+    public boolean createAccount(@NotNull UUID arg0, @NotNull String arg1, boolean arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteBank'");
+        throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
     }
 
     @Override
-    public EconomyResponse depositPlayer(String arg0, double arg1) {
+    public boolean createAccount(@NotNull UUID arg0, @NotNull String arg1, @NotNull String arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'depositPlayer'");
+        throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
     }
 
     @Override
-    public EconomyResponse depositPlayer(OfflinePlayer arg0, double arg1) {
-        PlayerConfigManager pcm = new PlayerConfigManager(arg0.getUniqueId().toString());
-        pcm.addBalance(pcm.getBalance() + arg1);
-        return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS,
-                "Successfully deposited " + arg1 + " into " + arg0.getName() + "'s account!");
-    }
-
-    @Override
-    public EconomyResponse depositPlayer(String arg0, String arg1, double arg2) {
+    public boolean createAccount(@NotNull UUID arg0, @NotNull String arg1, @NotNull String arg2, boolean arg3) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'depositPlayer'");
+        throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
     }
 
     @Override
-    public EconomyResponse depositPlayer(OfflinePlayer arg0, String arg1, double arg2) {
+    public boolean createSharedAccount(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull UUID arg3) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'depositPlayer'");
+        throw new UnsupportedOperationException("Unimplemented method 'createSharedAccount'");
     }
 
     @Override
-    public String format(double arg0) {
+    public @NotNull Collection<String> currencies() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'currencies'");
+    }
+
+    @Override
+    public @NotNull String defaultCurrencyNamePlural(@NotNull String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'defaultCurrencyNamePlural'");
+    }
+
+    @Override
+    public @NotNull String defaultCurrencyNameSingular(@NotNull String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'defaultCurrencyNameSingular'");
+    }
+
+    @Override
+    public boolean deleteAccount(@NotNull String arg0, @NotNull UUID arg1) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAccount'");
+    }
+
+    @Override
+    public @NotNull EconomyResponse deposit(@NotNull String arg0, @NotNull UUID arg1, @NotNull BigDecimal arg2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deposit'");
+    }
+
+    @Override
+    public @NotNull EconomyResponse deposit(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull BigDecimal arg3) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deposit'");
+    }
+
+    @Override
+    public @NotNull EconomyResponse deposit(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull String arg3, @NotNull BigDecimal arg4) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deposit'");
+    }
+
+    @Override
+    public @NotNull String format(@NotNull BigDecimal arg0) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'format'");
     }
 
     @Override
-    public int fractionalDigits() {
+    public @NotNull String format(@NotNull String arg0, @NotNull BigDecimal arg1) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'format'");
+    }
+
+    @Override
+    public @NotNull String format(@NotNull BigDecimal arg0, @NotNull String arg1) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'format'");
+    }
+
+    @Override
+    public @NotNull String format(@NotNull String arg0, @NotNull BigDecimal arg1, @NotNull String arg2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'format'");
+    }
+
+    @Override
+    public int fractionalDigits(@NotNull String arg0) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'fractionalDigits'");
     }
 
     @Override
-    public double getBalance(String arg0) {
+    public Optional<String> getAccountName(@NotNull UUID arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAccountName'");
+    }
+
+    @Override
+    public @NotNull BigDecimal getBalance(@NotNull String arg0, @NotNull UUID arg1) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getBalance'");
     }
 
     @Override
-    public double getBalance(OfflinePlayer arg0) {
-        PlayerConfigManager pcm = new PlayerConfigManager(arg0.getUniqueId().toString());
-        return pcm.getBalance();
-    }
-
-    @Override
-    public double getBalance(String arg0, String arg1) {
+    public @NotNull BigDecimal getBalance(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getBalance'");
     }
 
     @Override
-    public double getBalance(OfflinePlayer arg0, String arg1) {
+    public @NotNull BigDecimal getBalance(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull String arg3) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getBalance'");
     }
 
     @Override
-    public List<String> getBanks() {
+    public @NotNull String getDefaultCurrency(@NotNull String arg0) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBanks'");
+        throw new UnsupportedOperationException("Unimplemented method 'getDefaultCurrency'");
     }
 
     @Override
-    public String getName() {
-        return new String("§4§lz§a§oDeath§b§oArcade§r");
-    }
-
-    @Override
-    public boolean has(String arg0, double arg1) {
+    public @NotNull String getName() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'has'");
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 
     @Override
-    public boolean has(OfflinePlayer arg0, double arg1) {
+    public @NotNull Map<UUID, String> getUUIDNameMap() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'has'");
+        throw new UnsupportedOperationException("Unimplemented method 'getUUIDNameMap'");
     }
 
     @Override
-    public boolean has(String arg0, String arg1, double arg2) {
+    public boolean has(@NotNull String arg0, @NotNull UUID arg1, @NotNull BigDecimal arg2) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'has'");
     }
 
     @Override
-    public boolean has(OfflinePlayer arg0, String arg1, double arg2) {
+    public boolean has(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2, @NotNull BigDecimal arg3) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'has'");
     }
 
     @Override
-    public boolean hasAccount(String arg0) {
+    public boolean has(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2, @NotNull String arg3,
+            @NotNull BigDecimal arg4) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'has'");
+    }
+
+    @Override
+    public boolean hasAccount(@NotNull UUID arg0) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hasAccount'");
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer arg0) {
-        boolean exists = false;
-        for (File f : Main.getInstance().getPlayerDataFolder().listFiles()) {
-            if (f.getName().equals(arg0.getUniqueId().toString())) {
-                exists = true;
-                return true;
-            }
-            if (!(f.getName().equalsIgnoreCase(arg0.getUniqueId().toString()))) {
-                exists = false;
-                return true;
-            }
-        }
-        return exists;
-    }
-
-    @Override
-    public boolean hasAccount(String arg0, String arg1) {
+    public boolean hasAccount(@NotNull UUID arg0, @NotNull String arg1) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hasAccount'");
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer arg0, String arg1) {
+    public boolean hasAccountPermission(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2,
+            @NotNull AccountPermission arg3) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hasAccount'");
+        throw new UnsupportedOperationException("Unimplemented method 'hasAccountPermission'");
     }
 
     @Override
-    public boolean hasBankSupport() {
-        return true;
+    public boolean hasCurrency(@NotNull String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hasCurrency'");
     }
 
     @Override
-    public EconomyResponse isBankMember(String arg0, String arg1) {
+    public boolean hasMultiCurrencySupport() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isBankMember'");
+        throw new UnsupportedOperationException("Unimplemented method 'hasMultiCurrencySupport'");
     }
 
     @Override
-    public EconomyResponse isBankMember(String arg0, OfflinePlayer arg1) {
+    public boolean hasSharedAccountSupport() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isBankMember'");
+        throw new UnsupportedOperationException("Unimplemented method 'hasSharedAccountSupport'");
     }
 
     @Override
-    public EconomyResponse isBankOwner(String arg0, String arg1) {
+    public boolean isAccountMember(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isBankOwner'");
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountMember'");
     }
 
     @Override
-    public EconomyResponse isBankOwner(String arg0, OfflinePlayer arg1) {
+    public boolean isAccountOwner(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isBankOwner'");
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountOwner'");
     }
 
     @Override
     public boolean isEnabled() {
-        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public EconomyResponse withdrawPlayer(String arg0, double arg1) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'withdrawPlayer'");
+        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer arg0, double arg1) {
-        PlayerConfigManager pcm = new PlayerConfigManager(arg0.getUniqueId().toString());
-        pcm.setBalance(pcm.getBalance() - arg1);
-        return new EconomyResponse(arg1, pcm.getBalance(), EconomyResponse.ResponseType.SUCCESS,
-                "Withdrawn successfully!");
-    }
-
-    @Override
-    public EconomyResponse withdrawPlayer(String arg0, String arg1, double arg2) {
+    public boolean removeAccountMember(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'withdrawPlayer'");
+        throw new UnsupportedOperationException("Unimplemented method 'removeAccountMember'");
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer arg0, String arg1, double arg2) {
+    public boolean renameAccount(@NotNull UUID arg0, @NotNull String arg1) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'withdrawPlayer'");
+        throw new UnsupportedOperationException("Unimplemented method 'renameAccount'");
     }
 
-    public static double round(double value, int places) {
-        if (places < 0)
-            throw new IllegalArgumentException();
-
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+    @Override
+    public boolean renameAccount(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'renameAccount'");
     }
+
+    @Override
+    public boolean setOwner(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setOwner'");
+    }
+
+    @Override
+    public boolean updateAccountPermission(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2,
+            @NotNull AccountPermission arg3, boolean arg4) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateAccountPermission'");
+    }
+
+    @Override
+    public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull BigDecimal arg2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withdraw'");
+    }
+
+    @Override
+    public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull BigDecimal arg3) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withdraw'");
+    }
+
+    @Override
+    public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull String arg3, @NotNull BigDecimal arg4) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withdraw'");
+    }
+
 
 }

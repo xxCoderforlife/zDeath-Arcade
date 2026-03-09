@@ -18,25 +18,15 @@ import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
 import dev.nullpointercoding.zdeatharcade.Vendors.GunVendor;
-import me.zombie_striker.customitemmanager.CustomBaseObject;
-import me.zombie_striker.qg.api.QualityArmory;
-import me.zombie_striker.qg.miscitems.Grenade;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class EquipmentPage implements Listener {
     private Main plugin = Main.getInstance();
-    private Double grenadePrice = 45.0;
-    private Double smokePrice = 60.0;
-    private Double flashPrice = 60.0;
-    private Double molotovPrice = 60.0;
-    private Double proxMinePrice = 60.0;
-    private Double inciGPrice = 60.0;
     private final Component star = Component.text('★', NamedTextColor.YELLOW, TextDecoration.BOLD);
     private final Inventory inv;
     private final Component title = Component.text("Equipment Page", NamedTextColor.GOLD, TextDecoration.ITALIC);
-    private HashMap<CustomBaseObject, Double> equipment = new HashMap<CustomBaseObject, Double>();
 
     public EquipmentPage() {
         boolean isEventRegistered = HandlerList.getRegisteredListeners(plugin).stream()
@@ -54,12 +44,6 @@ public class EquipmentPage implements Listener {
     }
 
     private void addItems() {
-        inv.setItem(10, createMiscItem((Grenade) QualityArmory.getCustomItemByName("grenade"), grenadePrice));
-        inv.setItem(11, createMiscItem((Grenade) QualityArmory.getCustomItemByName("smokegrenade"), smokePrice));
-        inv.setItem(12, createMiscItem((Grenade) QualityArmory.getCustomItemByName("flashbang"), flashPrice));
-        inv.setItem(13, createMiscItem((Grenade) QualityArmory.getCustomItemByName("molotov"), molotovPrice));
-        inv.setItem(14, createMiscItem((Grenade) QualityArmory.getCustomItemByName("proxymine"), proxMinePrice));
-        inv.setItem(15, createMiscItem((Grenade) QualityArmory.getCustomItemByName("incendarygrenade"), inciGPrice));
         inv.setItem(16, CustomInvFunctions.getBackButton());
 
     }
@@ -73,42 +57,11 @@ public class EquipmentPage implements Listener {
                 return;
             }
             Player whoClicked = (Player) e.getWhoClicked();
-            if (QualityArmory.isMisc(clicked)) {
-                CustomBaseObject gre = QualityArmory.getCustomItem(clicked);
-                if (equipment.containsKey(gre)) {
-                    if (Main.getEconomy().getBalance(whoClicked) >= equipment.get(gre)) {
-                        Main.getEconomy().withdrawPlayer(whoClicked, equipment.get(gre));
-                        whoClicked.getInventory().addItem(QualityArmory.getCustomItemAsItemStack(gre));
-                        whoClicked.sendMessage(Component.text("You have bought a " + gre.getDisplayName() + " for $"
-                                + equipment.get(gre), NamedTextColor.GREEN, TextDecoration.ITALIC));
-                    } else {
-                        whoClicked.sendMessage(Component.text("You do not have enough money to buy this ammo!",
-                                NamedTextColor.RED, TextDecoration.ITALIC)
-                                .hoverEvent(Component.text("You need $", NamedTextColor.RED, TextDecoration.ITALIC)
-                                        .append(Component.text(equipment.get(gre), NamedTextColor.RED,
-                                                TextDecoration.ITALIC))));
-                    }
-                }
-            }
             if (clicked.getItemMeta().displayName()
                     .equals(CustomInvFunctions.getBackButton().getItemMeta().displayName())) {
                 whoClicked.closeInventory();
                 new GunVendor().openInventory(whoClicked);
             }
         }
-    }
-
-    private ItemStack createMiscItem(CustomBaseObject cbo, Double price) {
-        ItemStack cboItem = QualityArmory.getCustomItemAsItemStack(cbo);
-        ItemMeta meta = cboItem.getItemMeta();
-        meta.displayName(star.append(Component.text(" " + cbo.getDisplayName() + " ").append(star)));
-        List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("Price: ", NamedTextColor.GREEN, TextDecoration.ITALIC)
-                .append(Component.text("$" + price + " for 1", NamedTextColor.WHITE, TextDecoration.ITALIC)));
-        meta.lore(lore);
-        cboItem.setItemMeta(meta);
-        equipment.put(cbo, price);
-        return cboItem;
-
     }
 }

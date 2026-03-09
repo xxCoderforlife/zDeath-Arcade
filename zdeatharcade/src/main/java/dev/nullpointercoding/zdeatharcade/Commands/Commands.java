@@ -25,8 +25,6 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 import dev.nullpointercoding.zdeatharcade.Main;
-import dev.nullpointercoding.zdeatharcade.ShootingRange.RangeGunSmith;
-import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
 import dev.nullpointercoding.zdeatharcade.SpawnItems.AFKPool.AFKPool;
 import dev.nullpointercoding.zdeatharcade.Utils.MainConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
@@ -38,7 +36,6 @@ public class Commands implements TabExecutor {
 
     private Main plugin = Main.getInstance();
     private Boolean isRangeSpawnSet = plugin.getIsRangeSpawnSet();
-    private static HashMap<Player, UUID> playersInRange = TheRange.playersInRange;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String arg2,
@@ -70,7 +67,6 @@ public class Commands implements TabExecutor {
                                 SavePlayerInventoryToFile.playerInventoryToBase64(p.getInventory()));
                         SPI.saveConfig();
                         p.getInventory().clear();
-                        playersInRange.put(p, p.getUniqueId());
                         p.teleportAsync(locToTPPlayer, TeleportCause.PLUGIN);
 
                     } else {
@@ -124,7 +120,6 @@ public class Commands implements TabExecutor {
                             for (File f : plugin.getNPCDataFolder().listFiles()) {
                                 if (f.getName().equalsIgnoreCase("gunsmith.yml")) {
                                     p.sendMessage("The Gunsmith has been removed.");
-                                    RangeGunSmith.removeGunSmithNPC(p);
                                 }
                             }
                         }
@@ -138,7 +133,6 @@ public class Commands implements TabExecutor {
                     if (args[2].equalsIgnoreCase("set")) {
                         try {
                             Integer id = Integer.parseInt(args[3]);
-                            RangeGunSmith.spawnGunsmithNPC(p, id);
                         } catch (NumberFormatException e) {
                             p.sendMessage("§cVendor ID must be a number.");
                         }

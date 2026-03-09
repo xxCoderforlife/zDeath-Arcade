@@ -1,7 +1,9 @@
 package dev.nullpointercoding.zdeatharcade.Listeners;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +16,6 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -35,7 +36,6 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
-import dev.nullpointercoding.zdeatharcade.ShootingRange.TheRange;
 import dev.nullpointercoding.zdeatharcade.Utils.AutoBroadcast;
 import dev.nullpointercoding.zdeatharcade.Utils.ParticleEffects;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
@@ -47,11 +47,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.TitlePart;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class PlayerListeners implements Listener {
 
-    private HashMap<Player, UUID> playersInRange = TheRange.playersInRange;
     private HashMap<Player, Inventory> playerInv = new HashMap<Player, Inventory>();
     private Economy econ = new VaultHook();
     private AutoBroadcast AB;
@@ -59,7 +58,8 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        ParticleEffects.startEffects();
+        
+       // ParticleEffects.startEffects();
         Player p = e.getPlayer();
         SavePlayerInventoryToFile SPI = new SavePlayerInventoryToFile(p.getUniqueId().toString());
         if (SPI.getPlayersThatQuitConfig() == null)
@@ -85,10 +85,11 @@ public class PlayerListeners implements Listener {
         }
         // Check if Player config exists
         Economy econ = Main.getEconomy();
-        PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
+        PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId());
+        PCM.addKnownPlayer(p.getUniqueId());
 
         if (econ != null) { // add null check here
-            if (econ.createPlayerAccount(p)) {
+            if (econ.createAccount(p.getUniqueId(), p.getName() + " Player Account")) {
                 Bukkit.getConsoleSender()
                         .sendMessage(Component.text("Account created for: " + p.getName()).color(NamedTextColor.GREEN));
                 PCM.updatePlayerDataFile(p);
@@ -105,9 +106,8 @@ public class PlayerListeners implements Listener {
                 .append(Component.text().content("} ").color(TextColor.color(0x00FF00)))
                 .append(p.displayName().color(NamedTextColor.GREEN)).build();
         e.joinMessage(joinMessage.hoverEvent(randomJoinMessageLore(p)));
-        joinedWithBounty(p);
-        AB = new AutoBroadcast();
-        AB.startBroadcast();
+        //joinedWithBounty(p);
+        new AutoBroadcast().startBroadcast();
         // ✘
 
     }
@@ -115,17 +115,6 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        if (playersInRange.containsKey(p)) {
-            SavePlayerInventoryToFile SPI = new SavePlayerInventoryToFile(p.getUniqueId().toString());
-            SPI.playersThatQuit();
-            YamlConfiguration pConfig = SPI.getPlayersThatQuitConfig();
-            pConfig.set("PlayersThatQuitWhileInTheRange." + p.getName(), p.getUniqueId().toString());
-            try {
-                pConfig.save(SPI.getPlayersThatQuit());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
         final TextComponent leaveMessage = Component.text().content("{").color(TextColor.color(0x00FF00))
                 .append(Component.text('✘').color(TextColor.color(0xFF0000)))
                 .append(Component.text().content("} ").color(TextColor.color(0x00FF00)))
@@ -149,7 +138,7 @@ public class PlayerListeners implements Listener {
         Player p = (Player) e.getPlayer();
         if (p.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent playerKiller = (EntityDamageByEntityEvent) p.getLastDamageCause();
-            PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId().toString());
+            PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId());
             if (playerKiller.getDamager() instanceof Zombie) {
                 PCM.setDeaths(PCM.getDeaths() + 1);
                 PCM.saveConfig();
@@ -177,10 +166,9 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerReSpawn(PlayerRespawnEvent e) {
         Player p = (Player) e.getPlayer();
-        Double toTake = econ.getBalance(p) * 0.08;
-        VaultHook.round(toTake, 2);
+        BigDecimal toTake = econ.getBalance("zdeatharcade", p.getUniqueId()).multiply(BigDecimal.valueOf(0.08));
         if (playerInv.containsKey(p)) {
-            econ.withdrawPlayer(p, toTake);
+            econ.withdraw("zdeatharcade", p.getUniqueId(), toTake);
             p.sendTitlePart(TitlePart.TITLE, Component.text("§4§lYOU DIED"));
             p.sendTitlePart(TitlePart.SUBTITLE, Component.text("You lost §e§o" + toTake.toString() + "§4§l$"));
             p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
@@ -194,18 +182,18 @@ public class PlayerListeners implements Listener {
     private void checkForBounites(Player p) {
         for (Entry<Player, HashMap<Player, Double>> m : BankAccountGUI.getBountyList().entrySet()) {
             if (m.getValue().containsKey(p)) {
-                econ.withdrawPlayer(m.getKey(), m.getValue().get(p).doubleValue());
+                econ.withdraw("zdeathradio",p.getUniqueId(),BigDecimal.valueOf(m.getValue().get(p).doubleValue()));
                 m.getValue().remove(p);
                 Bukkit.broadcast(Component.text(p.getKiller() + " has claimed the bounty on " + p.getName()
                         + " and has been rewarded with " + m.getValue().get(p).doubleValue() + "$"));
-                econ.depositPlayer(p.getKiller(), m.getValue().get(p).doubleValue());
+                econ.deposit("zdeathradio", p.getKiller().getUniqueId(), BigDecimal.valueOf(m.getValue().get(p).doubleValue()));
                 p.getKiller().getInventory().addItem(bountyHead());
             }
         }
     }
 
     private void setLastLoginPlayer(Player player) {
-        PlayerConfigManager pcm = new PlayerConfigManager(player.getUniqueId().toString());
+        PlayerConfigManager pcm = new PlayerConfigManager(player.getUniqueId());
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         pcm.setLastLogin(myFormatObj.format(now));
@@ -214,7 +202,7 @@ public class PlayerListeners implements Listener {
     }
 
     private void joinedWithBounty(Player playerWithBounty) {
-        PlayerConfigManager pcm = new PlayerConfigManager(playerWithBounty.getUniqueId().toString());
+        PlayerConfigManager pcm = new PlayerConfigManager(playerWithBounty.getUniqueId());
         if (pcm.hasBounty()) {
             Bukkit.broadcast(Component.text(playerWithBounty.getName() + " has joined and still has a bounty of "
                     + pcm.getBounty() + "$"));
@@ -223,7 +211,7 @@ public class PlayerListeners implements Listener {
     }
 
     private void leftWithBounty(Player playerWithBounty) {
-        PlayerConfigManager pcm = new PlayerConfigManager(playerWithBounty.getUniqueId().toString());
+        PlayerConfigManager pcm = new PlayerConfigManager(playerWithBounty.getUniqueId());
         if (pcm.hasBounty()) {
             Bukkit.broadcast(Component.text(playerWithBounty.getName() + " has left and still has a bounty of "
                     + pcm.getBounty() + "$"));
@@ -251,9 +239,9 @@ public class PlayerListeners implements Listener {
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {
-            urlObject = new URL(url); // The URL to the skin, for example:
+            urlObject = new URI(url).toURL(); // The URL to the skin, for example:
                                       // https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
-        } catch (MalformedURLException exception) {
+        } catch (MalformedURLException | java.net.URISyntaxException exception) {
             throw new RuntimeException("Invalid URL", exception);
         }
         textures.setSkin(urlObject); // Set the skin of the player profile to the URL
