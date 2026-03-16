@@ -1,6 +1,5 @@
 package dev.nullpointercoding.zdeatharcade.Listeners;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -37,9 +36,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.Utils.AutoBroadcast;
-import dev.nullpointercoding.zdeatharcade.Utils.ParticleEffects;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
-import dev.nullpointercoding.zdeatharcade.Utils.SavePlayerInventoryToFile;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -61,44 +58,19 @@ public class PlayerListeners implements Listener {
         
        // ParticleEffects.startEffects();
         Player p = e.getPlayer();
-        SavePlayerInventoryToFile SPI = new SavePlayerInventoryToFile(p.getUniqueId().toString());
-        if (SPI.getPlayersThatQuitConfig() == null)
-            SPI.playersThatQuit();
-        if (SPI.getPlayersThatQuitConfig().contains("PlayersThatQuitWhileInTheRange." + p.getName())) {
-            p.getInventory().clear();
-            SPI.getPlayersThatQuitConfig().set("PlayersThatQuitWhileInTheRange." + p.getName(), null);
-            try {
-                SPI.getPlayersThatQuitConfig().save(SPI.getPlayersThatQuit());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
-            try {
-                p.getInventory().setContents(SavePlayerInventoryToFile
-                        .itemStackArrayFromBase64(SPI.getConfig().getString(p.getName() + ".InvAsBase64")));
-            } catch (IOException ex) {
-                Bukkit.getConsoleSender().sendMessage(ex.getStackTrace().toString());
-            }
-            p.sendTitlePart(TitlePart.TITLE, Component.text("§a§oINVENTORY RESTORED"));
-            p.sendTitlePart(TitlePart.SUBTITLE, Component.text("§cYou left the Range"));
-            SPI.deletePlayerInventoryFile();
-        }
-        // Check if Player config exists
         Economy econ = Main.getEconomy();
         PlayerConfigManager PCM = new PlayerConfigManager(p.getUniqueId());
         PCM.addKnownPlayer(p.getUniqueId());
 
         if (econ != null) { // add null check here
-            if (econ.createAccount(p.getUniqueId(), p.getName() + " Player Account")) {
-                Bukkit.getConsoleSender()
-                        .sendMessage(Component.text("Account created for: " + p.getName()).color(NamedTextColor.GREEN));
-                PCM.updatePlayerDataFile(p);
+            if (econ.createAccount(p.getUniqueId(), p.getName(),true)) {
+                p.sendMessage(Component.text("Creating your account!"));
             } else {
-                Bukkit.getConsoleSender().sendMessage(
-                        Component.text("Account already exists for: " + p.getName()).color(NamedTextColor.GREEN));
+                p.sendMessage(Component.text("Logging into to " + p.getName()).color(NamedTextColor.GREEN));
             }
         } else {
-            Bukkit.getConsoleSender().sendMessage("Economy is null.");
+            p.sendMessage(Component.text("Economy is null."));
+
         }
         // Check if the Player who joined has a bounty
         final TextComponent joinMessage = Component.text().content("{").color(TextColor.color(0x00FF00))
@@ -166,14 +138,13 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerReSpawn(PlayerRespawnEvent e) {
         Player p = (Player) e.getPlayer();
-        BigDecimal toTake = econ.getBalance("zdeatharcade", p.getUniqueId()).multiply(BigDecimal.valueOf(0.08));
+        BigDecimal toTake = econ.balance("zdeatharcade", p.getUniqueId()).multiply(BigDecimal.valueOf(0.08));
         if (playerInv.containsKey(p)) {
             econ.withdraw("zdeatharcade", p.getUniqueId(), toTake);
             p.sendTitlePart(TitlePart.TITLE, Component.text("§4§lYOU DIED"));
             p.sendTitlePart(TitlePart.SUBTITLE, Component.text("You lost §e§o" + toTake.toString() + "§4§l$"));
             p.teleportAsync(p.getWorld().getSpawnLocation(), TeleportCause.PLUGIN);
             p.getInventory().clear();
-            // TODO: Remove all loot and ammo but keep guns
             p.getInventory().setContents(playerInv.get(p).getContents());
             playerInv.remove(p);
         }

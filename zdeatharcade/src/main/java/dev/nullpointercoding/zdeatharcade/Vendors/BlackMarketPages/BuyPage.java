@@ -3,11 +3,7 @@ package dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketPages;
 import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -17,13 +13,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.nullpointercoding.zdeatharcade.Main;
-import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.CustomInvFunctions;
-import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.Pages;
 import dev.nullpointercoding.zdeatharcade.Vendors.BlackMarketVendor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

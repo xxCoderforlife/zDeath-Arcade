@@ -2,13 +2,16 @@ package dev.nullpointercoding.zdeatharcade.Zombies;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +38,7 @@ public class ZombieCommands implements TabExecutor {
                     return true;
                 }
                 if (args.length == 0) {
-                    p.sendMessage(Component.text("§eUsage: §6/zdeatharcade zombie <setspawner/killall>"));
+                    p.sendMessage(Component.text("§eUsage: §6/zombie <setspawner/killall/spawnlimit/spawned/mobspawning/mob>"));
                     return true;
                 }
                 if (args.length == 1) {
@@ -104,6 +107,21 @@ public class ZombieCommands implements TabExecutor {
                                         .append(Component.text(p.getWorld().getEntitiesByClass(Zombie.class).size(),
                                                 NamedTextColor.GOLD)));
                     }
+                    if (args[0].equalsIgnoreCase("mobspawning")) {
+                        if (!(p.hasPermission("zdeatharcade.admin"))) {
+                            p.sendMessage("§cYou do not have permission to use this command.");
+                            return true;
+                        }
+                        p.sendMessage(Component.text("Mob spawning is currently: ", NamedTextColor.YELLOW)
+                                .append(Component.text(MobSpawnController.isMobSpawningEnabled() ? "enabled" : "disabled",
+                                        MobSpawnController.isMobSpawningEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                        p.sendMessage(Component.text("Usage: /zombie mobspawning <on/off/toggle/status>", NamedTextColor.GOLD));
+                        return true;
+                    }
+                    if (args[0].equalsIgnoreCase("mob")) {
+                        p.sendMessage(Component.text("Usage: /zombie mob <type> <enable|disable|toggle|status>", NamedTextColor.GOLD));
+                        return true;
+                    }
                 }
                 if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("spawnlimit")) {
@@ -116,6 +134,52 @@ public class ZombieCommands implements TabExecutor {
                             return true;
                         }
 
+                    }
+                    if (args[0].equalsIgnoreCase("mobspawning")) {
+                        if (!(p.hasPermission("zdeatharcade.admin"))) {
+                            p.sendMessage("§cYou do not have permission to use this command.");
+                            return true;
+                        }
+                        if (args[1].equalsIgnoreCase("status")) {
+                            p.sendMessage(Component.text("Mob spawning is currently: ", NamedTextColor.YELLOW)
+                                    .append(Component.text(MobSpawnController.isMobSpawningEnabled() ? "enabled" : "disabled",
+                                            MobSpawnController.isMobSpawningEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                            return true;
+                        }
+                        if (args[1].equalsIgnoreCase("toggle")) {
+                            boolean enabled = MobSpawnController.toggleMobSpawning();
+                            p.sendMessage(Component.text("Mob spawning is now ", NamedTextColor.YELLOW)
+                                    .append(Component.text(enabled ? "enabled" : "disabled",
+                                            enabled ? NamedTextColor.GREEN : NamedTextColor.RED)));
+                            return true;
+                        }
+                        if (args[1].equalsIgnoreCase("on") || args[1].equalsIgnoreCase("enable")) {
+                            MobSpawnController.setMobSpawningEnabled(true);
+                            p.sendMessage(Component.text("Mob spawning has been enabled.", NamedTextColor.GREEN));
+                            return true;
+                        }
+                        if (args[1].equalsIgnoreCase("off") || args[1].equalsIgnoreCase("disable")) {
+                            MobSpawnController.setMobSpawningEnabled(false);
+                            p.sendMessage(Component.text("Mob spawning has been disabled.", NamedTextColor.RED));
+                            return true;
+                        }
+                        p.sendMessage(Component.text("Usage: /zombie mobspawning <on/off/toggle/status>", NamedTextColor.GOLD));
+                        return true;
+                    }
+                    if (args[0].equalsIgnoreCase("mob")) {
+                        EntityType entityType = parseEntityType(args[1]);
+                        MobSpawnToggleFile mobToggleFile = new MobSpawnToggleFile();
+                        if (entityType == null || !mobToggleFile.getManagedMobs().contains(entityType)) {
+                            p.sendMessage(Component.text("Unknown or unsupported mob type: ", NamedTextColor.RED)
+                                    .append(Component.text(args[1], NamedTextColor.GOLD)));
+                            return true;
+                        }
+                        p.sendMessage(Component.text(entityType.name() + " is currently ", NamedTextColor.YELLOW)
+                                .append(Component.text(mobToggleFile.isMobDisabled(entityType) ? "disabled" : "enabled",
+                                        mobToggleFile.isMobDisabled(entityType) ? NamedTextColor.RED : NamedTextColor.GREEN)));
+                        p.sendMessage(Component.text("Usage: /zombie mob " + entityType.name().toLowerCase()
+                                + " <enable|disable|toggle|status>", NamedTextColor.GOLD));
+                        return true;
                     }
                 }
                 if (args.length == 3) {
@@ -141,6 +205,43 @@ public class ZombieCommands implements TabExecutor {
                             return true;
                         }
                     }
+                    if (args[0].equalsIgnoreCase("mob")) {
+                        EntityType entityType = parseEntityType(args[1]);
+                        MobSpawnToggleFile mobToggleFile = new MobSpawnToggleFile();
+                        if (entityType == null || !mobToggleFile.getManagedMobs().contains(entityType)) {
+                            p.sendMessage(Component.text("Unknown or unsupported mob type: ", NamedTextColor.RED)
+                                    .append(Component.text(args[1], NamedTextColor.GOLD)));
+                            return true;
+                        }
+
+                        if (args[2].equalsIgnoreCase("status")) {
+                            p.sendMessage(Component.text(entityType.name() + " is currently ", NamedTextColor.YELLOW)
+                                    .append(Component.text(mobToggleFile.isMobDisabled(entityType) ? "disabled" : "enabled",
+                                            mobToggleFile.isMobDisabled(entityType) ? NamedTextColor.RED : NamedTextColor.GREEN)));
+                            return true;
+                        }
+                        if (args[2].equalsIgnoreCase("toggle")) {
+                            boolean disabled = mobToggleFile.toggleMob(entityType);
+                            p.sendMessage(Component.text(entityType.name() + " is now ", NamedTextColor.YELLOW)
+                                    .append(Component.text(disabled ? "disabled" : "enabled",
+                                            disabled ? NamedTextColor.RED : NamedTextColor.GREEN)));
+                            return true;
+                        }
+                        if (args[2].equalsIgnoreCase("disable") || args[2].equalsIgnoreCase("off")) {
+                            mobToggleFile.setMobDisabled(entityType, true);
+                            p.sendMessage(Component.text(entityType.name() + " spawning disabled.", NamedTextColor.RED));
+                            return true;
+                        }
+                        if (args[2].equalsIgnoreCase("enable") || args[2].equalsIgnoreCase("on")) {
+                            mobToggleFile.setMobDisabled(entityType, false);
+                            p.sendMessage(Component.text(entityType.name() + " spawning enabled.", NamedTextColor.GREEN));
+                            return true;
+                        }
+
+                        p.sendMessage(Component.text("Usage: /zombie mob " + entityType.name().toLowerCase()
+                                + " <enable|disable|toggle|status>", NamedTextColor.GOLD));
+                        return true;
+                    }
                 }
             }
         }
@@ -157,10 +258,24 @@ public class ZombieCommands implements TabExecutor {
                 tab.add("killall");
                 tab.add("spawnlimit");
                 tab.add("spawned");
+                tab.add("mobspawning");
+                tab.add("mob");
             }
             if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("spawnlimit")) {
                     tab.add("set");
+                }
+                if (args[0].equalsIgnoreCase("mobspawning")) {
+                    tab.add("on");
+                    tab.add("off");
+                    tab.add("toggle");
+                    tab.add("status");
+                }
+                if (args[0].equalsIgnoreCase("mob")) {
+                    tab.addAll(new MobSpawnToggleFile().getManagedMobs().stream()
+                            .map(type -> type.name().toLowerCase())
+                            .sorted(Comparator.naturalOrder())
+                            .collect(Collectors.toList()));
                 }
             }
             if (args.length == 3) {
@@ -176,11 +291,25 @@ public class ZombieCommands implements TabExecutor {
                     tab.add("900");
                     tab.add("1000");
                 }
+                if (args[0].equalsIgnoreCase("mob")) {
+                    tab.add("enable");
+                    tab.add("disable");
+                    tab.add("toggle");
+                    tab.add("status");
+                }
             }
 
         }
         return tab;
 
+    }
+
+    private EntityType parseEntityType(String input) {
+        try {
+            return EntityType.valueOf(input.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
 }

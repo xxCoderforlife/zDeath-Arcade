@@ -1,7 +1,5 @@
 package dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -9,17 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Utils.BankConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault2.economy.AccountPermission;
 import net.milkbowl.vault2.economy.Economy;
 import net.milkbowl.vault2.economy.EconomyResponse;
-import net.milkbowl.vault2.economy.EconomyResponse.ResponseType;
 
 public class VaultHook implements Economy {
 
@@ -56,9 +53,31 @@ public class VaultHook implements Economy {
     }
 
     @Override
-    public boolean createAccount(@NotNull UUID arg0, @NotNull String arg1, boolean arg2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createAccount'");
+    public boolean createAccount(@NotNull UUID playerUUID, @NotNull String playerName, boolean arg2) {
+        // TODO: Use this method to create accounts with the option for a default
+        // balance
+        if (hasAccount(playerUUID)) {
+            return false; // Account already exists -- No need to create one.
+        }
+        PlayerConfigManager playerConfigManager = new PlayerConfigManager(playerUUID);
+        playerConfigManager.updatePlayerDataFile();
+        Bukkit.getConsoleSender()
+                .sendMessage(Component.text("Account created for: " + playerName).color(NamedTextColor.GREEN));
+        return true;
+    }
+
+    public boolean createBankAccount(@NotNull String accountName, @NotNull UUID accountNumber) {
+        // Validate inputs
+        if (accountName == null || accountName.isEmpty() || accountNumber == null) {
+            return false; // Invalid input
+        }
+        BankConfigManager bankConfigManager = new BankConfigManager(accountNumber);
+        if (bankConfigManager.exists()) {
+            return false; // Account already exists
+        }
+        bankConfigManager.createConfig(accountNumber);
+        return true;
+
     }
 
     @Override
@@ -74,10 +93,9 @@ public class VaultHook implements Economy {
     }
 
     @Override
-    public boolean createSharedAccount(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
-            @NotNull UUID arg3) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createSharedAccount'");
+    public boolean createSharedAccount(@NotNull String pluginName, @NotNull UUID accountNumber, @NotNull String accountName,
+            @NotNull UUID owner) {
+            throw new UnsupportedOperationException("Unimplemented method 'createSharedAccount'");
     }
 
     @Override
@@ -106,6 +124,19 @@ public class VaultHook implements Economy {
 
     @Override
     public @NotNull EconomyResponse deposit(@NotNull String arg0, @NotNull UUID arg1, @NotNull BigDecimal arg2) {
+        BigDecimal amount = normalizeAmount(arg2);
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            return failure(amount, balance(arg0, arg1), "Cannot deposit a negative amount.");
+        }
+
+        PlayerConfigManager playerConfigManager = new PlayerConfigManager(arg1);
+        BigDecimal updatedBalance = balance(arg0, arg1).add(amount);
+        playerConfigManager.setBalance(updatedBalance);
+        return success(amount, updatedBalance);
+    }
+
+    public @NotNull EconomyResponse depositBank(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull BigDecimal arg3) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deposit'");
     }
@@ -126,26 +157,22 @@ public class VaultHook implements Economy {
 
     @Override
     public @NotNull String format(@NotNull BigDecimal arg0) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'format'");
+        return normalizeAmount(arg0).toPlainString();
     }
 
     @Override
     public @NotNull String format(@NotNull String arg0, @NotNull BigDecimal arg1) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'format'");
+        return format(arg1);
     }
 
     @Override
     public @NotNull String format(@NotNull BigDecimal arg0, @NotNull String arg1) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'format'");
+        return format(arg0);
     }
 
     @Override
     public @NotNull String format(@NotNull String arg0, @NotNull BigDecimal arg1, @NotNull String arg2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'format'");
+        return format(arg1);
     }
 
     @Override
@@ -161,22 +188,33 @@ public class VaultHook implements Economy {
     }
 
     @Override
+    @Deprecated
     public @NotNull BigDecimal getBalance(@NotNull String arg0, @NotNull UUID arg1) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBalance'");
+        return balance(arg0, arg1);
     }
 
     @Override
+    @Deprecated
     public @NotNull BigDecimal getBalance(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBalance'");
+        return balance(arg0, arg1);
     }
 
     @Override
+    @Deprecated
     public @NotNull BigDecimal getBalance(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
             @NotNull String arg3) {
+        return balance(arg0, arg1);
+    }
+
+    @Override
+    public @NotNull BigDecimal balance(@NotNull String arg0, @NotNull UUID arg1) {
+        PlayerConfigManager playerConfigManager = new PlayerConfigManager(arg1);
+        return normalizeAmount(new BigDecimal(playerConfigManager.getBalance()));
+    }
+
+    public @NotNull BigDecimal bankbBalance(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBalance'");
+        throw new UnsupportedOperationException("Unimplemented method 'balance'");
     }
 
     @Override
@@ -199,27 +237,29 @@ public class VaultHook implements Economy {
 
     @Override
     public boolean has(@NotNull String arg0, @NotNull UUID arg1, @NotNull BigDecimal arg2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'has'");
+        return balance(arg0, arg1).compareTo(normalizeAmount(arg2)) >= 0;
     }
 
     @Override
     public boolean has(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2, @NotNull BigDecimal arg3) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'has'");
+        return has(arg0, arg1, arg3);
     }
 
     @Override
     public boolean has(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2, @NotNull String arg3,
             @NotNull BigDecimal arg4) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'has'");
+        return has(arg0, arg1, arg4);
     }
 
     @Override
     public boolean hasAccount(@NotNull UUID arg0) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hasAccount'");
+        PlayerConfigManager playerConfigManager = new PlayerConfigManager(arg0);
+        return playerConfigManager.exists();
+    }
+
+    public boolean hasBankAccount(@NotNull UUID arg1) {
+        BankConfigManager bankConfigManager = new BankConfigManager(arg1);
+        return bankConfigManager.exists();
     }
 
     @Override
@@ -267,14 +307,14 @@ public class VaultHook implements Economy {
 
     @Override
     public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+        return true;
     }
 
     @Override
-    public boolean removeAccountMember(@NotNull String arg0, @NotNull UUID arg1, @NotNull UUID arg2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeAccountMember'");
+    public boolean removeAccountMember(@NotNull String arg0, @NotNull UUID accountNumber, @NotNull UUID memberUUID) {
+        BankConfigManager bankConfigManager = new BankConfigManager(accountNumber);
+        bankConfigManager.removeMember(memberUUID);
+        return true;
     }
 
     @Override
@@ -304,12 +344,22 @@ public class VaultHook implements Economy {
 
     @Override
     public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull BigDecimal arg2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'withdraw'");
+        BigDecimal amount = normalizeAmount(arg2);
+        BigDecimal currentBalance = balance(arg0, arg1);
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            return failure(amount, currentBalance, "Cannot withdraw a negative amount.");
+        }
+        if (currentBalance.compareTo(amount) < 0) {
+            return failure(amount, currentBalance, "Insufficient funds.");
+        }
+
+        BigDecimal updatedBalance = currentBalance.subtract(amount);
+        PlayerConfigManager playerConfigManager = new PlayerConfigManager(arg1);
+        playerConfigManager.setBalance(updatedBalance);
+        return success(amount, updatedBalance);
     }
 
-    @Override
-    public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+    public @NotNull EconomyResponse withdrawBank(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
             @NotNull BigDecimal arg3) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withdraw'");
@@ -317,10 +367,29 @@ public class VaultHook implements Economy {
 
     @Override
     public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
-            @NotNull String arg3, @NotNull BigDecimal arg4) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'withdraw'");
+            @NotNull BigDecimal arg3) {
+        return withdraw(arg0, arg1, arg3);
     }
 
+    @Override
+    public @NotNull EconomyResponse withdraw(@NotNull String arg0, @NotNull UUID arg1, @NotNull String arg2,
+            @NotNull String arg3, @NotNull BigDecimal arg4) {
+        return withdraw(arg0, arg1, arg4);
+    }
+
+    private BigDecimal normalizeAmount(BigDecimal amount) {
+        if (amount == null) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+        }
+        return amount.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    private EconomyResponse success(BigDecimal amount, BigDecimal balance) {
+        return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.SUCCESS, null);
+    }
+
+    private EconomyResponse failure(BigDecimal amount, BigDecimal balance, String message) {
+        return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.FAILURE, message);
+    }
 
 }

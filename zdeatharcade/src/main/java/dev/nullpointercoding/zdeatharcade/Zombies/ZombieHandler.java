@@ -71,7 +71,7 @@ public class ZombieHandler implements Listener {
         if (!(e.getEntity() instanceof Zombie)) {
             return;
         }/**
-        TODO: create a switch metgod to handle the different zombie levels
+        TODO: create a switch method to handle the different zombie levels
         */
         spawnCount--;
         Zombie z = (Zombie) e.getEntity();
@@ -160,6 +160,10 @@ public class ZombieHandler implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void disableAllOtherMobSpawns(CreatureSpawnEvent e) {
+        if (e.isCancelled() || !MobSpawnController.isMobSpawningEnabled()) {
+            e.setCancelled(true);
+            return;
+        }
         LivingEntity c = e.getEntity();
         if (c.getType() == EntityType.ZOMBIE) {
             spawnCount = e.getEntity().getWorld().getEntitiesByClass(Zombie.class).size();

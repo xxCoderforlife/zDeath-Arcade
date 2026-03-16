@@ -20,12 +20,18 @@ public class MainConfigManager {
     private File configFile;
     private FileConfiguration config;
     private static Integer zombieSpawnLimit;
+    private static boolean mobSpawningEnabled;
     private final String configStart = "zDeathArcade.";
 
     public MainConfigManager() {
         this.configName = "config.yml";
         configHandler();
+        if (!getConfig().contains(configStart + "world-mob-spawning-enabled")) {
+            getConfig().set(configStart + "world-mob-spawning-enabled", true);
+            saveConfig();
+        }
         zombieSpawnLimit = getConfig().getInt(configStart + "world-zombie-spawnLimit");
+        mobSpawningEnabled = getConfig().getBoolean(configStart + "world-mob-spawning-enabled", true);
     }
 
     public String getConfigName() {
@@ -40,9 +46,19 @@ public class MainConfigManager {
         return zombieSpawnLimit;
     }
 
+    public static boolean isMobSpawningEnabled() {
+        return mobSpawningEnabled;
+    }
+
     public void setZombieSpawnLimit(Integer zombieSpawnLimit) {
         MainConfigManager.zombieSpawnLimit = zombieSpawnLimit;
         getConfig().set(configStart + "world-zombie-spawnLimit", zombieSpawnLimit);
+        saveConfig();
+    }
+
+    public void setMobSpawningEnabled(boolean mobSpawningEnabled) {
+        MainConfigManager.mobSpawningEnabled = mobSpawningEnabled;
+        getConfig().set(configStart + "world-mob-spawning-enabled", mobSpawningEnabled);
         saveConfig();
     }
 

@@ -55,7 +55,7 @@ public class Snack {
         meta.displayName(displayName);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Effect: ", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC)
-                .append(Component.text(effect.getName(), NamedTextColor.WHITE)));
+            .append(Component.text(effect.translationKey(), NamedTextColor.WHITE)));
         lore.add(Component.text("Price: ", NamedTextColor.GREEN, TextDecoration.ITALIC)
                 .append(Component.text(worth.toString(), NamedTextColor.WHITE)));
         lore.add(Component.text("Feed Amount: ", NamedTextColor.GOLD, TextDecoration.ITALIC)

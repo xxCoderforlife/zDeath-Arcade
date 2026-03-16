@@ -1,6 +1,10 @@
 package dev.nullpointercoding.zdeatharcade;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
@@ -8,10 +12,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.profile.PlayerTextures;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-
+import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.nullpointercoding.zdeatharcade.Commands.Commands;
 import dev.nullpointercoding.zdeatharcade.Listeners.PlayerListeners;
 import dev.nullpointercoding.zdeatharcade.PlayerAccount.PlayerAccountCommands;
@@ -32,6 +37,8 @@ import dev.nullpointercoding.zdeatharcade.Vendors.SnackVendor;
 import dev.nullpointercoding.zdeatharcade.Vendors.VendorCommands;
 import dev.nullpointercoding.zdeatharcade.Vendors.VendorTabCommands;
 import dev.nullpointercoding.zdeatharcade.Vendors.Snacks.SnackEatEvent;
+import dev.nullpointercoding.zdeatharcade.Zombies.MobSpawnController;
+import dev.nullpointercoding.zdeatharcade.Zombies.MobSpawnToggleFile;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieCommands;
 import dev.nullpointercoding.zdeatharcade.Zombies.ZombieHandler;
 import dev.nullpointercoding.zdeatharcade.Zombies.PrizeLlama.PrizeLlamaCommands;
@@ -43,7 +50,7 @@ public class Main extends JavaPlugin {
     private static Main plugin;
     private static Random r;
     private static Random spawmChance;
-    private static Economy econ = null;
+    private static Economy econ;
     private ProtocolManager protocolManager;
     private Boolean isRangeSpawnSet;
     private File zombieSpawnLocations = new File(getDataFolder() + File.separator + "Zombie Spawn Locations");
@@ -56,6 +63,7 @@ public class Main extends JavaPlugin {
     private File customZombieDrops = new File(getDataFolder() + File.separator + "Custom Zombie Drops");
     private File dailyDealFolder = new File(getDataFolder() + File.separator + "Daily Deals");
     private File mainDataFolder = new File(getDataFolder() + File.separator + "Main Data");
+    private PlayerProfile profile;
 
     @Override
     public void onEnable() {
@@ -103,6 +111,7 @@ public class Main extends JavaPlugin {
     private void registerEcon() {
         Bukkit.getServer().getServicesManager().register(Economy.class, new VaultHook(), plugin,
                 ServicePriority.Highest);
+                econ = new VaultHook();
     }
 
     private void RegisterCommandsandEvents() {
@@ -123,6 +132,8 @@ public class Main extends JavaPlugin {
         getCommand("token").setExecutor(new EcoCommands());
         getCommand("token").setTabCompleter(new EcoTabCommands());
         getCommand("prizellama").setExecutor(new PrizeLlamaCommands());
+        getServer().getPluginManager().registerEvents(new MobSpawnController(), this);
+        getServer().getPluginManager().registerEvents(new MobSpawnToggleFile(), this);
         getServer().getPluginManager().registerEvents(new ZombieHandler(), this);
         getServer().getPluginManager().registerEvents(new PlayerListeners(), this);
         getServer().getPluginManager().registerEvents(new FarmerVendor(), this);
@@ -277,9 +288,24 @@ public class Main extends JavaPlugin {
     for (File f : files) {
         try {
             UUID uuid = UUID.fromString(f.getName().substring(0, f.getName().length() - 4));
-            new PlayerConfigManager().addKnownPlayer(uuid);
+            new PlayerConfigManager(uuid).addKnownPlayer(uuid);
         } catch (IllegalArgumentException ignored) { }
     }
 }
+    private final UUID R_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4");
+    private PlayerProfile getProfile(String url) {
+        PlayerProfile profile = (PlayerProfile) Bukkit.createProfile(R_UUID); // Get a new player profile
+        PlayerTextures textures = profile.getTextures();
+        URL urlObject = null;
+        try {
+            urlObject = new URI(url).toURL(); // The URL to the skin, for example:
+                                      // https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+        } catch (MalformedURLException | URISyntaxException exception) {
+            throw new RuntimeException("Invalid URL", exception);
+        }
+        textures.setSkin(urlObject); // Set the skin of the player profile to the URL
+        profile.setTextures(textures); // Set the textures back to the profile
+        return profile;
+    }
 
 }

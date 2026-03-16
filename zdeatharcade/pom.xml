@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
+  xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd"
+  root="true">
+  <modelVersion>4.1.0</modelVersion>
   <groupId>dev.nullpointercoding</groupId>
   <artifactId>zdeatharcade</artifactId>
   <version>0.0.1</version>
@@ -48,11 +48,11 @@
       <url>https://repo.dmulloy2.net/repository/public/</url>
     </repository>
     <repository>
-        <id>codemc-creatorfromhell</id>
-        <url>https://repo.codemc.io/repository/creatorfromhell/</url>
+      <id>codemc-creatorfromhell</id>
+      <url>https://repo.codemc.io/repository/creatorfromhell/</url>
     </repository>
   </repositories>
-  <dependencies>
+<dependencies>
     <dependency>
         <groupId>net.milkbowl.vault</groupId>
         <artifactId>VaultUnlockedAPI</artifactId>
@@ -68,12 +68,13 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.14.0</version>
+      <version>2.21.0</version>
     </dependency>
+    <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>6.1.0-M1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -85,73 +86,94 @@
     <dependency>
       <groupId>net.luckperms</groupId>
       <artifactId>api</artifactId>
-      <version>5.4</version>
+      <version>5.5</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldguard</groupId>
       <artifactId>worldguard-bukkit</artifactId>
-      <version>7.0.12</version>
+      <version>7.0.14</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.comphenix.protocol</groupId>
+      <groupId>net.dmulloy2</groupId>
       <artifactId>ProtocolLib</artifactId>
-      <version>5.2.0-SNAPSHOT</version>
+      <version>5.4.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.11.6</version>
+      <version>2.12.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.github.decentsoftware-eu</groupId>
       <artifactId>decentholograms</artifactId>
-      <version>2.8.11</version>
+      <version>2.9.9</version>
       <scope>provided</scope>
     </dependency>
+<!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+<dependency>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>4.0.0-beta-4</version>
+    <scope>compile</scope>
+</dependency>
+<!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+<dependency>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>4.0.0-beta-1</version>
+    <scope>compile</scope>
+</dependency>
   </dependencies>
+
+  <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>4.0.0-beta-2</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-compiler-plugin</artifactId>
+           <version>3.15.0</version>
+          <configuration>
+            <source>21</source>  <!-- or 21, etc. -->
+            <target>21</target>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
+          <version>3.5.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>4.0.0-beta-2</version>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>4.0.0-beta-2</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M8</version>
+          <version>4.0.0-M16</version>
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.9.0</version>
         </plugin>
       </plugins>
     </pluginManagement>

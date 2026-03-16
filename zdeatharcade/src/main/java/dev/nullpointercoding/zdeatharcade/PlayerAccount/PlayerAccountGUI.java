@@ -29,7 +29,9 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankGUI;
+import dev.nullpointercoding.zdeatharcade.Utils.BankConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
+import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
 import net.milkbowl.vault2.economy.Economy;
@@ -54,9 +56,12 @@ public class PlayerAccountGUI implements Listener {
 
     private void addItems() {
         inv.setItem(0, balanceItem());
-        inv.setItem(4, bankAccount());
+        if (doesPlayerHaveABankAccount()) {
+            inv.setItem(4, bankAccount());
+        } else {
+            inv.setItem(4, noBankAccountFound());
+        }
         inv.setItem(8, exit());
-
     }
 
     @EventHandler
@@ -85,8 +90,8 @@ public class PlayerAccountGUI implements Listener {
             whoClicked.sendTitlePart(TitlePart.TITLE, Component.text("§a§oCreating your account now..."));
             whoClicked.sendTitlePart(TitlePart.SUBTITLE,
                     Component.text("§2§oHave a nice Day User: " + whoClicked.getUniqueId().toString()));
-            econ.createBank("zdeatharcade" , whoClicked.getName() + "'s Bank", whoClicked.getUniqueId());
             whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            new VaultHook().createBankAccount(whoClicked.displayName().toString() + "'s Account" , whoClicked.getUniqueId());  
         }
         if (clicked.getItemMeta().displayName().equals(exit().getItemMeta().displayName())) {
             whoClicked.closeInventory(Reason.PLUGIN);
@@ -100,12 +105,7 @@ public class PlayerAccountGUI implements Listener {
 
     public void openGUI(Player p) {
         p.playSound(p, Sound.BLOCK_CHEST_OPEN, 1.0f, 1.0f);
-        if (doesPlayerHaveABankAccount()) {
-            addItems();
-        } else {
-            addItems();
-            inv.setItem(4, noBankAccountFound());
-        }
+        addItems();
         BlankSpaceFiller.fillinBlankInv(inv, List.of(0));
         p.openInventory(inv);
     }
@@ -117,7 +117,7 @@ public class PlayerAccountGUI implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.space());
-        lore.add(Component.text("§7Your current balance is: " + econ.getBalance("zdeatharcade",target.getUniqueId())));
+        lore.add(Component.text("§7Your current balance is: " + econ.balance("zdeatharcade",target.getUniqueId())));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/8b5d160bbdaa308350325ee7a96f6059004a31338615d43564a4c722e28f7cec");
@@ -134,7 +134,7 @@ public class PlayerAccountGUI implements Listener {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.space());
         lore.add(Component
-                .text("§7Your current balance is: " + econ.bankBalance("zdeatharcade", target.getUniqueId()).doubleValue()));
+                .text("§7Your current balance is: " + new BankConfigManager(target.getUniqueId()).getBankBalance())); 
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/3b1309dac556911e55398038c4367f892d96cd5e8034fc232db920736879944c");
@@ -142,6 +142,22 @@ public class PlayerAccountGUI implements Listener {
         bank.setItemMeta(meta);
         return bank;
 
+    }
+
+    private ItemStack comingSoon() {
+        ItemStack bank = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) bank.getItemMeta();
+        meta.displayName(Component.text("§c§lCOMING SOON"));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.space());
+        lore.add(Component.text("§7This feature is coming soon!"));
+        meta.lore(lore);
+        PlayerProfile profile = getProfile(
+                "https://textures.minecraft.net/texture/3b1309dac556911e55398038c4367f892d96cd5e8034fc232db920736879944c");
+        meta.setPlayerProfile(profile);
+        bank.setItemMeta(meta);
+        return bank;
     }
 
     private ItemStack noBankAccountFound() {
@@ -169,12 +185,13 @@ public class PlayerAccountGUI implements Listener {
     }
 
     public Boolean doesPlayerHaveABankAccount() {
-        for (File f : plugin.getBankDataFolder().listFiles()) {
-            if (f.getName().equals(target.getUniqueId().toString() + ".yml")) {
-                return true;
-            }
+        File bankDataFolder = plugin.getBankDataFolder();
+        if (bankDataFolder == null || !bankDataFolder.isDirectory()) {
+            return false;
         }
-        return false;
+
+        File playerBankFile = new File(bankDataFolder, target.getUniqueId() + ".yml");
+        return playerBankFile.isFile();
     }
 
     private static final UUID RANDOM_UUID = UUID.fromString("92864445-51c5-4c3b-9039-517c9927d1b4"); // We reuse the

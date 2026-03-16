@@ -26,6 +26,7 @@ public class PlayerConfigManager {
     private FileConfiguration config;
     private String configName;
     private String configPath;
+    private final UUID playerUUID;
     private final ConcurrentHashMap<UUID, Boolean> knownPlayersMap = new ConcurrentHashMap<>();
     private final Set<UUID> knownPlayers = knownPlayersMap.keySet(true);
 
@@ -58,22 +59,23 @@ public class PlayerConfigManager {
     }
 
     public PlayerConfigManager(UUID playerUUID) {
+        this.playerUUID = playerUUID;
         this.configName = playerUUID.toString();
         this.configPath = configName + '.';
-        configHandler();
+        this.configFile = new File(plugin.getPlayerDataFolder(), configName + ".yml");
     }
-
-    public PlayerConfigManager(){}
 
     public String getConfigName() {
         return configName;
     }
 
     public FileConfiguration getConfig() {
+        ensureConfigLoaded();
         return (YamlConfiguration) config;
     }
 
     public void saveConfig() {
+        ensureConfigLoaded();
         try {
             config.save(configFile);
         } catch (IOException e) {
@@ -83,11 +85,19 @@ public class PlayerConfigManager {
     }
 
     public boolean exists() {
-    return configFile.exists() && configFile.isFile();
-}
+        return configFile != null && configFile.exists() && configFile.isFile();
+    }
+
+    private void ensureConfigLoaded() {
+        if (config == null) {
+            configHandler();
+        }
+    }
 
     private void configHandler() {
-        configFile = new File(plugin.getPlayerDataFolder() + File.separator + configName + ".yml");
+        if (configFile == null) {
+            configFile = new File(plugin.getPlayerDataFolder() + File.separator + configName + ".yml");
+        }
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
             try {
@@ -105,15 +115,16 @@ public class PlayerConfigManager {
         }
     }
 
-    public void updatePlayerDataFile(Player p) {
+    public void updatePlayerDataFile() {
+        configHandler();
         YamlConfiguration playerConfig = (YamlConfiguration) config;
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate = now.format(myFormatObj);
 
-        playerConfig.set(configPath + configPaths.PLAYER.getPath(), p.getName());
-        playerConfig.set(configPath + configPaths.UUID.getPath(), p.getUniqueId().toString());
-        playerConfig.set(configPath + configPaths.CLIENTBRAND.getPath(), p.getClientBrandName());
+        playerConfig.set(configPath + configPaths.PLAYER.getPath(), Main.getInstance().getServer().getPlayer(playerUUID).getName());
+        playerConfig.set(configPath + configPaths.UUID.getPath(), playerUUID.toString());
+        playerConfig.set(configPath + configPaths.CLIENTBRAND.getPath(), Main.getInstance().getServer().getPlayer(playerUUID).getClientBrandName());
         playerConfig.set(configPath + configPaths.LASTLOGIN.getPath(), formattedDate);
         playerConfig.set(configPath + configPaths.ZOMBIEKILLS.getPath(), 0);
         playerConfig.set(configPath + configPaths.DEATHS.getPath(), 0);
@@ -219,6 +230,7 @@ public class PlayerConfigManager {
         getConfig().set(configPath + configPaths.SETTINGS.getPath() + configPaths.SETTINGS_ZOMBIE_VISABLE.getPath(), visable);
         saveConfig();
     }
+
 
     public Set<UUID> getKnownPlayers() {
         return knownPlayers;

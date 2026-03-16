@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -99,7 +100,8 @@ public class AFKPool implements Listener {
         if (e.getClickedBlock().getType().toString().contains("SIGN")) {
             Player whoClicked = (Player) e.getPlayer();
             Sign sign = (Sign) e.getClickedBlock().getState();
-            if (sign.line(0).equals(Component.text("AFK POOL", NamedTextColor.AQUA, TextDecoration.BOLD))) {
+            SignSide side = sign.getTargetSide(whoClicked);
+            if (side.line(0).equals(Component.text("AFK POOL", NamedTextColor.AQUA, TextDecoration.BOLD))) {
                 if (!(leavingPool.contains(e.getPlayer()))) {
                     AFKPlayer afkPlayer = playerDataHandler.getAFKPlayer(whoClicked);
                     leavingPool.add(whoClicked);
@@ -154,11 +156,11 @@ public class AFKPool implements Listener {
     public void onLeaveSignCreate(SignChangeEvent e) {
         Player whoCreated = (Player) e.getPlayer();
 
-        if (e.line(0).equals(Component.text("[afk]"))) {
+        if (e.lines().get(0).equals(Component.text("[afk]"))) {
             e.line(0, Component.text("AFK POOL", NamedTextColor.AQUA, TextDecoration.BOLD));
             e.line(2, Component.text("EXIT", NamedTextColor.DARK_RED, TextDecoration.ITALIC));
             whoCreated.sendMessage(
-                    Component.text("AFK Pool Exit Sign Created!", NamedTextColor.GREEN, TextDecoration.BOLD));
+                Component.text("AFK Pool Exit Sign Created!", NamedTextColor.GREEN, TextDecoration.BOLD));
         }
     }
 

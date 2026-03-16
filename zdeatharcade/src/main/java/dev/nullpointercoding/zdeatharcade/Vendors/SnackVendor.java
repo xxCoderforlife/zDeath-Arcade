@@ -52,7 +52,7 @@ public class SnackVendor implements Listener {
         if (Snack.isSnack(e.getCurrentItem())) {
             Snack s = Snack.ItemStackToSnack(e.getCurrentItem());
             // Check if the Player has enough money to buy a Snack
-            if (econ.getBalance("zdeatharcade",p.getUniqueId()).doubleValue() >= s.getWorth()) {
+            if (econ.balance("zdeatharcade", p.getUniqueId()).doubleValue() >= s.getWorth()) {
                 // Remove the money from the Player
                 econ.withdraw("zdeatharcade", p.getUniqueId(), BigDecimal.valueOf(s.getWorth()));
                 // Add the Snack to the Player's Inventory
@@ -141,7 +141,8 @@ public class SnackVendor implements Listener {
         Snack steak = new Snack("steak", Material.COOKED_BEEF, Component.text("Steak", NamedTextColor.BLUE),
                 PotionEffectType.ABSORPTION, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
-        Snack porkchop = new Snack("porkchop", Material.COOKED_PORKCHOP, Component.text("Porkchop", NamedTextColor.BLUE),
+        Snack porkchop = new Snack("porkchop", Material.COOKED_PORKCHOP,
+                Component.text("Porkchop", NamedTextColor.BLUE),
                 PotionEffectType.ABSORPTION, 5, 1,
                 1.2, 1.2, 1.6f, 50.00);
         inv.setItem(10, cookie.getSnack());

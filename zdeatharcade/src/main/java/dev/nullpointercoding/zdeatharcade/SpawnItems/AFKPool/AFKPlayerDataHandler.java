@@ -9,7 +9,7 @@ public class AFKPlayerDataHandler {
     private Map<Player, AFKPlayer> playerDataMap;
 
     public AFKPlayerDataHandler() {
-        playerDataMap = new HashMap<>();
+        playerDataMap = new HashMap<Player, AFKPlayer>();
     }
 
     public void addPlayerData(Player player, Double cash, Double tokens) {

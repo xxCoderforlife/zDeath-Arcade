@@ -32,8 +32,8 @@ public class PacketHandler {
 
     public void stopShowingPlayer(Player p) {
         protocolManager.addPacketListener(new PacketAdapter(Main.getInstance(), ListenerPriority.NORMAL,
-                PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.ENTITY_METADATA,
-                PacketType.Play.Server.REL_ENTITY_MOVE) {
+            PacketType.Play.Server.SPAWN_ENTITY, PacketType.Play.Server.ENTITY_METADATA,
+            PacketType.Play.Server.REL_ENTITY_MOVE) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player player = event.getPlayer();
@@ -91,7 +91,7 @@ public class PacketHandler {
 
     public void registerZombiePacket() {
         protocolManager.addPacketListener(
-                new PacketAdapter(plugin, ListenerPriority.HIGHEST, PacketType.Play.Server.NAMED_ENTITY_SPAWN) {
+            new PacketAdapter(plugin, ListenerPriority.HIGHEST, PacketType.Play.Server.SPAWN_ENTITY) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
                         EntityType entityType = event.getPacket().getEntityModifier(event).read(0).getType();

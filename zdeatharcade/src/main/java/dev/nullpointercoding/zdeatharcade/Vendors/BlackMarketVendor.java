@@ -47,7 +47,7 @@ public class BlackMarketVendor implements Listener {
     private final static Component key = Component.text('♛', NamedTextColor.YELLOW, TextDecoration.BOLD);
 
     private static final Component name = Component.text(" Black Market Dealer ", NamedTextColor.LIGHT_PURPLE,
-            TextDecoration.ITALIC).toBuilder().build();
+            TextDecoration.ITALIC);
     private final static Component fullName = Component.text('♛', NamedTextColor.YELLOW, TextDecoration.BOLD)
             .append(Component.text(" Black Market Dealer ", NamedTextColor.LIGHT_PURPLE, TextDecoration.ITALIC))
             .append(Component.text('♛', NamedTextColor.YELLOW, TextDecoration.BOLD));

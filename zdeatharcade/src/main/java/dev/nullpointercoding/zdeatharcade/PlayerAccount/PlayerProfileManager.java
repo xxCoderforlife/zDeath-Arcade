@@ -32,6 +32,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.nullpointercoding.zdeatharcade.Main;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI;
 import dev.nullpointercoding.zdeatharcade.Bank.BankAccountGUI.AccountType;
+import dev.nullpointercoding.zdeatharcade.Utils.BankConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -254,8 +255,8 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Cash: " + econ.getBalance("zdeatharcade", target.getUniqueId())));
-        lore.add(Component.text("Your Cash: " + econ.getBalance("zdeatharcade", whoClicked.getUniqueId())));
+        lore.add(Component.text("Cash: " + econ.balance("zdeatharcade", target.getUniqueId())));
+        lore.add(Component.text("Your Cash: " + econ.balance("zdeatharcade", whoClicked.getUniqueId())));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/99e77fae5313bac19bf14577d50093e4738ebd70fd54a4de1a27475d0ec9538f");
@@ -272,8 +273,8 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Banked Cash: " + econ.bankBalance("zdeatharcade", target.getUniqueId())));
-        lore.add(Component.text("Your Banked Cash: " + econ.bankBalance("zdeatharcade", whoClicked.getUniqueId())));
+        lore.add(Component.text("Banked Cash: " + new BankConfigManager(target.getUniqueId()).getBankBalance()));
+        lore.add(Component.text("Your Banked Cash: " + new BankConfigManager(whoClicked.getUniqueId()).getBankBalance()));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/b25b27ce62ca88743840a95d1c39868f43ca60696a84f564fbd7dda259be00fe");

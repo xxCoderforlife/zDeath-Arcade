@@ -1,6 +1,7 @@
 package dev.nullpointercoding.zdeatharcade.Bank;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.nullpointercoding.zdeatharcade.Main;
+import dev.nullpointercoding.zdeatharcade.Utils.BankConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.PlayerConfigManager;
 import dev.nullpointercoding.zdeatharcade.Utils.InventoryUtils.BlankSpaceFiller;
 import dev.nullpointercoding.zdeatharcade.Utils.VaultHookFolder.VaultHook;
@@ -187,11 +189,10 @@ public class BankAccountGUI implements Listener {
         }
         if (clicked.getItemMeta().displayName().equals(confirmDeposit().getItemMeta().displayName())) {
             if (amountToMoveToBank > 0) {
-                if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
-                    econ.withdraw("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
-                    econ.bankDeposit("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
+                BigDecimal movedAmount = BigDecimal.valueOf(amountToMoveToBank).setScale(2, RoundingMode.HALF_EVEN);
+                if (depositToBank(whoClicked, movedAmount)) {
                     whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
-                            + amountToMoveToBank + " §7to your bank account!"));
+                            + formatAmount(movedAmount) + " §7to your bank account!"));
                     whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     whoClicked.closeInventory(Reason.PLUGIN);
                 } else {
@@ -203,12 +204,11 @@ public class BankAccountGUI implements Listener {
         }
         if (clicked.getItemMeta().displayName().equals(confirmWithdraw().getItemMeta().displayName())) {
             if (amountToMoveToBank > 0) {
-                if (econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
-                    econ.deposit("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
-                    econ.bankWithdraw("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
+                BigDecimal movedAmount = BigDecimal.valueOf(amountToMoveToBank).setScale(2, RoundingMode.HALF_EVEN);
+                if (withdrawFromBank(whoClicked, movedAmount)) {
                     whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
-                            + amountToMoveToBank + " §7to your player account!"));
-                    whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
+                            + formatAmount(movedAmount) + " §7to your player account!"));
+                    whoClicked.playSound(whoClicked, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     whoClicked.closeInventory(Reason.PLUGIN);
                 } else {
                     sendNotEnounghMoney(whoClicked);
@@ -218,11 +218,10 @@ public class BankAccountGUI implements Listener {
             }
         }
         if (clicked.getItemMeta().displayName().equals(depoistAll().getItemMeta().displayName())) {
-            if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
-                econ.bankDeposit("zdeatharcade", whoClicked.getUniqueId(), econ.getBalance("zdeatharcade", whoClicked.getUniqueId()));
-                econ.withdraw("zdeatharcade", whoClicked.getUniqueId(), econ.getBalance("zdeatharcade", whoClicked.getUniqueId()));
+            BigDecimal movedAmount = econ.balance("zdeatharcade", whoClicked.getUniqueId());
+            if (depositAllToBank(whoClicked)) {
                 whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
-                        + econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() + " §7to your bank account!"));
+                + formatAmount(movedAmount) + " §7to your bank account!"));
                 whoClicked.closeInventory(Reason.PLUGIN);
                 whoClicked.playSound(whoClicked, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
             } else {
@@ -230,20 +229,18 @@ public class BankAccountGUI implements Listener {
             }
         }
         if (clicked.getItemMeta().displayName().equals(withdrawlAll().getItemMeta().displayName())) {
-            if (econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
-                econ.deposit("zdeatharcade", whoClicked.getUniqueId(), econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()));
-                econ.bankWithdraw("zdeatharcade", whoClicked.getUniqueId(),
-                        econ.bankBalance("zdeatharcade", whoClicked.getUniqueId()));
+            BigDecimal movedAmount = getBankBalance(whoClicked);
+            if (withdrawAllFromBank(whoClicked)) {
                 whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully moved §a§l$"
-                        + econ.getBalance("zdeatharcade", whoClicked.getUniqueId()) + " §7to your player account!"));
+                + formatAmount(movedAmount) + " §7to your player account!"));
                 whoClicked.closeInventory(Reason.PLUGIN);
-                whoClicked.playSound(whoClicked, Sound.ENTITY_CHICKEN_DEATH, 1.0f, 1.0f);
+                whoClicked.playSound(whoClicked, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
             } else {
                 sendNotEnounghMoney(whoClicked);
             }
         }
         if (clicked.getItemMeta().displayName().equals(payPlayer().getItemMeta().displayName())) {
-            if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
+            if (econ.balance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() > 0) {
                 econ.withdraw("zdeatharcade", whoClicked.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
                 econ.deposit("zdeatharcade", target.getUniqueId(), BigDecimal.valueOf(amountToMoveToBank));
                 whoClicked.sendMessage(Component.text("§a§lSUCCESS: §7You have successfully paid §a§l$"
@@ -274,7 +271,7 @@ public class BankAccountGUI implements Listener {
                     whoClicked.closeInventory(Reason.PLUGIN);
                     return;
                 }
-                if (econ.getBalance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
+                if (econ.balance("zdeatharcade", whoClicked.getUniqueId()).doubleValue() >= amountToMoveToBank) {
                     whoClicked.sendMessage("§a§lSUCCESS: §7You have successfully put a Bounty on " + target.getName());
                     Bukkit.broadcast(Component.text(whoClicked.getName() + " set a bounty of $" + amountToMoveToBank
                             + " on " + target.getName()));
@@ -492,6 +489,77 @@ public class BankAccountGUI implements Listener {
         whoToSendTo.sendMessage(
                 Component.text("§c§lERROR: §7You cannot move a negative or 0 amount of money!"));
         whoToSendTo.playSound(whoToSendTo, Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+    }
+
+    private boolean depositToBank(Player player, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+
+        BigDecimal playerBalance = econ.balance("zdeatharcade", player.getUniqueId());
+        if (playerBalance.compareTo(amount) < 0) {
+            return false;
+        }
+
+        econ.withdraw("zdeatharcade", player.getUniqueId(), amount);
+        BigDecimal bankBalance = getBankBalance(player);
+        setBankBalance(player, bankBalance.add(amount));
+        return true;
+    }
+
+    private boolean withdrawFromBank(Player player, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+
+        BigDecimal bankBalance = getBankBalance(player);
+        if (bankBalance.compareTo(amount) < 0) {
+            return false;
+        }
+
+        setBankBalance(player, bankBalance.subtract(amount));
+        econ.deposit("zdeatharcade", player.getUniqueId(), amount);
+        return true;
+    }
+
+    private boolean depositAllToBank(Player player) {
+        BigDecimal playerBalance = econ.balance("zdeatharcade", player.getUniqueId());
+        if (playerBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+
+        return depositToBank(player, playerBalance);
+    }
+
+    private boolean withdrawAllFromBank(Player player) {
+        BigDecimal bankBalance = getBankBalance(player);
+        if (bankBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+
+        return withdrawFromBank(player, bankBalance);
+    }
+
+    private BigDecimal getBankBalance(Player player) {
+        BankConfigManager bankConfigManager = new BankConfigManager(player.getUniqueId());
+
+        String rawBalance = bankConfigManager.getConfig().getString("Bank_Account.Balance", "0.00");
+        try {
+            return new BigDecimal(rawBalance).setScale(2, RoundingMode.HALF_EVEN);
+        } catch (NumberFormatException ex) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN);
+        }
+    }
+
+    private void setBankBalance(Player player, BigDecimal newBalance) {
+        BigDecimal normalizedBalance = newBalance.max(BigDecimal.ZERO).setScale(2, RoundingMode.HALF_EVEN);
+        BankConfigManager bankConfigManager = new BankConfigManager(player.getUniqueId());
+        bankConfigManager.getConfig().set("Bank_Account.Balance", normalizedBalance.toPlainString());
+        bankConfigManager.saveConfig();
+    }
+
+    private String formatAmount(BigDecimal amount) {
+        return String.format("$%,.2f", amount);
     }
 
     public static HashMap<Player, HashMap<Player, Double>> getBountyList() {

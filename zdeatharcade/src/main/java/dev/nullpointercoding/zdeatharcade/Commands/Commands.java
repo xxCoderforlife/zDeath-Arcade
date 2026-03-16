@@ -2,10 +2,7 @@ package dev.nullpointercoding.zdeatharcade.Commands;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
