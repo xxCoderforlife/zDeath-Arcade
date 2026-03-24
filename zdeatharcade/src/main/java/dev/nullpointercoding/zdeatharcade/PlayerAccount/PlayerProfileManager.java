@@ -150,7 +150,7 @@ public class PlayerProfileManager implements Listener {
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.displayName(Component.text("§e§lRequest Payment"));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("§7§oClick to request payment from a player"));
+        lore.add(Component.text("§7§oClick to request payment from " + target.getName()));
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/d7d7f8fd87fe7e34f9113dd385aab7b24ef221c19d455175b2578af7ff46eecf");
@@ -180,7 +180,7 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.displayName(Component.text("§a§lPay Player"));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("§7§oClick to pay a player"));
+        lore.add(Component.text("§7§oClick to pay " + target.getName()));
         PlayerProfile profile = getProfile(
                 "https://textures.minecraft.net/texture/d7d7f8fd87fe7e34f9113dd385aab7b24ef221c19d455175b2578af7ff46eecf");
         meta.setPlayerProfile(profile);
@@ -194,7 +194,7 @@ public class PlayerProfileManager implements Listener {
         SkullMeta meta = (SkullMeta) fire.getItemMeta();
         meta.displayName(Component.text("§c§lSet Bounty"));
         List<Component> lore = new ArrayList<Component>();
-        lore.add(Component.text("§7§oClick to set a bounty on a player"));
+        lore.add(Component.text("§7§oClick to set a bounty on " + target.getName()));
         meta.lore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         PlayerProfile profile = getProfile(
@@ -255,7 +255,7 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Cash: " + econ.balance("zdeatharcade", target.getUniqueId())));
+        lore.add(Component.text(target.getName() + "'s Cash: " + econ.balance("zdeatharcade", target.getUniqueId())));
         lore.add(Component.text("Your Cash: " + econ.balance("zdeatharcade", whoClicked.getUniqueId())));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
@@ -273,7 +273,7 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Banked Cash: " + new BankConfigManager(target.getUniqueId()).getBankBalance()));
+        lore.add(Component.text(target.getName() + "'s Banked Cash: " + new BankConfigManager(target.getUniqueId()).getBankBalance()));
         lore.add(Component.text("Your Banked Cash: " + new BankConfigManager(whoClicked.getUniqueId()).getBankBalance()));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
@@ -290,7 +290,7 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Player Kills: " + target.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
+        lore.add(Component.text(target.getName() + "'s Player Kills: " + target.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
         lore.add(Component.text("Your Player Kills: " + whoClicked.getStatistic(org.bukkit.Statistic.PLAYER_KILLS)));
         meta.lore(lore);
         PlayerProfile profile = getProfile(
@@ -310,7 +310,7 @@ public class PlayerProfileManager implements Listener {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         List<Component> lore = new ArrayList<Component>();
         lore.add(Component.space());
-        lore.add(Component.text("Tokens: " + tarConfig.getTokens()));
+        lore.add(Component.text(target.getName() + "'s Tokens: " + tarConfig.getTokens()));
         lore.add(Component.text("Your Tokens: " + pConfig.getTokens()));
         meta.lore(lore);
         item.setItemMeta(meta);

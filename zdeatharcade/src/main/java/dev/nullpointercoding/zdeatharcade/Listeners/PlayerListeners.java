@@ -50,7 +50,7 @@ public class PlayerListeners implements Listener {
 
     private HashMap<Player, Inventory> playerInv = new HashMap<Player, Inventory>();
     private Economy econ = new VaultHook();
-    private AutoBroadcast AB;
+    private AutoBroadcast AB = new AutoBroadcast();
     private Main plugin = Main.getInstance();
 
     @EventHandler
@@ -79,7 +79,7 @@ public class PlayerListeners implements Listener {
                 .append(p.displayName().color(NamedTextColor.GREEN)).build();
         e.joinMessage(joinMessage.hoverEvent(randomJoinMessageLore(p)));
         //joinedWithBounty(p);
-        new AutoBroadcast().startBroadcast();
+        AB.startBroadcast();
         // ✘
 
     }

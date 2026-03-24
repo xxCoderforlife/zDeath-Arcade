@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import java.util.Base64;
 
 import dev.nullpointercoding.zdeatharcade.Main;
 
@@ -137,7 +137,7 @@ public class SavePlayerInventoryToFile {
             }
 
             dataOutput.close();
-            return Base64Coder.encodeLines(outputStream.toByteArray());
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
             throw new IllegalStateException("Unable to save item stacks.", e);
         }
@@ -152,7 +152,7 @@ public class SavePlayerInventoryToFile {
      */
     public static ItemStack[] itemStackArrayFromBase64(String data) throws IOException {
         try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
             ObjectInputStream dataInput = new ObjectInputStream(inputStream);
             ItemStack[] items = new ItemStack[dataInput.readInt()];
 

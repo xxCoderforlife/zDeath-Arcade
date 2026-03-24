@@ -20,8 +20,8 @@
 
   <repositories>
     <repository>
-      <id>purpur</id>
-      <url>https://repo.purpurmc.org/snapshots</url>
+      <id>bx-team</id>
+      <url>https://repo.bxteam.org/snapshots</url>
     </repository>
     <repository>
       <id>placeholderapi</id>
@@ -52,12 +52,12 @@
       <url>https://repo.codemc.io/repository/creatorfromhell/</url>
     </repository>
   </repositories>
-<dependencies>
+  <dependencies>
     <dependency>
-        <groupId>net.milkbowl.vault</groupId>
-        <artifactId>VaultUnlockedAPI</artifactId>
-        <version>2.19</version><!-- Validate this is the most recent version from the CI -->
-        <scope>provided</scope>
+      <groupId>net.milkbowl.vault</groupId>
+      <artifactId>VaultUnlockedAPI</artifactId>
+      <version>2.19</version><!-- Validate this is the most recent version from the CI -->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.acrobot.chestshop</groupId>
@@ -78,8 +78,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.purpurmc.purpur</groupId>
-      <artifactId>purpur-api</artifactId>
+      <groupId>org.bxteam.divinemc</groupId>
+      <artifactId>divinemc-api</artifactId>
       <version>1.21.11-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
@@ -113,20 +113,20 @@
       <version>2.9.9</version>
       <scope>provided</scope>
     </dependency>
-<!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-<dependency>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-compiler-plugin</artifactId>
-    <version>4.0.0-beta-4</version>
-    <scope>compile</scope>
-</dependency>
-<!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
-<dependency>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-resources-plugin</artifactId>
-    <version>4.0.0-beta-1</version>
-    <scope>compile</scope>
-</dependency>
+    <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>4.0.0-beta-4</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>4.0.0-beta-1</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
@@ -143,9 +143,9 @@
           <version>3.5.0</version>
         </plugin>
         <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-compiler-plugin</artifactId>
-           <version>3.15.0</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.15.0</version>
           <configuration>
             <source>21</source>  <!-- or 21, etc. -->
             <target>21</target>
